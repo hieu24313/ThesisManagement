@@ -53,16 +53,30 @@ CKEDITOR_UPLOAD_PATH = "ckeditor/images/"
 #     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 # ]
 
+# MIDDLEWARE = [
+#     'django.middleware.security.SecurityMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'ThesisManagement.middlewares.OAuthMiddleware',
+#     'oauth2_provider.middleware.OAuth2TokenMiddleware',  # get user
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+# ]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'oauth2_provider.middleware.OAuth2TokenMiddleware',  # get user
+    'ThesisManagement.middlewares.OAuthMiddleware',  # Custom middleware
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',  # OAuth2 middleware
 ]
+
 
 ROOT_URLCONF = 'ThesisManagementApp.urls'
 
@@ -99,7 +113,7 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'ThesisManagement.User'
 
-MEDIA_ROOT = '%s/courses/static/' % BASE_DIR
+MEDIA_ROOT = '%s/ThesisManagement/static/' % BASE_DIR
 
 import pymysql
 
@@ -133,6 +147,13 @@ REST_FRAMEWORK = {
 
 CLIENT_ID = 'qmYQmR9yJuY5qEKlMfxFcP6oOnFwRQETSi1ePR6z'
 CLIENT_SECRET = 'L56kd93O90np5q7IOPP2vhsNx5ajGlV5MY6T33s4RlW9m4k9MsLKwC3qpkcTO1ba1WNal0W8rBFkboIbCrTogNqaKxyCQhmblRhzYo9ToA7FJIMtc9ftAStweFIXFhxo'
+# OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
+# OAUTH2_GRANT_TYPES = (
+#     'authorization-code',
+#     'implicit',
+#     'password',
+#     'client-credentials',
+# )
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

@@ -8,6 +8,11 @@ from django.contrib.auth.hashers import make_password
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='users/%Y/%m/', null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
+    role = models.CharField(max_length=50, default='student')
+
+    def has_role(self, required_role):
+        return self.role == required_role
+    # admin, universityadministrator, lecturer, student
     # groups = models.ManyToManyField(
     #     Group,
     #     verbose_name=('groups'),
@@ -129,13 +134,13 @@ def create_superuser(sender, **kwargs):
         admin_username = 'admin'
         admin_password = '123456'
         if not User.objects.filter(username=admin_username).exists():
-            User.objects.create_superuser(admin_username, 'hieu24313@gmail.com', admin_password)
+            User.objects.create_superuser(username=admin_username,email='hieu24313@gmail.com', password=admin_password, role='admin')
 
         if not User.objects.filter(username='hieu').exists():
-            User.objects.create_superuser('hieu', 'hieu24314@gmail.com', admin_password)
+            User.objects.create_superuser('hieu', 'hieu24314@gmail.com', admin_password, role='admin')
 
         if not User.objects.filter(username='nhu').exists():
-            User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password)
+            User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password, role='admin')
 
 
 
