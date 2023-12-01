@@ -36,9 +36,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ThesisManagement.apps.ThesismanagementConfig',
+    'drf_yasg',
+    'rest_framework',
+    'oauth2_provider'
 ]
 
 CKEDITOR_UPLOAD_PATH = "ckeditor/images/"
+
+# MIDDLEWARE = [
+#     'django.middleware.security.SecurityMiddleware',
+#     'django.contrib.sessions.middleware.SessionMiddleware',
+#     'django.middleware.common.CommonMiddleware',
+#     'django.middleware.csrf.CsrfViewMiddleware',
+#     'django.contrib.auth.middleware.AuthenticationMiddleware',
+#     'django.contrib.messages.middleware.MessageMiddleware',
+#     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+# ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -46,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',  # get user
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -87,7 +101,6 @@ AUTH_USER_MODEL = 'ThesisManagement.User'
 
 MEDIA_ROOT = '%s/courses/static/' % BASE_DIR
 
-
 import pymysql
 
 pymysql.install_as_MySQLdb()
@@ -112,12 +125,21 @@ AUTH_PASSWORD_VALIDATORS = []
 #     },
 # ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    )
+}
+
+CLIENT_ID = 'qmYQmR9yJuY5qEKlMfxFcP6oOnFwRQETSi1ePR6z'
+CLIENT_SECRET = 'L56kd93O90np5q7IOPP2vhsNx5ajGlV5MY6T33s4RlW9m4k9MsLKwC3qpkcTO1ba1WNal0W8rBFkboIbCrTogNqaKxyCQhmblRhzYo9ToA7FJIMtc9ftAStweFIXFhxo'
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 USE_I18N = True
 
