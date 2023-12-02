@@ -12,7 +12,7 @@ from oauth2_provider.decorators import protected_resource
 class UserViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializers
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     # permission_classes = [permissions.IsAdminUser]
 
     @protected_resource()
