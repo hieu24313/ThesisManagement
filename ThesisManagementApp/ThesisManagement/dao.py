@@ -1,4 +1,4 @@
-from .models import User
+from .models import User, Criteria
 
 
 def load_user(params={}):
@@ -11,5 +11,15 @@ def load_user(params={}):
     user_id = params.get('id')
     if user_id:
         q = q.filter(id=user_id)
+
+    return q
+
+
+def load_criteria(params={}):
+    q = Criteria.objects.filter(active=True)
+
+    name = params.get('name')
+    if name:
+        q = q.filter(name__icontains=name)
 
     return q

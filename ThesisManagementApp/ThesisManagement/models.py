@@ -25,7 +25,7 @@ class Role(BaseModel):
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='users/%Y/%m/', null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
-    role = models.CharField(max_length=50, default='student')
+    role = models.CharField(max_length=50, default='student', null=True, blank=True)
 
     def has_role(self, required_role):
         return self.role == required_role
@@ -137,13 +137,14 @@ def create_superuser(sender, **kwargs):
 
         # Tạo superuser 'admin'
         if not User.objects.filter(username=admin_username).exists():
-            User.objects.create_superuser(username=admin_username, email='hieu24313@gmail.com', password=admin_password)
+            User.objects.create_superuser(username=admin_username, email='hieu24313@gmail.com', password=admin_password,
+                                          role='admin')
 
         if not User.objects.filter(username='hieu').exists():
-            User.objects.create_superuser('hieu', 'hieu24314@gmail.com', admin_password)
+            User.objects.create_superuser('hieu', 'hieu24314@gmail.com', admin_password, role='admin')
 
         if not User.objects.filter(username='nhu').exists():
-            User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password)
+            User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password, role='admin')
 
 
 
