@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'ThesisManagement.apps.ThesismanagementConfig',
     'drf_yasg',
     'rest_framework',
-    'oauth2_provider'
+    'oauth2_provider',
+    'corsheaders'
 ]
 
 CKEDITOR_UPLOAD_PATH = "ckeditor/images/"
@@ -66,6 +67,7 @@ CKEDITOR_UPLOAD_PATH = "ckeditor/images/"
 # ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -76,7 +78,43 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',  # OAuth2 middleware
 ]
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOWED_ORIGINS = [
+#     'http://*',
+#     'http://localhost:3000',
+#     'http://localhost:8000',
+#     'http://127.0.0.1:3000',
+#     'http://127.0.0.1:8000',
+#     'http://192.168.1.7:3000',
+#     'http://192.168.1.7:8000',
+#     # Thêm các host khác vào đây
+# ]
 
+# CORS_ALLOW_METHODS = [
+#     'GET',
+#     'POST',
+#     'PUT',
+#     'PATCH',
+#     'DELETE',
+#     'OPTIONS'
+# ]
+#
+# CORS_ALLOW_HEADERS = [
+#     'accept',
+#     'accept-encoding',
+#     'authorization',
+#     'content-type',
+#     'dnt',
+#     'origin',
+#     'user-agent',
+#     'x-csrftoken',
+#     'x-requested-with'
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^https?://[^:/]*(:\d+)?/?$",
+# ]
 
 ROOT_URLCONF = 'ThesisManagementApp.urls'
 

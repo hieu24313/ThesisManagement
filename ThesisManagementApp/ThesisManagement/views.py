@@ -21,7 +21,7 @@ class UserViewSet(viewsets.ModelViewSet, generics.ListAPIView):
 class CriteriaViewSet(viewsets.ModelViewSet, generics.ListAPIView):
     queryset = Criteria.objects.all()
     serializer_class = serializers.CriteriaSerializers
-    permission_classes = [IsAdmin]
+    # permission_classes = [IsAdmin]
 
     def filter_queryset(self, queryset):
         return dao.load_criteria(self.request.query_params)
@@ -38,6 +38,8 @@ class ThesisDefenseCommitteeViewSet(viewsets.ModelViewSet, generics.ListAPIView)
 
     def filter_queryset(self, queryset):
         return dao.load_committee(self.request.query_params)
+
+    # return Response(serializers)
 
 
 

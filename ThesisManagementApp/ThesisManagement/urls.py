@@ -11,5 +11,5 @@ router.register('criteria', views.CriteriaViewSet, basename='criteria')
 router.register('committee', views.ThesisDefenseCommitteeViewSet, basename='committee')
 
 urlpatterns = [
-    path('api/', include(router.urls))
+    path('', include(router.urls))
 ]
