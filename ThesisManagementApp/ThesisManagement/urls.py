@@ -6,9 +6,10 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register('api/users', views.UserViewSet, basename='users')
-router.register('api/criteria', views.CriteriaViewSet, basename='criteria')
+router.register('users', views.UserViewSet, basename='users')
+router.register('criteria', views.CriteriaViewSet, basename='criteria')
+router.register('committee', views.ThesisDefenseCommitteeViewSet, basename='committee')
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('api/', include(router.urls))
 ]

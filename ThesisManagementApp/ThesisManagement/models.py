@@ -137,6 +137,17 @@ def create_superuser(sender, **kwargs):
 
         Role.objects.get_or_create(name='student')
 
+        Position.objects.get_or_create(name='Chủ Tịch')
+
+        Position.objects.get_or_create(name='Thư Ký')
+
+        Position.objects.get_or_create(name='Phản Biện')
+
+        Position.objects.get_or_create(name='Thành Viên')
+
+        StatusThesis.objects.get_or_create(name='Open')
+
+        StatusThesis.objects.get_or_create(name='Close')
 
         admin_username = 'admin'
         admin_password = '123456'

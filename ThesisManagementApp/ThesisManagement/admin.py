@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from .models import User, Criteria
+from .models import User, Criteria, Position
 from django.utils.html import mark_safe
 from django import forms
 from django.urls import path
@@ -29,4 +29,5 @@ class CriteriaAdmin(admin.ModelAdmin):
 
 admin_site.register(User, UserAdmin)
 admin_site.register(Criteria, CriteriaAdmin)
+admin_site.register(Position)
 

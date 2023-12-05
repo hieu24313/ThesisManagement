@@ -10,7 +10,7 @@ from . import dao
 from .permissions import IsAdmin
 
 
-class UserViewSet(viewsets.ViewSet, generics.ListAPIView):
+class UserViewSet(viewsets.ModelViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializers
 
@@ -27,6 +27,17 @@ class CriteriaViewSet(viewsets.ModelViewSet, generics.ListAPIView):
         return dao.load_criteria(self.request.query_params)
 
 
+class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+    queryset = Thesis.objects.all()
+    serializer_class = serializers.ThesisSerializers
+
+
+class ThesisDefenseCommitteeViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+    queryset = ThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.ThesisDefenseCommitteeSerializers
+
+    def filter_queryset(self, queryset):
+        return dao.load_committee(self.request.query_params)
 
 
 
