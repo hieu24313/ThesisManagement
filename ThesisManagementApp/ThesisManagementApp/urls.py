@@ -19,6 +19,8 @@ from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from ThesisManagement.admin import admin_site
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -34,7 +36,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', include('ThesisManagement.urls')),
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0),
             name='schema-json'),

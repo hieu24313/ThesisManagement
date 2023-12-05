@@ -23,23 +23,26 @@ class Role(BaseModel):
 
 
 class User(AbstractUser):
+    Role_choice = [
+        ('admin', 'Quản Trị Viên'),
+        ('universityadministrator', 'Giáo Vụ'),
+        ('lecturer', 'Giảng Viên'),
+        ('student', 'Sinh Viên')
+    ]
     avatar = models.ImageField(upload_to='users/%Y/%m/', null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
-    role = models.CharField(max_length=50, default='student', null=True, blank=True)
+    role = models.CharField(max_length=50, default='student', null=True, blank=True, choices=Role_choice)
 
     def has_role(self, required_role):
         return self.role == required_role
 
     def save(self, *args, **kwargs):
-        # if self.pk is not None:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
-        #     orig = User.objects.get(pk=self.pk)
-        #     if orig.password != self.password:
-        #         self.password = make_password(self.password)
-        # else:
-        #     self.password = make_password(self.password)
-        # if not self.role:
-        #     default_model1 = Role.objects.get_or_create(name='Default')[0]
-        #     self.role = default_model1
+        if self.pk is not None:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
+            orig = User.objects.get(pk=self.pk)
+            if orig.password != self.password:
+                self.password = make_password(self.password)
+        else:
+            self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -126,7 +129,6 @@ def create_superuser(sender, **kwargs):
         admin_username = 'admin'
         admin_password = '123456'
 
-        # Tạo hoặc lấy Role 'admin'
         admin_role, created = Role.objects.get_or_create(name='admin')
 
         Role.objects.get_or_create(name='universityadministrator')
@@ -135,16 +137,31 @@ def create_superuser(sender, **kwargs):
 
         Role.objects.get_or_create(name='student')
 
-        # Tạo superuser 'admin'
+
+        admin_username = 'admin'
+        admin_password = '123456'
+
         if not User.objects.filter(username=admin_username).exists():
-            User.objects.create_superuser(username=admin_username, email='hieu24313@gmail.com', password=admin_password,
-                                          role='admin')
+            User.objects.get_or_create(username=admin_username, email='hieu24313@gmail.com', password=admin_password,
+                                          role='admin', is_superuser=True, is_staff=True)
 
         if not User.objects.filter(username='hieu').exists():
-            User.objects.create_superuser('hieu', 'hieu24314@gmail.com', admin_password, role='admin')
+            User.objects.get_or_create(username='hieu', email='hieu24314@gmail.com', password=admin_password,
+                                       role='admin', is_superuser=True, is_staff=True)
 
         if not User.objects.filter(username='nhu').exists():
-            User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password, role='admin')
+            User.objects.get_or_create(username='nhu', email='huynhnhu@gmail.com', password=admin_password,
+                                       role='admin', is_superuser=True, is_staff=True)
+
+        # if not User.objects.filter(username=admin_username).exists():
+        #     User.objects.create_superuser(username=admin_username, email='hieu24313@gmail.com', password=admin_password,
+        #                                   role='admin')
+        #
+        # if not User.objects.filter(username='hieu').exists():
+        #     User.objects.create_superuser('hieu', 'hieu24314@gmail.com', admin_password, role='admin')
+        #
+        # if not User.objects.filter(username='nhu').exists():
+        #     User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password, role='admin')
 
 
 
