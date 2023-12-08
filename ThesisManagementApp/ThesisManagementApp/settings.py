@@ -24,7 +24,9 @@ SECRET_KEY = 'django-insecure-tv*_h-u1z@0cvnf)n1msoxr4hr(h(%g6+5c^a@zy%=v%7747cs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
 
 # Application definition
 
@@ -79,16 +81,6 @@ MIDDLEWARE = [
     'oauth2_provider.middleware.OAuth2TokenMiddleware',  # OAuth2 middleware
 ]
 CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ALLOWED_ORIGINS = [
-#     'http://*',
-#     'http://localhost:3000',
-#     'http://localhost:8000',
-#     'http://127.0.0.1:3000',
-#     'http://127.0.0.1:8000',
-#     'http://192.168.1.7:3000',
-#     'http://192.168.1.7:8000',
-#     # Thêm các host khác vào đây
-# ]
 
 # CORS_ALLOW_METHODS = [
 #     'GET',
