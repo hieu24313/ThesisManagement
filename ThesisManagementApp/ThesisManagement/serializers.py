@@ -1,4 +1,4 @@
-from .models import User, Criteria, Thesis, ThesisExaminationCommittee, ThesisDefenseCommittee
+from .models import *
 from rest_framework import serializers
 
 
