@@ -49,9 +49,19 @@ class User(AbstractUser):
         return self.first_name + self.last_name
 
 
+#Khóa luận
+class Thesis(BaseModel):
+    name = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return self.name
+
+
 #Hội đồng được thành lập
 class ThesisDefenseCommittee(BaseModel):
     name = models.CharField(max_length=255, null=True)
+    thesis = models.ManyToManyField(Thesis)
+
 
     def __str__(self):
         return self.name
@@ -80,14 +90,6 @@ class StatusThesis(BaseModel):
         return self.name
 
 
-#Khóa luận
-class Thesis(BaseModel):
-    name = models.CharField(max_length=255, null=True)
-
-    def __str__(self):
-        return self.name
-
-
 #Giảng viên hướng dẫn
 class ThesisSupervisor(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -102,8 +104,9 @@ class ThesisStudent(BaseModel):
 
 #Hội đồng nào chấm khóa luận nào
 class ThesisExaminationCommittee(BaseModel):
-    thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
-    Committee = models.ForeignKey(ThesisDefenseCommittee, on_delete=models.CASCADE)
+    pass
+    # thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+    # Committee = models.ForeignKey(ThesisDefenseCommittee, on_delete=models.CASCADE)
 
 
 #Tiêu chí chấm điểm

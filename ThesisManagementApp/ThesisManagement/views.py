@@ -2,6 +2,7 @@ from django.db import transaction
 from django.shortcuts import render
 from rest_framework import viewsets, generics, status, permissions
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from . import serializers, paginators
 from .models import *
@@ -53,7 +54,7 @@ class ThesisDefenseCommitteeViewSet(viewsets.ModelViewSet, generics.ListAPIView)
         type=openapi.TYPE_OBJECT,
         properties={
             'name': openapi.Schema(type=openapi.TYPE_STRING, description='Tên Hội Đồng'),
-            },
+        },
         required=['name']
     ))
     def create(self, request, *args, **kwargs):
@@ -142,3 +143,15 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
 
     def filter_queryset(self, queryset):
         return dao.load_thesis(self.request.query_params)
+
+
+class GetUserByToken(viewsets.ViewSet, generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializers
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.serializer_class(user)
+        return Response({'data': serializer.data},
+                        status=status.HTTP_200_OK)

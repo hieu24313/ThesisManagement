@@ -27,3 +27,10 @@ class IsStudent(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'student'
+
+
+class IsAuthenticated(BasePermission):
+    message = "Bạn không có quyền truy cập tài nguyên này."
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated

@@ -82,31 +82,7 @@ MIDDLEWARE = [
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 
-# CORS_ALLOW_METHODS = [
-#     'GET',
-#     'POST',
-#     'PUT',
-#     'PATCH',
-#     'DELETE',
-#     'OPTIONS'
-# ]
-#
-# CORS_ALLOW_HEADERS = [
-#     'accept',
-#     'accept-encoding',
-#     'authorization',
-#     'content-type',
-#     'dnt',
-#     'origin',
-#     'user-agent',
-#     'x-csrftoken',
-#     'x-requested-with'
-# ]
 CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOWED_ORIGIN_REGEXES = [
-#     r"^https?://[^:/]*(:\d+)?/?$",
-# ]
 
 ROOT_URLCONF = 'ThesisManagementApp.urls'
 
@@ -176,12 +152,6 @@ REST_FRAMEWORK = {
 }
 
 # OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
-# OAUTH2_GRANT_TYPES = (
-#     'authorization-code',
-#     'implicit',
-#     'password',
-#     'client-credentials',
-# )
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

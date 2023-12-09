@@ -171,7 +171,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2023-12-05 06:12:00.080028'),(2,'contenttypes','0002_remove_content_type_name','2023-12-05 06:12:00.119517'),(3,'auth','0001_initial','2023-12-05 06:12:00.253198'),(4,'auth','0002_alter_permission_name_max_length','2023-12-05 06:12:00.290239'),(5,'auth','0003_alter_user_email_max_length','2023-12-05 06:12:00.296760'),(6,'auth','0004_alter_user_username_opts','2023-12-05 06:12:00.302626'),(7,'auth','0005_alter_user_last_login_null','2023-12-05 06:12:00.313738'),(8,'auth','0006_require_contenttypes_0002','2023-12-05 06:12:00.316747'),(9,'auth','0007_alter_validators_add_error_messages','2023-12-05 06:12:00.323727'),(10,'auth','0008_alter_user_username_max_length','2023-12-05 06:12:00.331704'),(11,'auth','0009_alter_user_last_name_max_length','2023-12-05 06:12:00.338434'),(12,'auth','0010_alter_group_name_max_length','2023-12-05 06:12:00.352376'),(13,'auth','0011_update_proxy_permissions','2023-12-05 06:12:00.361946'),(14,'auth','0012_alter_user_first_name_max_length','2023-12-05 06:12:00.367934'),(15,'ThesisManagement','0001_initial','2023-12-05 06:12:00.927059'),(16,'ThesisManagement','0002_user_avatar_user_phone_alter_criteria_name_and_more','2023-12-05 06:12:01.091219'),(17,'ThesisManagement','0003_delete_criteria_and_more','2023-12-05 06:12:01.665904'),(18,'ThesisManagement','0004_alter_user_groups_alter_user_user_permissions','2023-12-05 06:12:01.677257'),(19,'ThesisManagement','0005_criteria_memberofthesisdefensecommittee_position_and_more','2023-12-05 06:12:02.135075'),(20,'ThesisManagement','0006_alter_user_groups_alter_user_user_permissions','2023-12-05 06:12:02.154027'),(21,'ThesisManagement','0007_score_thesis','2023-12-05 06:12:02.195103'),(22,'ThesisManagement','0008_alter_user_avatar_alter_user_phone','2023-12-05 06:12:02.212076'),(23,'ThesisManagement','0009_user_role','2023-12-05 06:12:02.261698'),(24,'ThesisManagement','0010_role_alter_user_role','2023-12-05 06:12:02.403252'),(25,'ThesisManagement','0011_alter_user_role','2023-12-05 06:12:02.523494'),(26,'ThesisManagement','0012_alter_user_role','2023-12-05 06:12:02.564906'),(27,'ThesisManagement','0013_alter_user_role','2023-12-05 06:12:02.575356'),(28,'admin','0001_initial','2023-12-05 06:12:02.649008'),(29,'admin','0002_logentry_remove_auto_add','2023-12-05 06:12:02.660980'),(30,'admin','0003_logentry_add_action_flag_choices','2023-12-05 06:12:02.670956'),(31,'oauth2_provider','0001_initial','2023-12-05 06:12:03.060890'),(32,'oauth2_provider','0002_auto_20190406_1805','2023-12-05 06:12:03.115016'),(33,'oauth2_provider','0003_auto_20201211_1314','2023-12-05 06:12:03.162394'),(34,'oauth2_provider','0004_auto_20200902_2022','2023-12-05 06:12:03.411589'),(35,'oauth2_provider','0005_auto_20211222_2352','2023-12-05 06:12:03.485384'),(36,'oauth2_provider','0006_alter_application_client_secret','2023-12-05 06:12:03.514073'),(37,'oauth2_provider','0007_application_post_logout_redirect_uris','2023-12-05 06:12:03.577918'),(38,'sessions','0001_initial','2023-12-05 06:12:03.602541'),(39,'ThesisManagement','0014_alter_user_role','2023-12-05 07:14:50.016006');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2023-12-05 06:12:00.080028'),(2,'contenttypes','0002_remove_content_type_name','2023-12-05 06:12:00.119517'),(3,'auth','0001_initial','2023-12-05 06:12:00.253198'),(4,'auth','0002_alter_permission_name_max_length','2023-12-05 06:12:00.290239'),(5,'auth','0003_alter_user_email_max_length','2023-12-05 06:12:00.296760'),(6,'auth','0004_alter_user_username_opts','2023-12-05 06:12:00.302626'),(7,'auth','0005_alter_user_last_login_null','2023-12-05 06:12:00.313738'),(8,'auth','0006_require_contenttypes_0002','2023-12-05 06:12:00.316747'),(9,'auth','0007_alter_validators_add_error_messages','2023-12-05 06:12:00.323727'),(10,'auth','0008_alter_user_username_max_length','2023-12-05 06:12:00.331704'),(11,'auth','0009_alter_user_last_name_max_length','2023-12-05 06:12:00.338434'),(12,'auth','0010_alter_group_name_max_length','2023-12-05 06:12:00.352376'),(13,'auth','0011_update_proxy_permissions','2023-12-05 06:12:00.361946'),(14,'auth','0012_alter_user_first_name_max_length','2023-12-05 06:12:00.367934'),(15,'ThesisManagement','0001_initial','2023-12-05 06:12:00.927059'),(16,'ThesisManagement','0002_user_avatar_user_phone_alter_criteria_name_and_more','2023-12-05 06:12:01.091219'),(17,'ThesisManagement','0003_delete_criteria_and_more','2023-12-05 06:12:01.665904'),(18,'ThesisManagement','0004_alter_user_groups_alter_user_user_permissions','2023-12-05 06:12:01.677257'),(19,'ThesisManagement','0005_criteria_memberofthesisdefensecommittee_position_and_more','2023-12-05 06:12:02.135075'),(20,'ThesisManagement','0006_alter_user_groups_alter_user_user_permissions','2023-12-05 06:12:02.154027'),(21,'ThesisManagement','0007_score_thesis','2023-12-05 06:12:02.195103'),(22,'ThesisManagement','0008_alter_user_avatar_alter_user_phone','2023-12-05 06:12:02.212076'),(23,'ThesisManagement','0009_user_role','2023-12-05 06:12:02.261698'),(24,'ThesisManagement','0010_role_alter_user_role','2023-12-05 06:12:02.403252'),(25,'ThesisManagement','0011_alter_user_role','2023-12-05 06:12:02.523494'),(26,'ThesisManagement','0012_alter_user_role','2023-12-05 06:12:02.564906'),(27,'ThesisManagement','0013_alter_user_role','2023-12-05 06:12:02.575356'),(28,'admin','0001_initial','2023-12-05 06:12:02.649008'),(29,'admin','0002_logentry_remove_auto_add','2023-12-05 06:12:02.660980'),(30,'admin','0003_logentry_add_action_flag_choices','2023-12-05 06:12:02.670956'),(31,'oauth2_provider','0001_initial','2023-12-05 06:12:03.060890'),(32,'oauth2_provider','0002_auto_20190406_1805','2023-12-05 06:12:03.115016'),(33,'oauth2_provider','0003_auto_20201211_1314','2023-12-05 06:12:03.162394'),(34,'oauth2_provider','0004_auto_20200902_2022','2023-12-05 06:12:03.411589'),(35,'oauth2_provider','0005_auto_20211222_2352','2023-12-05 06:12:03.485384'),(36,'oauth2_provider','0006_alter_application_client_secret','2023-12-05 06:12:03.514073'),(37,'oauth2_provider','0007_application_post_logout_redirect_uris','2023-12-05 06:12:03.577918'),(38,'sessions','0001_initial','2023-12-05 06:12:03.602541'),(39,'ThesisManagement','0014_alter_user_role','2023-12-05 07:14:50.016006'),(40,'ThesisManagement','0015_remove_thesisexaminationcommittee_committee_and_more','2023-12-09 02:51:22.057628');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -565,7 +565,7 @@ CREATE TABLE `thesismanagement_statusthesis` (
   `active` tinyint(1) NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -574,6 +574,7 @@ CREATE TABLE `thesismanagement_statusthesis` (
 
 LOCK TABLES `thesismanagement_statusthesis` WRITE;
 /*!40000 ALTER TABLE `thesismanagement_statusthesis` DISABLE KEYS */;
+INSERT INTO `thesismanagement_statusthesis` VALUES (1,'2023-12-09','2023-12-09',1,'Open'),(2,'2023-12-09','2023-12-09',1,'Close');
 /*!40000 ALTER TABLE `thesismanagement_statusthesis` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -632,6 +633,34 @@ INSERT INTO `thesismanagement_thesisdefensecommittee` VALUES (1,'2023-12-05','20
 UNLOCK TABLES;
 
 --
+-- Table structure for table `thesismanagement_thesisdefensecommittee_thesis`
+--
+
+DROP TABLE IF EXISTS `thesismanagement_thesisdefensecommittee_thesis`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `thesismanagement_thesisdefensecommittee_thesis` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `thesisdefensecommittee_id` bigint NOT NULL,
+  `thesis_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ThesisManagement_thesisd_thesisdefensecommittee_i_39287ab8_uniq` (`thesisdefensecommittee_id`,`thesis_id`),
+  KEY `ThesisManagement_the_thesis_id_2ae43abb_fk_ThesisMan` (`thesis_id`),
+  CONSTRAINT `ThesisManagement_the_thesis_id_2ae43abb_fk_ThesisMan` FOREIGN KEY (`thesis_id`) REFERENCES `thesismanagement_thesis` (`id`),
+  CONSTRAINT `ThesisManagement_the_thesisdefensecommitt_aa00687a_fk_ThesisMan` FOREIGN KEY (`thesisdefensecommittee_id`) REFERENCES `thesismanagement_thesisdefensecommittee` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `thesismanagement_thesisdefensecommittee_thesis`
+--
+
+LOCK TABLES `thesismanagement_thesisdefensecommittee_thesis` WRITE;
+/*!40000 ALTER TABLE `thesismanagement_thesisdefensecommittee_thesis` DISABLE KEYS */;
+/*!40000 ALTER TABLE `thesismanagement_thesisdefensecommittee_thesis` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `thesismanagement_thesisexaminationcommittee`
 --
 
@@ -643,13 +672,7 @@ CREATE TABLE `thesismanagement_thesisexaminationcommittee` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `Committee_id` bigint NOT NULL,
-  `thesis_id` bigint NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ThesisManagement_the_Committee_id_30861171_fk_ThesisMan` (`Committee_id`),
-  KEY `ThesisManagement_the_thesis_id_249f5e0c_fk_ThesisMan` (`thesis_id`),
-  CONSTRAINT `ThesisManagement_the_Committee_id_30861171_fk_ThesisMan` FOREIGN KEY (`Committee_id`) REFERENCES `thesismanagement_thesisdefensecommittee` (`id`),
-  CONSTRAINT `ThesisManagement_the_thesis_id_249f5e0c_fk_ThesisMan` FOREIGN KEY (`thesis_id`) REFERENCES `thesismanagement_thesis` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -828,4 +851,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-08 16:18:12
+-- Dump completed on 2023-12-09  9:55:35
