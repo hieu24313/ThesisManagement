@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from . import serializers, paginators
+from .mail import send_email
 from .models import *
 from django.http import JsonResponse
 from oauth2_provider.decorators import protected_resource
@@ -30,6 +31,18 @@ class UserViewSet(viewsets.ModelViewSet, generics.ListAPIView):
     def filter_queryset(self, queryset):
         return dao.load_user(self.request.query_params)
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('name', openapi.IN_QUERY, description="Lọc theo tên",
+                          type=openapi.TYPE_STRING),
+        openapi.Parameter('username', openapi.IN_QUERY, description="Lọc theo username",
+                          type=openapi.TYPE_STRING),
+        openapi.Parameter('role', openapi.IN_QUERY, description="Lọc theo role (admin, universityadministrator, "
+                                                                "lecturer, student)",
+                          type=openapi.TYPE_STRING),
+    ])
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class CriteriaViewSet(viewsets.ModelViewSet, generics.ListAPIView):
     queryset = Criteria.objects.all()
@@ -39,6 +52,13 @@ class CriteriaViewSet(viewsets.ModelViewSet, generics.ListAPIView):
 
     def filter_queryset(self, queryset):
         return dao.load_criteria(self.request.query_params)
+
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('name', openapi.IN_QUERY, description="Lọc theo tên",
+                          type=openapi.TYPE_STRING),
+    ])
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class ThesisDefenseCommitteeViewSet(viewsets.ModelViewSet, generics.ListAPIView):
@@ -117,19 +137,21 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
                 ThesisStudent.objects.create(user=user, thesis=thesis)
 
             try:
-                gv1 = ''
-                gv2 = ''
+                listgv = []
                 giangvien1 = data.get('giangvien1')
                 if giangvien1:
                     giangvien1 = int(giangvien1)
                     gv1 = User.objects.get(pk=giangvien1)
                     ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+                    listgv.append(gv1.email)
                 giangvien2 = data.get('giangvien2')
                 if giangvien2:
                     giangvien2 = int(giangvien2)
                     gv2 = User.objects.get(pk=giangvien2)
                     ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
-
+                    listgv.append(gv2.email)
+                #gửi email thông báo
+                send_email(listreceiver=listgv)
             except ValueError:
                 return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -146,6 +168,33 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
 
     def filter_queryset(self, queryset):
         return dao.load_thesis(self.request.query_params)
+
+    # @action(detail=True, methods=['GET'])
+    # def student(self, request, pk=None):
+    #     try:
+    #         thesis = Thesis.objects.get(pk=pk)
+    #     except Thesis.DoesNotExist:
+    #         return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     serializer = serializers.ThesisSerializers(thesis)
+    #     status_serializer = serializers.StatusThesisSerializers(thesis.status) if thesis.status else None
+    #     thesis_instance = Thesis.objects.get(id=pk)
+    #     student = thesis_instance.thesisstudent_set.all()
+    #     student_serializer = serializers.ThesisStudentSerializers(student)
+    #     supervisor = thesis_instance.thesissupervisor_set.all()
+    #
+    #     return Response({"student": student_serializer.data if student_serializer else None}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def status(self, request, pk=None):
+        try:
+            thesis = Thesis.objects.get(pk=pk)
+        except Thesis.DoesNotExist:
+            return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = serializers.ThesisSerializers(thesis)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class GetUserByToken(viewsets.ViewSet, generics.ListAPIView):

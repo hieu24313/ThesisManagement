@@ -16,7 +16,7 @@ class BaseModel(models.Model):
 
 
 class Role(BaseModel):
-    name = models.CharField(max_length=255)# admin, universityadministrator, lecturer, student
+    name = models.CharField(max_length=255)  # admin, universityadministrator, lecturer, student
 
     def __str__(self):
         return self.name
@@ -49,40 +49,7 @@ class User(AbstractUser):
         return self.first_name + self.last_name
 
 
-#Khóa luận
-class Thesis(BaseModel):
-    name = models.CharField(max_length=255, null=True)
-
-    def __str__(self):
-        return self.name
-
-
-#Hội đồng được thành lập
-class ThesisDefenseCommittee(BaseModel):
-    name = models.CharField(max_length=255, null=True)
-    thesis = models.ManyToManyField(Thesis)
-
-
-    def __str__(self):
-        return self.name
-
-
-#Chức Vụ Trong Hội Đồng
-class Position(BaseModel):
-    name = models.CharField(max_length=255, null=True)
-
-    def __str__(self):
-        return self.name
-
-
-#Thành viên của hội đồng
-class MemberOfThesisDefenseCommittee(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) # trước khi xóa user phải cảnh báo bởi vì sẽ xóa luôn trường này.
-    Committee = models.ForeignKey(ThesisDefenseCommittee, on_delete=models.CASCADE) #trước kih xóa hội đồng phải cảnh báo vì sẽ xóa luôn trường này
-    position = models.ForeignKey(Position, on_delete=models.RESTRICT) # cái này bị chặn không xóa được nếu vẫn còn record có khóa ngoại ở đây
-
-
-#Trạng thái kháo luận
+# Trạng thái kháo luận
 class StatusThesis(BaseModel):
     name = models.CharField(max_length=255, null=True)
 
@@ -90,26 +57,67 @@ class StatusThesis(BaseModel):
         return self.name
 
 
-#Giảng viên hướng dẫn
+# Khóa luận
+class Thesis(BaseModel):
+    name = models.CharField(max_length=255, null=True)
+    status = models.ForeignKey(StatusThesis, on_delete=models.RESTRICT)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
+            self.status = 1
+        super().save(*args, **kwargs)
+
+
+# Hội đồng được thành lập
+class ThesisDefenseCommittee(BaseModel):
+    name = models.CharField(max_length=255, null=True)
+    thesis = models.ManyToManyField(Thesis)
+
+    def __str__(self):
+        return self.name
+
+
+# Chức Vụ Trong Hội Đồng
+class Position(BaseModel):
+    name = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+# Thành viên của hội đồng
+class MemberOfThesisDefenseCommittee(BaseModel):
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE)  # trước khi xóa user phải cảnh báo bởi vì sẽ xóa luôn trường này.
+    Committee = models.ForeignKey(ThesisDefenseCommittee,
+                                  on_delete=models.CASCADE)  # trước kih xóa hội đồng phải cảnh báo vì sẽ xóa luôn trường này
+    position = models.ForeignKey(Position,
+                                 on_delete=models.RESTRICT)  # cái này bị chặn không xóa được nếu vẫn còn record có khóa ngoại ở đây
+
+
+# Giảng viên hướng dẫn
 class ThesisSupervisor(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
 
 
-#Bảng lưu cụ thể sinh viên nào làm khóa luận
+# Bảng lưu cụ thể sinh viên nào làm khóa luận
 class ThesisStudent(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
 
 
-#Hội đồng nào chấm khóa luận nào
+# Hội đồng nào chấm khóa luận nào
 class ThesisExaminationCommittee(BaseModel):
     pass
     # thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
     # Committee = models.ForeignKey(ThesisDefenseCommittee, on_delete=models.CASCADE)
 
 
-#Tiêu chí chấm điểm
+# Tiêu chí chấm điểm
 class Criteria(BaseModel):
     name = models.CharField(max_length=255, null=True)
     percent = models.IntegerField(null=False)
@@ -118,11 +126,11 @@ class Criteria(BaseModel):
         return self.name
 
 
-#Điểm số
+# Điểm số
 class Score(BaseModel):
     score = models.FloatField()
-    memberofcommittee = models.ForeignKey(MemberOfThesisDefenseCommittee, on_delete=models.CASCADE) # nguoi cham diem
-    scoreofstudent = models.ForeignKey(ThesisStudent, on_delete=models.CASCADE) # diem cua sinh vien nao
+    memberofcommittee = models.ForeignKey(MemberOfThesisDefenseCommittee, on_delete=models.CASCADE)  # nguoi cham diem
+    scoreofstudent = models.ForeignKey(ThesisStudent, on_delete=models.CASCADE)  # diem cua sinh vien nao
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE, null=True)
 
 
@@ -157,7 +165,7 @@ def create_superuser(sender, **kwargs):
 
         if not User.objects.filter(username=admin_username).exists():
             User.objects.get_or_create(username=admin_username, email='hieu24313@gmail.com', password=admin_password,
-                                          role='admin', is_superuser=True, is_staff=True)
+                                       role='admin', is_superuser=True, is_staff=True)
 
         if not User.objects.filter(username='hieu').exists():
             User.objects.get_or_create(username='hieu', email='hieu24314@gmail.com', password=admin_password,
@@ -176,7 +184,3 @@ def create_superuser(sender, **kwargs):
         #
         # if not User.objects.filter(username='nhu').exists():
         #     User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password, role='admin')
-
-
-
-

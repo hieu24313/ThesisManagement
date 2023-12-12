@@ -64,7 +64,7 @@ def load_thesis(params={}):
     q = Thesis.objects.filter()
 
     thesis_id = params.get('id')
-    if id:
+    if thesis_id:
         q = q.filter(pk=thesis_id)
     name = params.get('name')
     if name:
