@@ -13,6 +13,8 @@ from .permissions import IsAdmin, IsStudent, IsLecturer, IsUniversityAdministrat
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from .tests import TestSendEmail
+
 
 class BaseViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
@@ -48,6 +50,7 @@ class ThesisDefenseCommitteeViewSet(viewsets.ModelViewSet, generics.ListAPIView)
                           type=openapi.TYPE_STRING),
     ])
     def list(self, request, *args, **kwargs):
+        # TestSendEmail()
         return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=openapi.Schema(
