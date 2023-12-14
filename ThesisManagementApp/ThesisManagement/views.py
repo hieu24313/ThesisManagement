@@ -107,7 +107,7 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
         properties={
             'name': openapi.Schema(type=openapi.TYPE_STRING, description='Tên Khóa Luận'),
             'sinhvien': openapi.Schema(type=openapi.TYPE_STRING,
-                                       description='Id những sinh viên thực hiện các nhau dấu phẩy. VD: 1,3,5,6'),
+                                       description='Id những sinh viên thực hiện cách nhau dấu phẩy. VD: 1,3,5,6'),
             'giangvien1': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 1'),
             'giangvien2': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 2'),
         },
@@ -166,24 +166,73 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
             return Response({'error': f'Lỗi : {str(e)}'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING, description='Tên Khóa Luận'),
+            'sinhvien': openapi.Schema(type=openapi.TYPE_STRING,
+                                       description='Id những sinh viên thực hiện cách nhau dấu phẩy. VD: 1,3,5,6'),
+            'giangvien1': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 1, lưu ý phải '
+                                                                               'gửi cả id 2 khi update'),
+            'giangvien2': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 2, lưu ý phải '
+                                                                               'gửi key nếu k có gv 2 value bỏ trống'),
+        },
+        # required=['name', 'sinhvien', 'giangvien1', 'giangvien2']
+    ))
+    def partial_update(self, request, *args, **kwargs):
+        thesis_id = kwargs.get('pk', None)
+        thesis = Thesis.objects.get(pk=thesis_id)
+        data = request.data
+        # name = data.get('name')
+        # if name:
+        #     thesis = Thesis.objects.get(pk=thesis_id)
+        #     thesis.name = name
+        #     thesis.save()
+
+        sv = data.get('sinhvien')  # idsv là chuỗi "1,3,5,6"
+        if sv:
+            svth_str = sv.split(',')  # kết quả sẽ là list ['1', '3', '5', '6']
+
+            try:
+                svth_int = [int(value) for value in svth_str]
+            except ValueError:
+                return Response({'error': 'Mã Sinh Viên Không Hợp Lệ!!!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            thesis_students = ThesisStudent.objects.filter(thesis_id=thesis_id)
+            thesis_students.delete()
+            for s in svth_int:
+                user = User.objects.get(id=s)
+                ThesisStudent.objects.create(user=user, thesis=thesis)
+
+        try:
+            listgv = []
+            giangvien1 = data.get('giangvien1')
+            if giangvien1:
+                giangvien1 = int(giangvien1)
+                thesis_supervisor = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
+                thesis_supervisor.delete()
+                gv1 = User.objects.get(pk=giangvien1)
+                ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+                listgv.append(gv1.email)
+            giangvien2 = data.get('giangvien2')
+            if giangvien2:
+                giangvien2 = int(giangvien2)
+                # thesis_supervisor2 = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
+                # thesis_supervisor2.delete()
+                gv2 = User.objects.get(pk=giangvien2)
+                ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+                listgv.append(gv2.email)
+            # gửi email thông báo
+            send_email(listreceiver=listgv)
+        except ValueError:
+            return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        return super().partial_update(request, *args, **kwargs)
+
     def filter_queryset(self, queryset):
         return dao.load_thesis(self.request.query_params)
-
-    # @action(detail=True, methods=['GET'])
-    # def student(self, request, pk=None):
-    #     try:
-    #         thesis = Thesis.objects.get(pk=pk)
-    #     except Thesis.DoesNotExist:
-    #         return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
-    #
-    #     serializer = serializers.ThesisSerializers(thesis)
-    #     status_serializer = serializers.StatusThesisSerializers(thesis.status) if thesis.status else None
-    #     thesis_instance = Thesis.objects.get(id=pk)
-    #     student = thesis_instance.thesisstudent_set.all()
-    #     student_serializer = serializers.ThesisStudentSerializers(student)
-    #     supervisor = thesis_instance.thesissupervisor_set.all()
-    #
-    #     return Response({"student": student_serializer.data if student_serializer else None}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'])
     def status(self, request, pk=None):

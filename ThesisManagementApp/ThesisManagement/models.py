@@ -66,7 +66,7 @@ class Thesis(BaseModel):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.pk is not None:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
+        if self.pk is None:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
             self.status = 1
         super().save(*args, **kwargs)
 
