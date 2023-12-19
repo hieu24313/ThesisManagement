@@ -68,3 +68,36 @@ class ThesisExaminationCommitteeSerializers(serializers.ModelSerializer):
         model = ThesisExaminationCommittee
         fields = '__all__'
 
+
+class PositionSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = '__all__'
+
+
+class MemberOfThesisDefenseCommitteeSerializers(serializers.ModelSerializer):
+    # position = PositionSerializers()
+    # user = UserSerializersOnlyName()
+    # Committee = ThesisDefenseCommitteeSerializers()
+
+    class Meta:
+        model = MemberOfThesisDefenseCommittee
+        fields = '__all__'
+
+
+class ThesisDefenseCommitteeSerializersGETMember(serializers.ModelSerializer):
+    # thesis = ThesisSerializers()
+    class Meta:
+        model = ThesisDefenseCommittee
+        fields = '__all__'
+
+
+class MemberOfThesisDefenseCommitteeSerializersForMethodGet(serializers.ModelSerializer):
+    position = PositionSerializers()
+    user = UserSerializersOnlyName()
+    Committee = ThesisDefenseCommitteeSerializersGETMember()
+
+    class Meta:
+        model = MemberOfThesisDefenseCommittee
+        fields = '__all__'
+

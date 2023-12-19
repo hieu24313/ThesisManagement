@@ -150,7 +150,7 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
                     gv2 = User.objects.get(pk=giangvien2)
                     ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
                     listgv.append(gv2.email)
-                #gửi email thông báo
+                # gửi email thông báo
                 send_email(listreceiver=listgv)
             except ValueError:
                 return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
@@ -256,3 +256,35 @@ class GetUserByToken(viewsets.ViewSet, generics.ListAPIView):
         serializer = self.serializer_class(user)
         return Response({'data': serializer.data},
                         status=status.HTTP_200_OK)
+
+
+class PositionViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+    queryset = Position.objects.all()
+    serializer_class = serializers.PositionSerializers
+
+
+#viết lại các method từ đầu
+class MemberOfThesisDefenseCommitteeViewSetPOSTAndPATCH(viewsets.ViewSet, generics.CreateAPIView, generics.RetrieveUpdateAPIView):
+    queryset = MemberOfThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializers
+
+    # permission_classes = [IsAuthenticated]
+    #
+    # def create(self, request, *args, **kwargs):
+    #     return super().create(request, *args, **kwargs)
+    #
+    # def partial_update(self, request, *args, **kwargs):
+    #     return super().partial_update(request, *args, **kwargs)
+
+
+# class MemberOfThesisDefenseCommitteeViewSetGET(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
+#     queryset = MemberOfThesisDefenseCommittee.objects.all()
+#     serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializersForMethodGet
+#
+#     def list(self, request, *args, **kwargs):
+#         return super().list(request, *args, **kwargs)
+#
+#     def retrieve(self, request, *args, **kwargs):
+#         return super().retrieve(request, *args, **kwargs)
+
+
