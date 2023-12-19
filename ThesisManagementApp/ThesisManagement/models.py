@@ -58,6 +58,19 @@ class StatusThesis(BaseModel):
 
 
 # Khóa luận
+# class Thesis(BaseModel):
+#     name = models.CharField(max_length=255, null=True)
+#     status = models.ForeignKey(StatusThesis, on_delete=models.RESTRICT)
+#
+#     def __str__(self):
+#         return self.name
+#
+#     def save(self, *args, **kwargs):
+#         if self.pk is None:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
+#             self.status = StatusThesis.objects.get_or_create(name='Open')
+#         super().save(*args, **kwargs)
+
+
 class Thesis(BaseModel):
     name = models.CharField(max_length=255, null=True)
     status = models.ForeignKey(StatusThesis, on_delete=models.RESTRICT)
@@ -66,8 +79,9 @@ class Thesis(BaseModel):
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.pk is None:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
-            self.status = 1
+        if not self.pk:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
+            default_status, created = StatusThesis.objects.get_or_create(name='Open')
+            self.status = default_status
         super().save(*args, **kwargs)
 
 
