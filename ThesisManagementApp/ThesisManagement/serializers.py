@@ -47,8 +47,10 @@ class ThesisSerializers(serializers.ModelSerializer):
     status = StatusThesisSerializers()
     # student = ThesisStudentSerializers()
     # supervisor = ThesisSupervisorSerializers()
+    committee = serializers.CharField(required=False, allow_null=True)
     students = ThesisStudentSerializers(source='thesisstudent_set', many=True)
     supervisors = ThesisSupervisorSerializers(source='thesissupervisor_set', many=True)
+
 
     class Meta:
         model = Thesis

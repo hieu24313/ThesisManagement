@@ -24,9 +24,10 @@ class BaseViewSet(viewsets.ModelViewSet):
         instance.save()
 
 
-class UserViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+class GetUserViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializers
+    permission_classes = [IsAuthenticated]
 
     def filter_queryset(self, queryset):
         return dao.load_user(self.request.query_params)
@@ -44,11 +45,26 @@ class UserViewSet(viewsets.ModelViewSet, generics.ListAPIView):
         return super().list(request, *args, **kwargs)
 
 
-class CriteriaViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+class UpdateUserViewSet(viewsets.GenericViewSet, generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializers
+    permission_classes = [IsAuthenticated]
+
+    # def filter_queryset(self, queryset):
+    #     return dao.load_user(self.request.query_params)
+
+
+class AddUserViewSet(viewsets.GenericViewSet, generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializers
+    permission_classes = [IsAuthenticated]
+
+
+class GetCriteriaViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Criteria.objects.all()
     serializer_class = serializers.CriteriaSerializers
 
-    # permission_classes = [IsAdmin]
+    # permission_classes = [IsAuthenticated]
 
     def filter_queryset(self, queryset):
         return dao.load_criteria(self.request.query_params)
@@ -61,7 +77,21 @@ class CriteriaViewSet(viewsets.ModelViewSet, generics.ListAPIView):
         return super().list(request, *args, **kwargs)
 
 
-class ThesisDefenseCommitteeViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+class AddCriteriaViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = Criteria.objects.all()
+    serializer_class = serializers.CriteriaSerializers
+
+    permission_classes = [IsUniversityAdministrator]
+
+
+class UpdateCriteriaViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
+    queryset = Criteria.objects.all()
+    serializer_class = serializers.CriteriaSerializers
+
+    permission_classes = [IsUniversityAdministrator]
+
+
+class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = ThesisDefenseCommittee.objects.all()
     serializer_class = serializers.ThesisDefenseCommitteeSerializers
 
@@ -73,25 +103,30 @@ class ThesisDefenseCommitteeViewSet(viewsets.ModelViewSet, generics.ListAPIView)
         # TestSendEmail()
         return super().list(request, *args, **kwargs)
 
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'name': openapi.Schema(type=openapi.TYPE_STRING, description='Tên Hội Đồng'),
-        },
-        required=['name']
-    ))
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
     def filter_queryset(self, queryset):
         return dao.load_committee(self.request.query_params)
 
 
-class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+class AddThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = ThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.ThesisDefenseCommitteeSerializers
+
+    permission_classes = [IsUniversityAdministrator]
+
+
+class UpdateThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
+    queryset = ThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.ThesisDefenseCommitteeSerializers
+
+    permission_classes = [IsUniversityAdministrator]
+
+
+class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
 
-    # permission_classes = [IsUniversityAdministrator]
+    def filter_queryset(self, queryset):
+        return dao.load_thesis(self.request.query_params)
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('name', openapi.IN_QUERY, description="Lọc theo tên",
@@ -102,17 +137,24 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'name': openapi.Schema(type=openapi.TYPE_STRING, description='Tên Khóa Luận'),
-            'sinhvien': openapi.Schema(type=openapi.TYPE_STRING,
-                                       description='Id những sinh viên thực hiện cách nhau dấu phẩy. VD: 1,3,5,6'),
-            'giangvien1': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 1'),
-            'giangvien2': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 2'),
-        },
-        required=['name', 'sinhvien', 'giangvien1', 'giangvien2']
-    ))
+    @action(detail=False, methods=['GET'])
+    def status(self, request, pk=None):
+        try:
+            thesis = Thesis.objects.get(pk=pk)
+        except Thesis.DoesNotExist:
+            return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = serializers.ThesisSerializers(thesis)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddThesisViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = Thesis.objects.all()
+    serializer_class = serializers.ThesisSerializers
+
+    permission_classes = [IsUniversityAdministrator]
+
     def create(self, request, *args, **kwargs):
         data = request.data
         # thesis = self.instance
@@ -130,8 +172,13 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
             # Tạo đối tượng Khóa luận từ Serializer
             # serializer = self.get_serializer(data=data)
             # serializer.is_valid(raise_exception=True)
-            thesis = Thesis.objects.create(name=data.get('name'))
-
+            committee_id = data.get('committee')
+            if committee_id:
+                committee_id = int(committee_id)
+                committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+                thesis = Thesis.objects.create(name=data.get('name'), committee=committee)
+            else:
+                thesis = Thesis.objects.create(name=data.get('name'))
             for s in svth_int:
                 user = User.objects.get(id=s)
                 ThesisStudent.objects.create(user=user, thesis=thesis)
@@ -166,6 +213,13 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
             return Response({'error': f'Lỗi : {str(e)}'},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
+    queryset = Thesis.objects.all()
+    serializer_class = serializers.ThesisSerializers
+
+    permission_classes = [IsUniversityAdministrator]
+
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
@@ -188,6 +242,14 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
         #     thesis = Thesis.objects.get(pk=thesis_id)
         #     thesis.name = name
         #     thesis.save()
+        committee_id_str = data.get('committee')
+        if committee_id_str:
+            committee_id = int(committee_id_str)
+            thesiscommittee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+            thesis.committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+######################3
+            return Response({'xem': f'nè : {str(ThesisDefenseCommittee.objects.get(pk=committee_id))}'},
+                            status=status.HTTP_200_OK)
 
         sv = data.get('sinhvien')  # idsv là chuỗi "1,3,5,6"
         if sv:
@@ -231,19 +293,150 @@ class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
 
         return super().partial_update(request, *args, **kwargs)
 
-    def filter_queryset(self, queryset):
-        return dao.load_thesis(self.request.query_params)
 
-    @action(detail=False, methods=['GET'])
-    def status(self, request, pk=None):
-        try:
-            thesis = Thesis.objects.get(pk=pk)
-        except Thesis.DoesNotExist:
-            return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = serializers.ThesisSerializers(thesis)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+# class ThesisViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+#     queryset = Thesis.objects.all()
+#     serializer_class = serializers.ThesisSerializers
+#
+#     # permission_classes = [IsUniversityAdministrator]
+#
+#     @swagger_auto_schema(request_body=openapi.Schema(
+#         type=openapi.TYPE_OBJECT,
+#         properties={
+#             'name': openapi.Schema(type=openapi.TYPE_STRING, description='Tên Khóa Luận'),
+#             'sinhvien': openapi.Schema(type=openapi.TYPE_STRING,
+#                                        description='Id những sinh viên thực hiện cách nhau dấu phẩy. VD: 1,3,5,6'),
+#             'giangvien1': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 1'),
+#             'giangvien2': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 2'),
+#         },
+#         required=['name', 'sinhvien', 'giangvien1', 'giangvien2']
+#     ))
+#     def create(self, request, *args, **kwargs):
+#         data = request.data
+#         # thesis = self.instance
+#         sv = data.get('sinhvien')  # idsv là chuỗi "1,3,5,6"
+#         svth_str = sv.split(',')  # kết quả sẽ là list ['1', '3', '5', '6']
+#
+#         try:
+#             svth_int = [int(value) for value in svth_str]
+#         except ValueError:
+#             return Response({'error': 'Mã Sinh Viên Không Hợp Lệ!!!'},
+#                             status=status.HTTP_400_BAD_REQUEST)
+#
+#         try:
+#             # with transaction.atomic():
+#             # Tạo đối tượng Khóa luận từ Serializer
+#             # serializer = self.get_serializer(data=data)
+#             # serializer.is_valid(raise_exception=True)
+#             thesis = Thesis.objects.create(name=data.get('name'))
+#
+#             for s in svth_int:
+#                 user = User.objects.get(id=s)
+#                 ThesisStudent.objects.create(user=user, thesis=thesis)
+#
+#             try:
+#                 listgv = []
+#                 giangvien1 = data.get('giangvien1')
+#                 if giangvien1:
+#                     giangvien1 = int(giangvien1)
+#                     gv1 = User.objects.get(pk=giangvien1)
+#                     ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+#                     listgv.append(gv1.email)
+#                 giangvien2 = data.get('giangvien2')
+#                 if giangvien2:
+#                     giangvien2 = int(giangvien2)
+#                     gv2 = User.objects.get(pk=giangvien2)
+#                     ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+#                     listgv.append(gv2.email)
+#                 # gửi email thông báo
+#                 send_email(listreceiver=listgv)
+#             except ValueError:
+#                 return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
+#                                 status=status.HTTP_400_BAD_REQUEST)
+#
+#             # Nếu mọi thứ ổn, commit
+#             # transaction.commit()
+#
+#             return Response({'success': 'Thêm Thành Công.'}, status=status.HTTP_201_CREATED)
+#         except Exception as e:
+#             # Nếu có lỗi xảy ra, rollback
+#             # transaction.rollback()
+#             return Response({'error': f'Lỗi : {str(e)}'},
+#                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#     @swagger_auto_schema(request_body=openapi.Schema(
+#         type=openapi.TYPE_OBJECT,
+#         properties={
+#             'name': openapi.Schema(type=openapi.TYPE_STRING, description='Tên Khóa Luận'),
+#             'sinhvien': openapi.Schema(type=openapi.TYPE_STRING,
+#                                        description='Id những sinh viên thực hiện cách nhau dấu phẩy. VD: 1,3,5,6'),
+#             'giangvien1': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 1, lưu ý phải '
+#                                                                                'gửi cả id 2 khi update'),
+#             'giangvien2': openapi.Schema(type=openapi.TYPE_STRING, description='ID Giảng Viên Hướng Dẫn 2, lưu ý phải '
+#                                                                                'gửi key nếu k có gv 2 value bỏ trống'),
+#         },
+#         # required=['name', 'sinhvien', 'giangvien1', 'giangvien2']
+#     ))
+#     def partial_update(self, request, *args, **kwargs):
+#         thesis_id = kwargs.get('pk', None)
+#         thesis = Thesis.objects.get(pk=thesis_id)
+#         data = request.data
+#         # name = data.get('name')
+#         # if name:
+#         #     thesis = Thesis.objects.get(pk=thesis_id)
+#         #     thesis.name = name
+#         #     thesis.save()
+#
+#         sv = data.get('sinhvien')  # idsv là chuỗi "1,3,5,6"
+#         if sv:
+#             svth_str = sv.split(',')  # kết quả sẽ là list ['1', '3', '5', '6']
+#
+#             try:
+#                 svth_int = [int(value) for value in svth_str]
+#             except ValueError:
+#                 return Response({'error': 'Mã Sinh Viên Không Hợp Lệ!!!'},
+#                                 status=status.HTTP_400_BAD_REQUEST)
+#
+#             thesis_students = ThesisStudent.objects.filter(thesis_id=thesis_id)
+#             thesis_students.delete()
+#             for s in svth_int:
+#                 user = User.objects.get(id=s)
+#                 ThesisStudent.objects.create(user=user, thesis=thesis)
+#
+#         try:
+#             listgv = []
+#             giangvien1 = data.get('giangvien1')
+#             if giangvien1:
+#                 giangvien1 = int(giangvien1)
+#                 thesis_supervisor = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
+#                 thesis_supervisor.delete()
+#                 gv1 = User.objects.get(pk=giangvien1)
+#                 ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+#                 listgv.append(gv1.email)
+#             giangvien2 = data.get('giangvien2')
+#             if giangvien2:
+#                 giangvien2 = int(giangvien2)
+#                 # thesis_supervisor2 = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
+#                 # thesis_supervisor2.delete()
+#                 gv2 = User.objects.get(pk=giangvien2)
+#                 ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+#                 listgv.append(gv2.email)
+#             # gửi email thông báo
+#             send_email(listreceiver=listgv)
+#         except ValueError:
+#             return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
+#                             status=status.HTTP_400_BAD_REQUEST)
+#
+#         return super().partial_update(request, *args, **kwargs)
+#     @action(detail=False, methods=['GET'])
+#     def status(self, request, pk=None):
+#         try:
+#             thesis = Thesis.objects.get(pk=pk)
+#         except Thesis.DoesNotExist:
+#             return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
+#
+#         serializer = serializers.ThesisSerializers(thesis)
+#
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class GetUserByToken(viewsets.ViewSet, generics.ListAPIView):
@@ -258,7 +451,7 @@ class GetUserByToken(viewsets.ViewSet, generics.ListAPIView):
                         status=status.HTTP_200_OK)
 
 
-class PositionViewSet(viewsets.ModelViewSet, generics.ListAPIView):
+class GetPositionViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Position.objects.all()
     serializer_class = serializers.PositionSerializers
 
@@ -277,14 +470,9 @@ class MemberOfThesisDefenseCommitteeViewSetPOSTAndPATCH(viewsets.ViewSet, generi
     #     return super().partial_update(request, *args, **kwargs)
 
 
-# class MemberOfThesisDefenseCommitteeViewSetGET(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
+# class MemberOfThesisDefenseCommitteeViewSetGET(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
 #     queryset = MemberOfThesisDefenseCommittee.objects.all()
 #     serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializersForMethodGet
-#
-#     def list(self, request, *args, **kwargs):
-#         return super().list(request, *args, **kwargs)
-#
-#     def retrieve(self, request, *args, **kwargs):
-#         return super().retrieve(request, *args, **kwargs)
+
 
 

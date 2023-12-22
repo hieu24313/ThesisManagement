@@ -70,10 +70,18 @@ class StatusThesis(BaseModel):
 #             self.status = StatusThesis.objects.get_or_create(name='Open')
 #         super().save(*args, **kwargs)
 
+# Hội đồng được thành lập
+class ThesisDefenseCommittee(BaseModel):
+    name = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return self.name
+
 
 class Thesis(BaseModel):
     name = models.CharField(max_length=255, null=True)
     status = models.ForeignKey(StatusThesis, on_delete=models.RESTRICT)
+    committee = models.ForeignKey(ThesisDefenseCommittee, on_delete=models.RESTRICT, null=True)
 
     def __str__(self):
         return self.name
@@ -83,15 +91,6 @@ class Thesis(BaseModel):
             default_status, created = StatusThesis.objects.get_or_create(name='Open')
             self.status = default_status
         super().save(*args, **kwargs)
-
-
-# Hội đồng được thành lập
-class ThesisDefenseCommittee(BaseModel):
-    name = models.CharField(max_length=255, null=True)
-    thesis = models.ManyToManyField(Thesis)
-
-    def __str__(self):
-        return self.name
 
 
 # Chức Vụ Trong Hội Đồng
