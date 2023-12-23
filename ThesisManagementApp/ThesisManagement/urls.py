@@ -13,7 +13,6 @@ router.register('get-criteria', views.GetCriteriaViewSet, basename='get-criteria
 router.register('add-criteria', views.AddCriteriaViewSet, basename='add-criteria')
 router.register('update-criteria', views.UpdateCriteriaViewSet, basename='update-criteria')
 router.register('get-committee', views.GetThesisDefenseCommitteeViewSet, basename='get-committee')
-
 router.register('add-committee', views.AddThesisDefenseCommitteeViewSet, basename='add-committee')
 router.register('update-committee', views.UpdateThesisDefenseCommitteeViewSet, basename='update-committee')
 router.register('get-thesis', views.GetThesisViewSet, basename='get-thesis')
