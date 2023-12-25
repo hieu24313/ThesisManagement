@@ -1,3 +1,5 @@
+from six import u
+
 from .models import *
 from rest_framework import serializers
 
@@ -6,6 +8,27 @@ class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
+
+    # def get_image(self, user):
+    #     request = self.context.get('request')
+    #     if request:
+    #         return request.build_absolute_uri('/static/%s' % user.image.name)
+    #     return '/static/%s' % user.image.name
+
+    def get_image_url(self, user):
+        base_url = 'https://res.cloudinary.com/dyfzuigha/'
+        # avatar_url = user.avatar.url
+        if base_url not in user.avatar.url:
+            # return avatar_url
+            user.avatar = user.avatar.url
+
+    avatar_url = serializers.SerializerMethodField(method_name='get_image_url')
 
 
 class UserSerializersOnlyName(serializers.ModelSerializer):
@@ -50,7 +73,6 @@ class ThesisSerializers(serializers.ModelSerializer):
     committee = serializers.CharField(required=False, allow_null=True)
     students = ThesisStudentSerializers(source='thesisstudent_set', many=True)
     supervisors = ThesisSupervisorSerializers(source='thesissupervisor_set', many=True)
-
 
     class Meta:
         model = Thesis
@@ -102,4 +124,3 @@ class MemberOfThesisDefenseCommitteeSerializersForMethodGet(serializers.ModelSer
     class Meta:
         model = MemberOfThesisDefenseCommittee
         fields = '__all__'
-

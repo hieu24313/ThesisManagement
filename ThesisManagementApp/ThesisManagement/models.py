@@ -4,6 +4,7 @@ from django.db.models.functions import Rank
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth.hashers import make_password
+from cloudinary.models import CloudinaryField
 
 
 class BaseModel(models.Model):
@@ -29,7 +30,7 @@ class User(AbstractUser):
         ('lecturer', 'Giảng Viên'),
         ('student', 'Sinh Viên')
     ]
-    avatar = models.ImageField(upload_to='users/%Y/%m/', null=True, blank=True)
+    avatar = CloudinaryField('image')
     phone = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=50, default='student', null=True, blank=True, choices=Role_choice)
 
@@ -43,13 +44,16 @@ class User(AbstractUser):
                 self.password = make_password(self.password)
         else:
             self.password = make_password(self.password)
+        # url = self.avatar
+        # if 'https://res.cloudinary.com/dyfzuigha/' not in self.avatar:
+        #     self.avatar = 'https://res.cloudinary.com/dyfzuigha/' + url
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
 
-# Trạng thái kháo luận
+# Trạng thái khóa luận
 class StatusThesis(BaseModel):
     name = models.CharField(max_length=255, null=True)
 
