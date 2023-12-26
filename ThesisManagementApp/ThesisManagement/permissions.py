@@ -16,7 +16,7 @@ class IsUniversityAdministrator(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
-        return request.user.is_authenticated and request.user.role == 'universityadministrator'
+        return request.user.role == 'admin' or request.user.role == 'universityadministrator'
 
 
 class IsLecturer(BasePermission):
@@ -25,7 +25,7 @@ class IsLecturer(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
-        return request.user.is_authenticated and request.user.role == 'lecturer'
+        return request.user.role == 'admin' or request.user.role == 'lecturer'
 
 
 class IsStudent(BasePermission):
@@ -34,7 +34,7 @@ class IsStudent(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
-        return request.user.is_authenticated and request.user.role == 'student'
+        return request.user.role == 'admin' or request.user.role == 'student'
 
 
 class IsAuthenticated(BasePermission):

@@ -365,3 +365,95 @@ class DeleteMemberOfThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.Des
     serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializers
 
     permission_classes = [IsAdminOrUniversityAdministrator]
+
+
+class GetScoreViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
+    queryset = Score.objects.all()
+    serializer_class = serializers.GetScoreSerializer
+
+
+class AddScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = Score.objects.all()
+    serializer_class = serializers.AddUpdateScoreSerializer
+    permission_classes = [IsLecturer]
+
+
+class UpdateScoreViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+    queryset = Score.objects.all()
+    serializer_class = serializers.AddUpdateScoreSerializer
+
+    permission_classes = [IsLecturer]
+
+    def partial_update(self, request, *args, **kwargs):
+
+        data = request.data
+
+        thesis_id = data.get('thesis')
+
+        if thesis_id:
+            try:
+                thesis_id = int(thesis_id)
+                thesis = Thesis.objects.get(pk=thesis_id)
+                try:
+                    status_thesis = thesis.status.name
+                except ValueError:
+                    return Response({'error': 'Khóa Luận Không Tồn Tại!!'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+                if status_thesis == 'Open':
+                    return super().partial_update(request, *args, **kwargs)
+                else:
+                    return Response({'error': 'Khóa Luận Này Đã Đóng Không Thể Sửa Điểm!!'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            except ValueError:
+                return Response({'error': 'Mã Khóa Luận Không Hợp Lệ!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'Thiếu Mã Khóa Luận!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class OpenThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+    queryset = Thesis.objects.all()
+    serializer_class = serializers.ThesisSerializers
+
+    permission_classes = [IsAdminOrUniversityAdministrator]
+
+    def partial_update(self, request, *args, **kwargs):
+        status_thesis = StatusThesis.objects.get(pk=1)
+
+        thesis_id = kwargs.get('pk')
+        if thesis_id:
+            try:
+                thesis_id = int(thesis_id)
+                thesis = Thesis.objects.get(pk=thesis_id)
+                thesis.status = status_thesis
+                thesis.save()
+                return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
+            except ValueError:
+                return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+    queryset = Thesis.objects.all()
+    serializer_class = serializers.ThesisSerializers
+
+    permission_classes = [IsAdminOrUniversityAdministrator]
+
+    def partial_update(self, request, *args, **kwargs):
+        status_thesis = StatusThesis.objects.get(pk=2)
+
+        thesis_id = kwargs.get('pk')
+        if thesis_id:
+            try:
+                thesis_id = int(thesis_id)
+                thesis = Thesis.objects.get(pk=thesis_id)
+                thesis.status = status_thesis
+                thesis.save()
+                return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
+            except ValueError:
+                return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+

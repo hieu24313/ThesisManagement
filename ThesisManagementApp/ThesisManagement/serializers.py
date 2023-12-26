@@ -42,13 +42,13 @@ class UserSerializersOnlyName(serializers.ModelSerializer):
 class CriteriaSerializers(serializers.ModelSerializer):
     class Meta:
         model = Criteria
-        fields = '__all__'
+        fields = ['id', 'name', 'percent']
 
 
 class StatusThesisSerializers(serializers.ModelSerializer):
     class Meta:
         model = StatusThesis
-        fields = '__all__'
+        fields = ['id', 'name']
 
 
 class ThesisSupervisorSerializers(serializers.ModelSerializer):
@@ -64,7 +64,7 @@ class ThesisStudentSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = ThesisStudent
-        fields = '__all__'
+        fields = ['user']
 
 
 class ThesisSerializers(serializers.ModelSerializer):
@@ -129,6 +129,14 @@ class CommitteeSerializerOnlyName(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class ThesisSerializersForScore(serializers.ModelSerializer):
+    status = StatusThesisSerializers()
+
+    class Meta:
+        model = Thesis
+        fields = ['id', 'name', 'status']
+
+
 class GetMemberOfThesisDefenseCommitteeSerializer(serializers.ModelSerializer):
     position = PositionSerializerOnlyName()
     user = UserSerializersOnlyName()
@@ -137,3 +145,32 @@ class GetMemberOfThesisDefenseCommitteeSerializer(serializers.ModelSerializer):
     class Meta:
         model = MemberOfThesisDefenseCommittee
         fields = '__all__'
+
+
+class GetMemberOfThesisDefenseCommitteeSerializersForScore(serializers.ModelSerializer):
+    user = UserSerializersOnlyName()
+    Committee = ThesisDefenseCommitteeSerializers()
+    position = PositionSerializerOnlyName()
+
+    class Meta:
+        model = MemberOfThesisDefenseCommittee
+        fields = ['user', 'Committee', 'position']
+
+
+class GetScoreSerializer(serializers.ModelSerializer):
+    lecturer = GetMemberOfThesisDefenseCommitteeSerializersForScore()
+    student = ThesisStudentSerializers()
+    thesis = ThesisSerializersForScore()
+    criteria = CriteriaSerializers()
+
+    class Meta:
+        model = Score
+        fields = '__all__'
+
+
+class AddUpdateScoreSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Score
+        fields = '__all__'
+

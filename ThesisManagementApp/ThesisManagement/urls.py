@@ -27,6 +27,16 @@ router.register('update-member-of-committee', views.UpdateMemberOfThesisDefenseC
                 basename='update-member-of-committee')
 router.register('delete-member-of-committee', views.DeleteMemberOfThesisDefenseCommitteeViewSet,
                 basename='delete-member-of-committee')
+router.register('get-score', views.GetScoreViewSet,
+                basename='get-score')
+router.register('add-score', views.AddScoreViewSet,
+                basename='add-score')
+router.register('update-score', views.UpdateScoreViewSet,
+                basename='update-score')
+router.register('open-thesis', views.OpenThesisViewSet,
+                basename='open-thesis')
+router.register('close-thesis', views.CloseThesisViewSet,
+                basename='close-thesis')
 
 # router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
 urlpatterns = [

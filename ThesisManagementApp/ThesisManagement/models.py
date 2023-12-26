@@ -145,10 +145,11 @@ class Criteria(BaseModel):
 
 # Điểm số
 class Score(BaseModel):
-    score = models.FloatField()
-    memberofcommittee = models.ForeignKey(MemberOfThesisDefenseCommittee, on_delete=models.CASCADE)  # nguoi cham diem
-    scoreofstudent = models.ForeignKey(ThesisStudent, on_delete=models.CASCADE)  # diem cua sinh vien nao
+    score = models.FloatField(null=True)
+    lecturer = models.ForeignKey(MemberOfThesisDefenseCommittee, on_delete=models.CASCADE, null=True)  # nguoi cham diem
+    student = models.ForeignKey(ThesisStudent, on_delete=models.CASCADE, null=True)  # diem cua sinh vien nao
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE, null=True)
+    criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE, null=True)
 
 
 @receiver(post_migrate)
