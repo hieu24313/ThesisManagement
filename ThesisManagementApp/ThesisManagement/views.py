@@ -11,7 +11,7 @@ from .models import *
 from django.http import JsonResponse
 from oauth2_provider.decorators import protected_resource
 from . import dao
-from .permissions import IsAdmin, IsStudent, IsLecturer, IsUniversityAdministrator
+from .permissions import IsAdmin, IsStudent, IsLecturer, IsUniversityAdministrator, IsAdminOrUniversityAdministrator
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -82,14 +82,14 @@ class AddCriteriaViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = Criteria.objects.all()
     serializer_class = serializers.CriteriaSerializers
 
-    permission_classes = [IsUniversityAdministrator]
+    permission_classes = [IsAdminOrUniversityAdministrator]
 
 
 class UpdateCriteriaViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
     queryset = Criteria.objects.all()
     serializer_class = serializers.CriteriaSerializers
 
-    permission_classes = [IsUniversityAdministrator]
+    permission_classes = [IsAdminOrUniversityAdministrator]
 
 
 class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
@@ -112,14 +112,14 @@ class AddThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.CreateAPIView)
     queryset = ThesisDefenseCommittee.objects.all()
     serializer_class = serializers.ThesisDefenseCommitteeSerializers
 
-    permission_classes = [IsUniversityAdministrator]
+    permission_classes = [IsAdminOrUniversityAdministrator]
 
 
 class UpdateThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
     queryset = ThesisDefenseCommittee.objects.all()
     serializer_class = serializers.ThesisDefenseCommitteeSerializers
 
-    permission_classes = [IsUniversityAdministrator]
+    permission_classes = [IsAdminOrUniversityAdministrator]
 
 
 class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
@@ -154,7 +154,7 @@ class AddThesisViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
 
-    permission_classes = [IsUniversityAdministrator]
+    permission_classes = [IsAdminOrUniversityAdministrator]
 
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -225,7 +225,7 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
 
-    permission_classes = [IsUniversityAdministrator]
+    permission_classes = [IsAdminOrUniversityAdministrator]
 
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
@@ -332,12 +332,12 @@ class GetPositionViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
 
 
 # viết lại các method từ đầu
-class MemberOfThesisDefenseCommitteeViewSetPOSTAndPATCH(viewsets.ViewSet, generics.CreateAPIView,
-                                                        generics.RetrieveUpdateAPIView):
+class GetMemberOfThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = MemberOfThesisDefenseCommittee.objects.all()
-    serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializers
+    serializer_class = serializers.GetMemberOfThesisDefenseCommitteeSerializer
 
-    # permission_classes = [IsAuthenticated]
+    def filter_queryset(self, queryset):
+        return dao.load_member_of_committee(self.request.query_params)
     #
     # def create(self, request, *args, **kwargs):
     #     return super().create(request, *args, **kwargs)
@@ -345,6 +345,23 @@ class MemberOfThesisDefenseCommitteeViewSetPOSTAndPATCH(viewsets.ViewSet, generi
     # def partial_update(self, request, *args, **kwargs):
     #     return super().partial_update(request, *args, **kwargs)
 
-# class MemberOfThesisDefenseCommitteeViewSetGET(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
-#     queryset = MemberOfThesisDefenseCommittee.objects.all()
-#     serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializersForMethodGet
+
+class AddMemberOfThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = MemberOfThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializers
+
+    permission_classes = [IsAdminOrUniversityAdministrator]
+
+
+class UpdateMemberOfThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+    queryset = MemberOfThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializers
+
+    permission_classes = [IsAdminOrUniversityAdministrator]
+
+
+class DeleteMemberOfThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.DestroyAPIView):
+    queryset = MemberOfThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.MemberOfThesisDefenseCommitteeSerializers
+
+    permission_classes = [IsAdminOrUniversityAdministrator]

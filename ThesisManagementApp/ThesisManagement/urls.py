@@ -19,11 +19,14 @@ router.register('get-thesis', views.GetThesisViewSet, basename='get-thesis')
 router.register('add-thesis', views.AddThesisViewSet, basename='add-thesis')
 router.register('update-thesis', views.UpdateThesisViewSet, basename='update-thesis')
 router.register('get-position', views.GetPositionViewSet, basename='get-position')
-
-# router.register('get-member-of-committee', views.MemberOfThesisDefenseCommitteeViewSetGET,
-#                 basename='get-member-of-committee')
-router.register('add-update-member-of-committee', views.MemberOfThesisDefenseCommitteeViewSetPOSTAndPATCH,
-                basename='add-update-member-of-committee')
+router.register('get-member-of-committee', views.GetMemberOfThesisDefenseCommitteeViewSet,
+                basename='get-member-of-committee')
+router.register('add-member-of-committee', views.AddMemberOfThesisDefenseCommitteeViewSet,
+                basename='add-member-of-committee')
+router.register('update-member-of-committee', views.UpdateMemberOfThesisDefenseCommitteeViewSet,
+                basename='update-member-of-committee')
+router.register('delete-member-of-committee', views.DeleteMemberOfThesisDefenseCommitteeViewSet,
+                basename='delete-member-of-committee')
 
 # router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
 urlpatterns = [

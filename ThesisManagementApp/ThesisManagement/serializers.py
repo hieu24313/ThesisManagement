@@ -1,3 +1,5 @@
+from dataclasses import fields
+
 from six import u
 
 from .models import *
@@ -100,9 +102,6 @@ class PositionSerializers(serializers.ModelSerializer):
 
 
 class MemberOfThesisDefenseCommitteeSerializers(serializers.ModelSerializer):
-    # position = PositionSerializers()
-    # user = UserSerializersOnlyName()
-    # Committee = ThesisDefenseCommitteeSerializers()
 
     class Meta:
         model = MemberOfThesisDefenseCommittee
@@ -116,10 +115,24 @@ class ThesisDefenseCommitteeSerializersGETMember(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MemberOfThesisDefenseCommitteeSerializersForMethodGet(serializers.ModelSerializer):
-    position = PositionSerializers()
+class PositionSerializerOnlyName(serializers.ModelSerializer):
+
+    class Meta:
+        model = Position
+        fields = ['id', 'name']
+
+
+class CommitteeSerializerOnlyName(serializers.ModelSerializer):
+
+    class Meta:
+        model = ThesisDefenseCommittee
+        fields = ['id', 'name']
+
+
+class GetMemberOfThesisDefenseCommitteeSerializer(serializers.ModelSerializer):
+    position = PositionSerializerOnlyName()
     user = UserSerializersOnlyName()
-    Committee = ThesisDefenseCommitteeSerializersGETMember()
+    Committee = CommitteeSerializerOnlyName()
 
     class Meta:
         model = MemberOfThesisDefenseCommittee

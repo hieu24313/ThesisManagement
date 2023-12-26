@@ -75,3 +75,19 @@ def load_thesis(params={}):
         q = q.filter(active=active)
 
     return q
+
+
+def load_member_of_committee(params={}):
+    q = MemberOfThesisDefenseCommittee.objects.filter()
+
+    user_id = params.get('user_id')
+    if user_id:
+        q = q.filter(user=user_id)
+
+    committee = params.get('committee')
+    if committee:
+        q = q.filter(Committee=committee)
+
+    return q
+
+
