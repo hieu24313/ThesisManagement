@@ -4,6 +4,7 @@ from six import u
 
 from .models import *
 from rest_framework import serializers
+from urllib.parse import urljoin
 
 
 class UserSerializers(serializers.ModelSerializer):
@@ -25,10 +26,9 @@ class UserSerializers(serializers.ModelSerializer):
 
     def get_image_url(self, user):
         base_url = 'https://res.cloudinary.com/dyfzuigha/'
-        # avatar_url = user.avatar.url
-        if base_url not in user.avatar.url:
-            # return avatar_url
-            user.avatar = user.avatar.url
+
+        if user.avatar and base_url not in urljoin(base_url, user.avatar.url):
+            return user.avatar.url
 
     avatar_url = serializers.SerializerMethodField(method_name='get_image_url')
 
