@@ -371,6 +371,9 @@ class GetScoreViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Score.objects.all()
     serializer_class = serializers.GetScoreSerializer
 
+    def filter_queryset(self, queryset):
+        return dao.load_score(self.request.query_params)
+
 
 class AddScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = Score.objects.all()

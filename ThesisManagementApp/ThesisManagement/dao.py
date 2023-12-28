@@ -91,3 +91,17 @@ def load_member_of_committee(params={}):
     return q
 
 
+def load_score(params={}):
+    q = Score.objects.filter()
+
+    thesis_id = params.get('thesis')
+    if thesis_id:
+        q = q.filter(thesis=thesis_id)
+
+    student_id = params.get('student')
+    if student_id:
+        q = q.filter(student=student_id)
+
+    return q
+
+
