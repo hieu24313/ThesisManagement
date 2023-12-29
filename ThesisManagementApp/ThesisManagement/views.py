@@ -177,12 +177,18 @@ class AddThesisViewSet(viewsets.ViewSet, generics.CreateAPIView):
             if committee_id:
                 committee_id = int(committee_id)
                 count_committee = Thesis.objects.filter(committee=committee_id).count()
-                if count_committee <= 5:
-                    committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
-                    thesis = Thesis.objects.create(name=data.get('name'), committee=committee)
+                count_member = MemberOfThesisDefenseCommittee.objects.filter(Committee=committee_id).count()
+                if 2 < count_member < 6:
+                    if count_committee <= 5:
+                        committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+                        thesis = Thesis.objects.create(name=data.get('name'), committee=committee)
+                    else:
+                        return Response({'error': 'Hội Đồng Này Đã Được Phân Công Đủ 5 Khóa Luận!'},
+                                        status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'error': 'Hội Đồng Này Đã Được Phân Công Đủ 5 Khóa Luận!'},
+                    return Response({'error': 'Hội Đồng Này Chưa Đủ 3 Thành Viên!'},
                                     status=status.HTTP_400_BAD_REQUEST)
+
             else:
                 thesis = Thesis.objects.create(name=data.get('name'))
 
@@ -459,4 +465,59 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def AddAllMember(committee, user_id, position_id):
+    user = User.objects.get(pk=user_id)
+    position = Position.objects.get(pk=position_id)
+    MemberOfThesisDefenseCommittee.objects.create(user=user, Committee=committee, position=position)
+
+
+class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = ThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.ThesisDefenseCommitteeSerializers
+
+    permission_classes = [IsAdminOrUniversityAdministrator]
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        committee = serializer.instance  # Đối tượng vừa được tạo
+        print(committee)
+        try:
+            # member1
+            member1_id = data.get('member1')
+            position1_id = data.get('position1')
+            if member1_id and position1_id:
+                AddAllMember(committee, member1_id, position1_id)
+
+            # member2
+            member2_id = data.get('member2')
+            position2_id = data.get('position2')
+            if member2_id and position2_id:
+                AddAllMember(committee, member2_id, position2_id)
+
+            # member3
+            member3_id = data.get('member3')
+            position3_id = data.get('position3')
+            if member3_id and position3_id:
+                AddAllMember(committee, member3_id, position3_id)
+
+            # member4
+            member4_id = data.get('member4')
+            position4_id = data.get('position4')
+            if member4_id and position4_id:
+                AddAllMember(committee, member4_id, position4_id)
+
+            # member4
+            member5_id = data.get('member5')
+            position5_id = data.get('position5')
+            if member5_id and position5_id:
+                AddAllMember(committee, member5_id, position5_id)
+            # super().create(request, *args, **kwargs)
+            return Response({'data': 'Thêm Thành Công!'}, status=status.HTTP_200_OK)
+        except ValueError:
+            return Response({'error': 'Có Lỗi Xảy Ra!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -38,6 +38,8 @@ router.register('open-thesis', views.OpenThesisViewSet,
 router.register('close-thesis', views.CloseThesisViewSet,
                 basename='close-thesis')
 
+router.register('add-all-member', views.AddThesisDefenseCommitteeAndMemberViewSet,
+                basename='add-all-member')
 # router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
 urlpatterns = [
     path('', include(router.urls))
