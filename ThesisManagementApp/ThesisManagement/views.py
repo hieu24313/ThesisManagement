@@ -14,7 +14,7 @@ from . import dao
 from .permissions import IsAdmin, IsStudent, IsLecturer, IsUniversityAdministrator, IsAdminOrUniversityAdministrator
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
+from django.contrib.auth.hashers import make_password, check_password
 from .tests import TestSendEmail
 
 
@@ -520,4 +520,29 @@ class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Creat
             return Response({'data': 'Thêm Thành Công!'}, status=status.HTTP_200_OK)
         except ValueError:
             return Response({'error': 'Có Lỗi Xảy Ra!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CheckPassWordViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    serializer_class = serializers.UserSerializers
+    queryset = User.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+
+        user_id = data.get('user_id')
+        old_password = data.get('old_password')
+
+        # Kiểm tra xem người dùng có tồn tại không
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'Người dùng không tồn tại'}, status=status.HTTP_404_NOT_FOUND)
+
+        # So sánh mật khẩu cũ
+        is_password_correct = check_password(old_password, user.password)
+
+        if is_password_correct:
+            return Response({'data': True}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': False}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -37,9 +37,11 @@ router.register('open-thesis', views.OpenThesisViewSet,
                 basename='open-thesis')
 router.register('close-thesis', views.CloseThesisViewSet,
                 basename='close-thesis')
-
 router.register('add-all-member', views.AddThesisDefenseCommitteeAndMemberViewSet,
                 basename='add-all-member')
+router.register('check-old-password', views.CheckPassWordViewSet,
+                basename='check-old-password')
+
 # router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
 urlpatterns = [
     path('', include(router.urls))
