@@ -525,6 +525,7 @@ class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Creat
 class CheckPassWordViewSet(viewsets.ViewSet, generics.CreateAPIView):
     serializer_class = serializers.UserSerializers
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         data = request.data
