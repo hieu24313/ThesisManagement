@@ -18,6 +18,8 @@ import cloudinary.api
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+server_domain = 'http://127.0.0.1'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -29,7 +31,6 @@ DEBUG = True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -133,8 +134,6 @@ REST_FRAMEWORK = {
     )
 }
 
-
-
 # OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
 
 # Internationalization
@@ -161,7 +160,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CLIENT_ID = 'E6qkqMboLiY269L4dwciPOvoaW6m4drb7KyxvjB6'
 CLIENT_SECRET = 'qdiNphOVt6FH8ZGdmbKQcC8xnAssQUajaSeffNXl7STtEhN4uMQ8BsV4QccAYxlISCBLCKBhiifavWGaiX8aWL7faBUzpVMQ3FkzZWYyzAb9xgNvYZGfPskIrY3gu73h'
 
-#email
+# email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'hieu01659505026@gmail.com'
@@ -173,7 +172,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # adding config
 cloudinary.config(
-  cloud_name = "dyfzuigha",
-  api_key = "845545783724776",
-  api_secret = "qpXCeoAFOiuT0F_M0sY01YeO91s"
+    cloud_name="dyfzuigha",
+    api_key="845545783724776",
+    api_secret="qpXCeoAFOiuT0F_M0sY01YeO91s"
 )
+
+

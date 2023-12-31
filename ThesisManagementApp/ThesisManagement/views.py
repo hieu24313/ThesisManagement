@@ -1,22 +1,24 @@
+from urllib.parse import urljoin
+
+from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction
 from django.shortcuts import render
-from rest_framework import viewsets, generics, status, permissions
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets, generics, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from . import serializers, paginators
+from ThesisManagementApp import settings
+
+from . import dao
+from . import serializers
 from .mail import send_email
 from .models import *
-from django.http import JsonResponse
-from oauth2_provider.decorators import protected_resource
-from . import dao
-from .permissions import IsAdmin, IsStudent, IsLecturer, IsUniversityAdministrator, IsAdminOrUniversityAdministrator
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-from django.contrib.auth.hashers import make_password, check_password
-from .tests import TestSendEmail
-
+from .permissions import IsLecturer, IsAdminOrUniversityAdministrator
+import random
+import string
+import base64
 
 class BaseViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
@@ -471,7 +473,8 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                 for i in listidsv:
                     user = User.objects.get(pk=i)
                     listemail.append(user.email)
-                send_email(subject='Khóa Luận Của Bạn Đã Được Chấm Điểm!', body='Khóa Luận Của Bạn Đã Được Chấm Điểm!', listreceiver=listemail)
+                send_email(subject='Khóa Luận Của Bạn Đã Được Chấm Điểm!', body='Khóa Luận Của Bạn Đã Được Chấm Điểm!',
+                           listreceiver=listemail)
                 return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
             except ValueError:
                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
@@ -559,3 +562,89 @@ class CheckPassWordViewSet(viewsets.ViewSet, generics.CreateAPIView):
         else:
             return Response({'error': False}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class GetMajorViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
+    queryset = Majors.objects.all()
+    serializer_class = serializers.GetMajorSerializer
+
+    def filter_queryset(self, queryset):
+        server_domain = domain = self.request.build_absolute_uri('/')[:-1]
+
+        print(server_domain)
+
+        return dao.load_major(self.request.query_params)
+
+
+class ForgotPasswordViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializers
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        email = data.get('email')
+        if email:
+            try:
+                user = User.objects.get(email=email)
+            except ValueError:
+                return Response({'error': 'Người dùng không tồn tại!'}, status=status.HTTP_400_BAD_REQUEST)
+            characters = string.ascii_letters + string.digits
+            password = ''.join(random.choice(characters) for _ in range(12))
+            user.temp_password = password
+            user.save()
+            #mã hóa username
+            username_encoded_text_bytes = base64.b64encode(user.username.encode('utf-8'))
+            username = username_encoded_text_bytes.decode('utf-8')
+
+            server_domain = self.request.build_absolute_uri('/')[:-1]
+            # server_domain = settings.server_domain
+            accept_new_password_url = urljoin(server_domain, f'/accept-new-password/?username={username}')
+
+            body = (f'Bạn đã yêu cầu cấp mật khẩu mới!\n'
+                    f'Tên Đăng Nhập: {user.username}\n'
+                    f'Mật khẩu mới của bạn là: {password}\n'
+                    f'Ấn vào liên kết sau để xác nhận mật khẩu mới: {accept_new_password_url}')
+            list_email = [email]
+            send_email(subject='Mật Khẩu Mới', body=body, listreceiver=list_email)
+
+            return Response({'data': 'Vui lòng kiểm tra email để xác nhận mật khẩu mới!'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Thiếu địa chỉ email rồi bạn ơi!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AcceptNewPasswordViewSet(viewsets.ViewSet):
+
+    def list(self, request, *args, **kwargs):
+        username_encode = self.request.query_params.get('username')
+
+        if username_encode:
+            try:
+                decoded_text_bytes = base64.b64decode(username_encode)
+                username = decoded_text_bytes.decode('utf-8')
+                user = User.objects.get(username=username)
+                user.password = user.temp_password
+                if user.temp_password:
+                    user.temp_password = None
+                    user.save()
+                    msg = 'Mật khẩu của bạn đã được thay đổi!!!'
+                    context = {
+                        'msg': msg,
+                    }
+                    return render(request, 'acceiptpassword.html', context)
+                else:
+                    msg = 'Vào đây kiếm bug à? Không có đâu :))'
+                    context = {
+                        'msg': msg,
+                    }
+                    return render(request, 'acceiptpassword.html', context)
+            except ValueError:
+                msg = 'Làm gì có ai có mail này trong cơ sở dữ liệu đâu?'
+                context = {
+                    'msg': msg,
+                }
+                return render(request, 'acceiptpassword.html', context)
+        else:
+            msg = 'Thiếu username rồi nha, đừng sửa url của tui'
+            context = {
+                'msg': msg,
+            }
+            return render(request, 'acceiptpassword.html', context)

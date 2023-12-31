@@ -41,6 +41,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=255, default='student', null=True, blank=True, choices=Role_choice)
     major = models.ForeignKey(Majors, null=True, blank=True, on_delete=models.CASCADE)
+    temp_password = models.CharField(max_length=255, null=True, blank=True)
 
     def has_role(self, required_role):
         return self.role == required_role

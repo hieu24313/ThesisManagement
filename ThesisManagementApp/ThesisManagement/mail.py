@@ -8,7 +8,7 @@ def send_email(subject='Hồi Đồng Của Bạn Vừa Được Phân Công Ch�
         email1 = mail.EmailMessage(
             subject,
             body,
-            'hieu01659505026@gmail.com',
+            'Hội đồng quản lý khóa luận <hieu01659505026@gmail.com>',
             listreceiver,
             connection=connection
         )

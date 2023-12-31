@@ -1,6 +1,10 @@
 from django.test import TestCase
 from django.core import mail
 # Create your tests here.
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+
 
 def TestSendEmail():
     try:
@@ -19,4 +23,5 @@ def TestSendEmail():
 
 
 if __name__ == '__main__':
-    TestSendEmail()
+    key = get_random_bytes(16)
+    print(key)

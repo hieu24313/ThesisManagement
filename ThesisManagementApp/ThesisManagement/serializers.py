@@ -7,7 +7,16 @@ from rest_framework import serializers
 from urllib.parse import urljoin
 
 
+class GetMajorOnlyNameSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Majors
+        fields = ['id', 'name']
+
+
 class UserSerializers(serializers.ModelSerializer):
+    major = GetMajorOnlyNameSerializer()
+
     class Meta:
         model = User
         fields = '__all__'
@@ -174,3 +183,9 @@ class AddUpdateScoreSerializer(serializers.ModelSerializer):
         model = Score
         fields = '__all__'
 
+
+class GetMajorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Majors
+        fields = '__all__'

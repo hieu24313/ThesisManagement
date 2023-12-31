@@ -105,3 +105,13 @@ def load_score(params={}):
     return q
 
 
+def load_major(params={}):
+    q = Majors.objects.filter()
+
+    name = params.get('name')
+    if name:
+        q = q.filter(name__icontains=name)
+
+    return q
+
+

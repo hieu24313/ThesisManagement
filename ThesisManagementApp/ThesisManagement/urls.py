@@ -41,6 +41,10 @@ router.register('add-all-member', views.AddThesisDefenseCommitteeAndMemberViewSe
                 basename='add-all-member')
 router.register('check-old-password', views.CheckPassWordViewSet,
                 basename='check-old-password')
+router.register('get-major', views.GetMajorViewSet,
+                basename='get-major')
+router.register('forgot-password', views.ForgotPasswordViewSet, basename='forgot-password')
+router.register('accept-new-password', views.AcceptNewPasswordViewSet, basename='accept-new-password')
 
 # router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
 urlpatterns = [
