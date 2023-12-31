@@ -180,8 +180,10 @@ class AddThesisViewSet(viewsets.ViewSet, generics.CreateAPIView):
                 count_member = MemberOfThesisDefenseCommittee.objects.filter(Committee=committee_id).count()
                 if 2 < count_member < 6:
                     if count_committee <= 5:
+                        id_first_student = svth_int[0]
                         committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
-                        thesis = Thesis.objects.create(name=data.get('name'), committee=committee)
+                        student = User.objects.get(pk=id_first_student)
+                        thesis = Thesis.objects.create(name=data.get('name'), committee=committee, major=student.major)
                     else:
                         return Response({'error': 'Hội Đồng Này Đã Được Phân Công Đủ 5 Khóa Luận!'},
                                         status=status.HTTP_400_BAD_REQUEST)
@@ -460,6 +462,16 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                 thesis = Thesis.objects.get(pk=thesis_id)
                 thesis.status = status_thesis
                 thesis.save()
+                student = ThesisStudent.objects.filter(thesis=thesis_id)
+                listidsv = []
+                listemail = []
+                for s in student:
+                    listidsv.append(s.user_id)
+
+                for i in listidsv:
+                    user = User.objects.get(pk=i)
+                    listemail.append(user.email)
+                send_email(subject='Khóa Luận Của Bạn Đã Được Chấm Điểm!', body='Khóa Luận Của Bạn Đã Được Chấm Điểm!', listreceiver=listemail)
                 return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
             except ValueError:
                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)

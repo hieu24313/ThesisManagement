@@ -23,6 +23,13 @@ class Role(BaseModel):
         return self.name
 
 
+class Majors(BaseModel):
+    name = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return self.name
+
+
 class User(AbstractUser):
     Role_choice = [
         ('admin', 'Quản Trị Viên'),
@@ -32,7 +39,8 @@ class User(AbstractUser):
     ]
     avatar = CloudinaryField('image')
     phone = models.CharField(max_length=255, null=True, blank=True)
-    role = models.CharField(max_length=50, default='student', null=True, blank=True, choices=Role_choice)
+    role = models.CharField(max_length=255, default='student', null=True, blank=True, choices=Role_choice)
+    major = models.ForeignKey(Majors, null=True, blank=True, on_delete=models.CASCADE)
 
     def has_role(self, required_role):
         return self.role == required_role
@@ -86,6 +94,7 @@ class Thesis(BaseModel):
     name = models.CharField(max_length=255, null=True)
     status = models.ForeignKey(StatusThesis, on_delete=models.RESTRICT)
     committee = models.ForeignKey(ThesisDefenseCommittee, on_delete=models.RESTRICT, null=True)
+    major = models.ForeignKey(Majors, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -177,6 +186,14 @@ def create_superuser(sender, **kwargs):
         StatusThesis.objects.get_or_create(name='Open')
 
         StatusThesis.objects.get_or_create(name='Close')
+
+        Majors.objects.get_or_create(name='Công Nghệ Thông Tin')
+
+        Majors.objects.get_or_create(name='Khoa Học Máy Tính')
+
+        Majors.objects.get_or_create(name='Tài Chính Ngân Hàng')
+
+        Majors.objects.get_or_create(name='Trí Tuệ Nhân Tạo')
 
         admin_username = 'admin'
         admin_password = '123456'
