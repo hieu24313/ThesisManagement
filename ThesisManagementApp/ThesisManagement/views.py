@@ -585,7 +585,7 @@ class ForgotPasswordViewSet(viewsets.ViewSet, generics.CreateAPIView):
         if email:
             try:
                 user = User.objects.get(email=email)
-            except ValueError:
+            except User.DoesNotExist:
                 return Response({'error': 'Người dùng không tồn tại!'}, status=status.HTTP_400_BAD_REQUEST)
             characters = string.ascii_letters + string.digits
             password = ''.join(random.choice(characters) for _ in range(12))
