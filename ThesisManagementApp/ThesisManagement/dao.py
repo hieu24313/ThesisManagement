@@ -102,6 +102,18 @@ def load_score(params={}):
     if student_id:
         q = q.filter(student=student_id)
 
+    from_score = params.get('from_score')
+    if from_score:
+        q = q.filter(score__gte=from_score)
+
+    to_score = params.get('to_score')
+    if to_score:
+        q = q.filter(score__lte=to_score)
+    lecturer_id = params.get('lecturer')
+    if lecturer_id:
+        # print(lecturer_id)
+        q = q.filter(lecturer_id=lecturer_id)
+
     return q
 
 

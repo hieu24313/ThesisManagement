@@ -76,12 +76,19 @@ class ThesisStudentSerializers(serializers.ModelSerializer):
         fields = ['user']
 
 
+class CommitteeSerializerOnlyName(serializers.ModelSerializer):
+
+    class Meta:
+        model = ThesisDefenseCommittee
+        fields = ['id', 'name']
+        
+
 class ThesisSerializers(serializers.ModelSerializer):
     # status = serializers.StringRelatedField(source='status.name')
     status = StatusThesisSerializers()
     # student = ThesisStudentSerializers()
     # supervisor = ThesisSupervisorSerializers()
-    committee = serializers.CharField(required=False, allow_null=True)
+    committee = CommitteeSerializerOnlyName()
     students = ThesisStudentSerializers(source='thesisstudent_set', many=True)
     supervisors = ThesisSupervisorSerializers(source='thesissupervisor_set', many=True)
 
@@ -131,13 +138,6 @@ class PositionSerializerOnlyName(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
-class CommitteeSerializerOnlyName(serializers.ModelSerializer):
-
-    class Meta:
-        model = ThesisDefenseCommittee
-        fields = ['id', 'name']
-
-
 class ThesisSerializersForScore(serializers.ModelSerializer):
     status = StatusThesisSerializers()
 
@@ -175,6 +175,9 @@ class GetScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
         fields = '__all__'
+#     class Meta:
+#         model = Score
+#         fields = ['score']
 
 
 class AddUpdateScoreSerializer(serializers.ModelSerializer):

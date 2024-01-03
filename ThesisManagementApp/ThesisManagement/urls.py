@@ -45,6 +45,8 @@ router.register('get-major', views.GetMajorViewSet,
                 basename='get-major')
 router.register('forgot-password', views.ForgotPasswordViewSet, basename='forgot-password')
 router.register('accept-new-password', views.AcceptNewPasswordViewSet, basename='accept-new-password')
+router.register('update-committee-and-member', views.UpdateThesisDefenseCommitteeAndMemberViewSet,
+                basename='update-committee-and-member')
 
 # router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
 urlpatterns = [

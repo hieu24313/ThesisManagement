@@ -1,5 +1,6 @@
 from urllib.parse import urljoin
 
+from Tools.scripts.var_access_benchmark import C
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
@@ -19,6 +20,7 @@ from .permissions import IsLecturer, IsAdminOrUniversityAdministrator
 import random
 import string
 import base64
+
 
 class BaseViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
@@ -448,6 +450,28 @@ class OpenThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
             return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+def totalscore(thesis_id):
+    print(thesis_id)
+    students = ThesisStudent.objects.filter(thesis_id=thesis_id) #danh sach sinh vien lam khoa luan thesis_id
+    print(students)
+    for s in students:
+        print(s.id)
+        scores_student = Score.objects.filter(thesis_id=thesis_id, student_id=s.id) #danh sach diem cua sinh vien s
+        print(scores_student)
+        #cong thuc tinh diem : (diem * percent cua tieu chi do)/tong percent
+        tong_diem = 0
+        tong_tieu_chi = 0
+        for score in scores_student:
+            tong_diem += score.score * score.criteria.percent
+            tong_tieu_chi += score.criteria.percent
+            print('loai diem')
+            print(score.criteria.percent)
+            # criteria = Criteria.objects.get(score.criteria_id)
+        s.total = tong_diem/tong_tieu_chi
+        print(s.total)
+        s.save()
+
+
 class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
@@ -456,7 +480,6 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         status_thesis = StatusThesis.objects.get(pk=2)
-
         thesis_id = kwargs.get('pk')
         if thesis_id:
             try:
@@ -470,16 +493,59 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                 for s in student:
                     listidsv.append(s.user_id)
 
+                totalscore(thesis_id) #tinh diem ne
+
                 for i in listidsv:
                     user = User.objects.get(pk=i)
                     listemail.append(user.email)
+
                 send_email(subject='Khóa Luận Của Bạn Đã Được Chấm Điểm!', body='Khóa Luận Của Bạn Đã Được Chấm Điểm!',
                            listreceiver=listemail)
-                return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
+                return Response({'data': 'Thành Công! Khóa Luận này Đã Được Đóng Lại!'}, status=status.HTTP_200_OK)
             except ValueError:
                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+# class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+#     queryset = Thesis.objects.all()
+#     serializer_class = serializers.ThesisSerializers
+#
+#     permission_classes = [IsAdminOrUniversityAdministrator]
+#
+#     def partial_update(self, request, *args, **kwargs):
+#         status_thesis = StatusThesis.objects.get(pk=2)
+#
+#         thesis_id = kwargs.get('pk')
+#         if thesis_id:
+#             try:
+#                 thesis_id = int(thesis_id)
+#                 thesis = Thesis.objects.get(pk=thesis_id)
+#                 thesis.status = status_thesis
+#                 thesis.save()
+#                 student = ThesisStudent.objects.filter(thesis=thesis_id)
+#                 listidsv = []
+#                 listemail = []
+#                 for s in student:
+#                     listidsv.append(s.user_id)
+#
+#                 async def background_task():
+#                     await asyncio.sleep(5)  # đợi 5s nha
+#                     for i in listidsv:
+#                         user = User.objects.get(pk=i)
+#                         listemail.append(user.email)
+#                     send_email(subject='Khóa Luận Của Bạn Đã Được Chấm Điểm!',
+#                                body='Khóa Luận Của Bạn Đã Được Chấm Điểm!',
+#                                listreceiver=listemail)
+#
+#                 # Chuyển đổi hàm bất đồng bộ sang đồng bộ và chạy nó
+#                 # return về rồi mưới chạy nó............
+#                 async_to_sync(background_task)()
+#
+#                 return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
+#             except ValueError:
+#                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def AddAllMember(committee, user_id, position_id):
@@ -505,18 +571,20 @@ class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Creat
             # member1
             member1_id = data.get('member1')
             position1_id = data.get('position1')
-            if member1_id and position1_id:
-                AddAllMember(committee, member1_id, position1_id)
 
             # member2
             member2_id = data.get('member2')
             position2_id = data.get('position2')
-            if member2_id and position2_id:
-                AddAllMember(committee, member2_id, position2_id)
 
             # member3
             member3_id = data.get('member3')
             position3_id = data.get('position3')
+            if member1_id and position1_id:
+                AddAllMember(committee, member1_id, position1_id)
+
+            if member2_id and position2_id:
+                AddAllMember(committee, member2_id, position2_id)
+
             if member3_id and position3_id:
                 AddAllMember(committee, member3_id, position3_id)
 
@@ -534,7 +602,59 @@ class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Creat
             # super().create(request, *args, **kwargs)
             return Response({'data': 'Thêm Thành Công!'}, status=status.HTTP_200_OK)
         except ValueError:
-            return Response({'error': 'Có Lỗi Xảy Ra!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': 'Có Lỗi Xảy Ra!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+    # queryset = ThesisDefenseCommittee.objects.all()
+    # serializer_class = serializers.ThesisDefenseCommitteeSerializers
+
+    permission_classes = [IsAdminOrUniversityAdministrator]
+
+    def update(self, request, *args, **kwargs):
+        data = request.data
+        committee_id = data.get('committee')
+        if not committee_id:
+            return Response({'error': 'Thiếu ID hội đồng!!!'}, status=status.HTTP_400_BAD_REQUEST)
+        committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+        memberofcommittee = MemberOfThesisDefenseCommittee.objects.filter(Committee_id=committee_id)
+        memberofcommittee.delete()
+        try:
+            # member1
+            member1_id = data.get('member1')
+            position1_id = data.get('position1')
+
+            # member2
+            member2_id = data.get('member2')
+            position2_id = data.get('position2')
+
+            # member3
+            member3_id = data.get('member3')
+            position3_id = data.get('position3')
+            if member1_id and position1_id:
+                AddAllMember(committee, member1_id, position1_id)
+
+            if member2_id and position2_id:
+                AddAllMember(committee, member2_id, position2_id)
+
+            if member3_id and position3_id:
+                AddAllMember(committee, member3_id, position3_id)
+
+            # member4
+            member4_id = data.get('member4')
+            position4_id = data.get('position4')
+            if member4_id and position4_id:
+                AddAllMember(committee, member4_id, position4_id)
+
+            # member4
+            member5_id = data.get('member5')
+            position5_id = data.get('position5')
+            if member5_id and position5_id:
+                AddAllMember(committee, member5_id, position5_id)
+            # super().create(request, *args, **kwargs)
+            return Response({'data': 'Cập Nhật Thành Công!'}, status=status.HTTP_200_OK)
+        except ValueError:
+            return Response({'error': 'Check Lại ID Position và ID USER!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CheckPassWordViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -568,7 +688,7 @@ class GetMajorViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     serializer_class = serializers.GetMajorSerializer
 
     def filter_queryset(self, queryset):
-        server_domain = domain = self.request.build_absolute_uri('/')[:-1]
+        server_domain = self.request.build_absolute_uri('/')[:-1]
 
         print(server_domain)
 
@@ -615,6 +735,13 @@ class AcceptNewPasswordViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
         username_encode = self.request.query_params.get('username')
+        # param = request.GET.get('param', '')
+        # select_option = request.GET.get('select_option', '')
+        # select_option1 = request.GET.get('select_option1', '')
+        # print(param)
+        # print(select_option1)
+        # print(select_option)
+        # print('params o tren nhe')
 
         if username_encode:
             try:
@@ -648,3 +775,6 @@ class AcceptNewPasswordViewSet(viewsets.ViewSet):
                 'msg': msg,
             }
             return render(request, 'acceiptpassword.html', context)
+
+
+

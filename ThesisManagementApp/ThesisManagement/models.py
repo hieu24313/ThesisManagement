@@ -135,6 +135,7 @@ class ThesisSupervisor(BaseModel):
 class ThesisStudent(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+    total = models.FloatField(null=True)
 
 
 # Hội đồng nào chấm khóa luận nào
@@ -155,7 +156,7 @@ class Criteria(BaseModel):
 
 # Điểm số
 class Score(BaseModel):
-    score = models.FloatField(null=True)
+    score = models.FloatField()
     lecturer = models.ForeignKey(MemberOfThesisDefenseCommittee, on_delete=models.CASCADE, null=True)  # nguoi cham diem
     student = models.ForeignKey(ThesisStudent, on_delete=models.CASCADE, null=True)  # diem cua sinh vien nao
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE, null=True)
@@ -195,6 +196,12 @@ def create_superuser(sender, **kwargs):
         Majors.objects.get_or_create(name='Tài Chính Ngân Hàng')
 
         Majors.objects.get_or_create(name='Trí Tuệ Nhân Tạo')
+
+        Criteria.objects.get_or_create(name='Điểm Trình Bày', percent=20)
+
+        Criteria.objects.get_or_create(name='Điểm Phản Biện', percent=30)
+
+        Criteria.objects.get_or_create(name='Điểm Sản Phẩm', percent=50)
 
         admin_username = 'admin'
         admin_password = '123456'
