@@ -157,8 +157,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = 'E6qkqMboLiY269L4dwciPOvoaW6m4drb7KyxvjB6'
-CLIENT_SECRET = 'qdiNphOVt6FH8ZGdmbKQcC8xnAssQUajaSeffNXl7STtEhN4uMQ8BsV4QccAYxlISCBLCKBhiifavWGaiX8aWL7faBUzpVMQ3FkzZWYyzAb9xgNvYZGfPskIrY3gu73h'
+CLIENT_ID = 'kECtsLYTTj8xy1BbpTQ0CNjAGyeOl7w7SmAc8Vl8'
+CLIENT_SECRET = 'ALonGeXwPqAkMdOwlKFg4apGfju29abCV0fzJ5nh3Xd0eNVI5hXjKJHe07e4onHEjekC6i0QYD1NMXQP2bpYVZfKTAfAaSe3FfBwJPPQJLWn3fqiuKM6owGm63oVZO8o'
 
 # email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

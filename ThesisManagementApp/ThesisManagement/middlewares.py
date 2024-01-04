@@ -8,8 +8,8 @@ class OAuthMiddleware(MiddlewareMixin):
         if request.path_info == '/o/token/' and request.method == 'POST':
             # Thêm client_id và client_secret vào request POST data
             request.POST = request.POST.copy()
-            request.POST['client_id'] = 'E6qkqMboLiY269L4dwciPOvoaW6m4drb7KyxvjB6'
-            request.POST['client_secret'] = 'qdiNphOVt6FH8ZGdmbKQcC8xnAssQUajaSeffNXl7STtEhN4uMQ8BsV4QccAYxlISCBLCKBhiifavWGaiX8aWL7faBUzpVMQ3FkzZWYyzAb9xgNvYZGfPskIrY3gu73h'
+            request.POST['client_id'] = 'kECtsLYTTj8xy1BbpTQ0CNjAGyeOl7w7SmAc8Vl8'
+            request.POST['client_secret'] = 'ALonGeXwPqAkMdOwlKFg4apGfju29abCV0fzJ5nh3Xd0eNVI5hXjKJHe07e4onHEjekC6i0QYD1NMXQP2bpYVZfKTAfAaSe3FfBwJPPQJLWn3fqiuKM6owGm63oVZO8o'
             request.POST['grant_type'] = 'password'
 
 

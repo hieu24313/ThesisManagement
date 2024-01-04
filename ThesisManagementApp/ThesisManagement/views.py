@@ -1,8 +1,8 @@
 from urllib.parse import urljoin
 
-from Tools.scripts.var_access_benchmark import C
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -11,12 +11,13 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from ThesisManagementApp import settings
+from django.shortcuts import get_object_or_404
 
 from . import dao
 from . import serializers
 from .mail import send_email
 from .models import *
-from .permissions import IsLecturer, IsAdminOrUniversityAdministrator
+from .permissions import IsLecturer, IsAdminOrUniversityAdministrator, IsAdmin, IsStudent
 import random
 import string
 import base64
@@ -32,7 +33,8 @@ class BaseViewSet(viewsets.ModelViewSet):
 class GetUserViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializers
-    permission_classes = [IsAuthenticated]
+
+    # permission_classes = [IsAuthenticated]
 
     def filter_queryset(self, queryset):
         return dao.load_user(self.request.query_params)
@@ -49,6 +51,35 @@ class GetUserViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
+    @action(methods=['get'], url_name='thesis', detail=True)
+    def thesis(self, request, pk):
+        list_stduent_thesis = ThesisStudent.objects.filter(user_id=pk)
+        list_thesis = []
+        for st in list_stduent_thesis:
+            list_thesis.append(Thesis.objects.get(pk=st.thesis_id))
+
+        return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods=['get'], url_name='committee', detail=True)
+    def committee(self, request, pk):
+        committee = ThesisDefenseCommittee.objects.filter(memberofthesisdefensecommittee__user_id=pk)
+        return Response(
+            serializers.ThesisDefenseCommitteeSerializers(committee, many=True, context={'request': request}).data,
+            status=status.HTTP_200_OK)
+
+    @action(methods=['get'], url_name='score', detail=True)
+    def score(self, request, pk):
+        params = request.query_params
+        thesis = params.get('thesis')
+        thesis_of_student = ThesisStudent.objects.get(user_id=pk, thesis_id=thesis)
+        # list_score = []
+        # for ts in thesis_of_student:
+        #     ts.id
+        list_score = Score.objects.filter(student_id=thesis_of_student.id, thesis_id=thesis)
+        return Response(serializers.GetScoreSerializer(list_score, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
 
 class UpdateUserViewSet(viewsets.GenericViewSet, generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
@@ -59,10 +90,10 @@ class UpdateUserViewSet(viewsets.GenericViewSet, generics.RetrieveUpdateAPIView)
     #     return dao.load_user(self.request.query_params)
 
 
-class AddUserViewSet(viewsets.GenericViewSet, generics.RetrieveUpdateAPIView):
+class AddUserViewSet(viewsets.GenericViewSet, generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializers
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdmin]
 
 
 class GetCriteriaViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
@@ -79,7 +110,38 @@ class GetCriteriaViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
                           type=openapi.TYPE_STRING),
     ])
     def list(self, request, *args, **kwargs):
+        # Lấy thông tin người dùng hiện tại từ request
+        # user = self.request.user
+
+        # print('User Information:')
+        # print('User ID:', user.id)
+        # print('Username:', user.username)
+        # print('Email:', user.email)
+
         return super().list(request, *args, **kwargs)
+
+
+# class GetCriteriaViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
+#     queryset = Criteria.objects.all()
+#     serializer_class = serializers.CriteriaSerializers
+#
+#     permission_classes = [IsAuthenticated]
+#
+#     def filter_queryset(self, queryset):
+#         return dao.load_criteria(self.request.query_params)
+#
+#     @swagger_auto_schema(manual_parameters=[
+#         openapi.Parameter('name', openapi.IN_QUERY, description="Lọc theo tên",
+#                           type=openapi.TYPE_STRING),
+#     ])
+#     def list(self, request, *args, **kwargs):
+#         user = request.user
+#         serializer = self.request.user
+#         print('uuuuusssseeeerrr')
+#         print(serializer)
+#         # print(serializer.data)
+#
+#         return super().list(request, *args, **kwargs)
 
 
 class AddCriteriaViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -152,6 +214,19 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
         serializer = serializers.ThesisSerializers(thesis)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['GET'], url_name='score', detail=True)
+    def score(self, request, pk):
+        score = Score.objects.filter(thesis_id=pk)
+        print(score)
+        return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods=['GET'], url_name='student', detail=True)
+    def student(self, request, pk):
+        student = ThesisStudent.objects.filter(thesis_id=pk)
+        return Response(serializers.ThesisStudentSerializers(student, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
 
 
 class AddThesisViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -230,7 +305,7 @@ class AddThesisViewSet(viewsets.ViewSet, generics.CreateAPIView):
             # Nếu có lỗi xảy ra, rollback
             # transaction.rollback()
             return Response({'error': f'Lỗi : {str(e)}'},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
@@ -347,6 +422,7 @@ class GetPositionViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
 class GetMemberOfThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = MemberOfThesisDefenseCommittee.objects.all()
     serializer_class = serializers.GetMemberOfThesisDefenseCommitteeSerializer
+    ordering_fields = ['position_id']
 
     def filter_queryset(self, queryset):
         return dao.load_member_of_committee(self.request.query_params)
@@ -391,6 +467,51 @@ class AddScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = Score.objects.all()
     serializer_class = serializers.AddUpdateScoreSerializer
     permission_classes = [IsLecturer]
+
+    def create(self, request, *args, **kwargs):
+        # Lấy thông tin người dùng hiện tại từ request
+        user = self.request.user
+        # print('User Information:')
+        # print('User ID:', user.id)
+        # print('Username:', user.username)
+        # print('Email:', user.email)
+        data = request.data
+        thesis = data.get('thesis')  # id khóa luận
+        criteria = data.get('criteria')  # id tiêu chí
+        lecturer = user.id  # id giảng viên
+        print(user.id)
+        student = data.get('student')  # id học sinh
+        score_thesis = data.get('score')  # điểm được chấm của tiêu chí này
+        if lecturer and student and thesis and criteria:
+            student_user = ThesisStudent.objects.get(user_id=student,
+                                                     thesis_id=thesis)  # lấy ra xem id của user đó trong bảng thesis student => lưu vào điểm
+            try:
+                thesis_user = Thesis.objects.get(pk=thesis)
+                print(thesis_user.committee_id)
+                print('11wd')
+                lecturer_user = MemberOfThesisDefenseCommittee.objects.get(user_id=lecturer,
+                                                             Committee_id=thesis_user.committee_id)  # id của gv trong bảng trung gian thesissupervisor
+                try:
+                    print('toi day')
+                    score = get_object_or_404(Score, lecturer_id=lecturer_user.id, student_id=student_user.id,
+                                              criteria_id=criteria,
+                                              thesis_id=thesis)
+                    if score:
+                        return Response({'error': 'Bạn đã chấm điểm cho tiêu chí này rồi!'},
+                                        status=status.HTTP_400_BAD_REQUEST)
+                    print('toi day2')
+                except Http404:
+                    criteria_user = Criteria.objects.get(pk=criteria)
+                    # member
+                    new_score = Score.objects.create(score=score_thesis, lecturer=lecturer_user, student=student_user,
+                                                     thesis=thesis_user, criteria=criteria_user, active=True)
+                    return Response(serializers.GetScoreSerializer(new_score).data, status=status.HTTP_201_CREATED)
+                    # super().create(request, *args, **kwargs)
+            except MemberOfThesisDefenseCommittee.DoesNotExist:
+                return Response('Bạn không có quyền chấm khóa luận này!!!', status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response({'error': 'Gửi Thiếu Thông Tin Rồi Nhé!!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateScoreViewSet(viewsets.ViewSet, generics.UpdateAPIView):
@@ -452,13 +573,13 @@ class OpenThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
 
 def totalscore(thesis_id):
     print(thesis_id)
-    students = ThesisStudent.objects.filter(thesis_id=thesis_id) #danh sach sinh vien lam khoa luan thesis_id
+    students = ThesisStudent.objects.filter(thesis_id=thesis_id)  # danh sach sinh vien lam khoa luan thesis_id
     print(students)
     for s in students:
         print(s.id)
-        scores_student = Score.objects.filter(thesis_id=thesis_id, student_id=s.id) #danh sach diem cua sinh vien s
+        scores_student = Score.objects.filter(thesis_id=thesis_id, student_id=s.id)  # danh sach diem cua sinh vien s
         print(scores_student)
-        #cong thuc tinh diem : (diem * percent cua tieu chi do)/tong percent
+        # cong thuc tinh diem : (diem * percent cua tieu chi do)/tong percent
         tong_diem = 0
         tong_tieu_chi = 0
         for score in scores_student:
@@ -467,7 +588,7 @@ def totalscore(thesis_id):
             print('loai diem')
             print(score.criteria.percent)
             # criteria = Criteria.objects.get(score.criteria_id)
-        s.total = tong_diem/tong_tieu_chi
+        s.total = tong_diem / tong_tieu_chi
         print(s.total)
         s.save()
 
@@ -493,7 +614,7 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                 for s in student:
                     listidsv.append(s.user_id)
 
-                totalscore(thesis_id) #tinh diem ne
+                totalscore(thesis_id)  # tinh diem ne
 
                 for i in listidsv:
                     user = User.objects.get(pk=i)
@@ -506,6 +627,8 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 # class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
 #     queryset = Thesis.objects.all()
 #     serializer_class = serializers.ThesisSerializers
@@ -551,7 +674,7 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
 def AddAllMember(committee, user_id, position_id):
     user = User.objects.get(pk=user_id)
     position = Position.objects.get(pk=position_id)
-    MemberOfThesisDefenseCommittee.objects.create(user=user, Committee=committee, position=position)
+    MemberOfThesisDefenseCommittee.objects.create(user=user, Committee=committee, position=position, active=True)
 
 
 class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -711,7 +834,7 @@ class ForgotPasswordViewSet(viewsets.ViewSet, generics.CreateAPIView):
             password = ''.join(random.choice(characters) for _ in range(12))
             user.temp_password = password
             user.save()
-            #mã hóa username
+            # mã hóa username
             username_encoded_text_bytes = base64.b64encode(user.username.encode('utf-8'))
             username = username_encoded_text_bytes.decode('utf-8')
 
@@ -775,6 +898,3 @@ class AcceptNewPasswordViewSet(viewsets.ViewSet):
                 'msg': msg,
             }
             return render(request, 'acceiptpassword.html', context)
-
-
-

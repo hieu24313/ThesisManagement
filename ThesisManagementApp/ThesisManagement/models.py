@@ -37,7 +37,7 @@ class User(AbstractUser):
         ('lecturer', 'Giảng Viên'),
         ('student', 'Sinh Viên')
     ]
-    avatar = CloudinaryField('image')
+    avatar = CloudinaryField('image', null=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=255, default='student', null=True, blank=True, choices=Role_choice)
     major = models.ForeignKey(Majors, null=True, blank=True, on_delete=models.CASCADE)
@@ -99,6 +99,9 @@ class Thesis(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def __repr__(self):
+        return f"Thesis(id={self.id}, name={self.name}, status_id={self.status_id}, committee_id={self.committee_id}, major_id={self.major_id})"
 
     def save(self, *args, **kwargs):
         if not self.pk:  # Kiểm tra xem đã có ID (đã tồn tại trong cơ sở dữ liệu) hay chưa
@@ -211,12 +214,33 @@ def create_superuser(sender, **kwargs):
                                        role='admin', is_superuser=True, is_staff=True)
 
         if not User.objects.filter(username='hieu').exists():
-            User.objects.get_or_create(username='hieu', email='hieu24314@gmail.com', password=admin_password,
+            User.objects.get_or_create(username='hieu', email='2051050138hieu@ou.edu.vn', password=admin_password,
                                        role='admin', is_superuser=True, is_staff=True)
 
         if not User.objects.filter(username='nhu').exists():
-            User.objects.get_or_create(username='nhu', email='huynhnhu@gmail.com', password=admin_password,
+            User.objects.get_or_create(username='nhu', email='2051050327nhu@ou.edu.vn', password=admin_password,
                                        role='admin', is_superuser=True, is_staff=True)
+
+        for i in range(1, 15):
+            username = 'sinhvien' + str(i)
+            password = '123'
+            if not User.objects.filter(username=username).exists():
+                User.objects.get_or_create(username=username, password=password,role='student'
+                                           , email='hieu24313@gmail.com')
+
+        for i in range(1, 15):
+            username = 'giaovu' + str(i)
+            password = '123'
+            if not User.objects.filter(username=username).exists():
+                User.objects.get_or_create(username=username, password=password, role='universityadministrator'
+                                           , email='hieu24313@gmail.com')
+
+        for i in range(1, 15):
+            username = 'giangvien' + str(i)
+            password = '123'
+            if not User.objects.filter(username=username).exists():
+                User.objects.get_or_create(username=username, password=password, role='lecturer'
+                                           , email='hieu24313@gmail.com')
 
         # if not User.objects.filter(username=admin_username).exists():
         #     User.objects.create_superuser(username=admin_username, email='hieu24313@gmail.com', password=admin_password,
