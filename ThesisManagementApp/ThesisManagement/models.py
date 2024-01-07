@@ -37,10 +37,20 @@ class User(AbstractUser):
         ('lecturer', 'Giảng Viên'),
         ('student', 'Sinh Viên')
     ]
+
+    Gender_choice = [
+        ('male', 'Nam'),
+        ('female', 'Nữ'),
+        ('other', 'Khác'),
+        ('secret', 'Bí Mật')
+    ]
     avatar = CloudinaryField('image', null=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=255, default='student', null=True, blank=True, choices=Role_choice)
     major = models.ForeignKey(Majors, null=True, blank=True, on_delete=models.CASCADE)
+    date_of_birth = models.DateTimeField(null=True, blank=True)
+    gender = models.CharField(max_length=255, null=True, choices=Gender_choice)
+    address = models.CharField(max_length=255 ,null=True)
     temp_password = models.CharField(max_length=255, null=True, blank=True)
 
     def has_role(self, required_role):
@@ -132,6 +142,7 @@ class MemberOfThesisDefenseCommittee(BaseModel):
 class ThesisSupervisor(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
+    type = models.CharField(max_length=255, null=True) # gv1 , gv2
 
 
 # Bảng lưu cụ thể sinh viên nào làm khóa luận
@@ -186,7 +197,9 @@ def create_superuser(sender, **kwargs):
 
         Position.objects.get_or_create(name='Phản Biện')
 
-        Position.objects.get_or_create(name='Thành Viên')
+        Position.objects.get_or_create(name='Thành Viên 1')
+
+        Position.objects.get_or_create(name='Thành Viên 2')
 
         StatusThesis.objects.get_or_create(name='Open')
 
@@ -242,12 +255,18 @@ def create_superuser(sender, **kwargs):
                 User.objects.get_or_create(username=username, password=password, role='lecturer'
                                            , email='hieu24313@gmail.com')
 
-        # if not User.objects.filter(username=admin_username).exists():
-        #     User.objects.create_superuser(username=admin_username, email='hieu24313@gmail.com', password=admin_password,
-        #                                   role='admin')
+        first_names = ["Hồng", "Trung", "Linh", "Quang", "Thiên", "Phương", "Minh", "Anh", "Dương", "Tâm", "Thu",
+                       "Tùng", "Hải", "Ngọc", "Hà", "Tú", "Kiều", "Đức", "Thúy", "Vân"]
+        last_names = ["Nguyễn", "Trần", "Lê", "Phạm", "Võ", "Hoàng", "Đặng", "Bùi", "Đỗ", "Lý", "Ngô", "Đinh", "Hồ",
+                      "Vũ", "Đào", "Mai", "Quách", "Trịnh", "Đoàn", "Phan"]
+        # import random
+        # for i in range(47, 48):
         #
-        # if not User.objects.filter(username='hieu').exists():
-        #     User.objects.create_superuser('hieu', 'hieu24314@gmail.com', admin_password, role='admin')
         #
-        # if not User.objects.filter(username='nhu').exists():
-        #     User.objects.create_superuser('nhu', 'huynhnhu@gmail.com', admin_password, role='admin')
+        #     # Chọn một tên và họ ngẫu nhiên
+        #     random_first_name = random.choice(first_names)
+        #     random_last_name = random.choice(last_names)
+        #     u = User.objects.get(pk=i)
+        #     u.first_name = random.choice(first_names)
+        #     u.last_name = random.choice(last_names)
+        #     u.save()

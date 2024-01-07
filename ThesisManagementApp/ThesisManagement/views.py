@@ -188,7 +188,7 @@ class UpdateThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.RetrieveUpd
     permission_classes = [IsAdminOrUniversityAdministrator]
 
 
-class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
+class GetThesisViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
 
@@ -226,6 +226,157 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     def student(self, request, pk):
         student = ThesisStudent.objects.filter(thesis_id=pk)
         return Response(serializers.ThesisStudentSerializers(student, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods='post', url_name='add-thesis', detail=False)
+    def add_thesis(self, request):
+        data = request.data
+        # thesis = self.instance
+        sv = data.get('sinhvien')  # idsv là chuỗi "1,3,5,6"
+        svth_str = sv.split(',')  # kết quả sẽ là list ['1', '3', '5', '6']
+
+        try:
+            svth_int = [int(value) for value in svth_str]
+        except ValueError:
+            return Response({'error': 'Mã Sinh Viên Không Hợp Lệ!!!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # with transaction.atomic():
+            # Tạo đối tượng Khóa luận từ Serializer
+            # serializer = self.get_serializer(data=data)
+            # serializer.is_valid(raise_exception=True)
+            committee_id = data.get('committee')
+            if committee_id:
+                committee_id = int(committee_id)
+                count_committee = Thesis.objects.filter(committee=committee_id).count()
+                count_member = MemberOfThesisDefenseCommittee.objects.filter(Committee=committee_id).count()
+                if 2 < count_member < 6:
+                    if count_committee <= 5:
+                        id_first_student = svth_int[0]
+                        committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+                        student = User.objects.get(pk=id_first_student)
+                        thesis = Thesis.objects.create(name=data.get('name'), committee=committee, major=student.major)
+                    else:
+                        return Response({'error': 'Hội Đồng Này Đã Được Phân Công Đủ 5 Khóa Luận!'},
+                                        status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'error': 'Hội Đồng Này Chưa Đủ 3 Thành Viên!'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                thesis = self.get_object()
+
+            for s in svth_int:
+                user = User.objects.get(id=s)
+                ThesisStudent.objects.create(user=user, thesis=thesis)
+
+            try:
+                listgv = []
+                giangvien1 = data.get('giangvien1')
+                if giangvien1:
+                    giangvien1 = int(giangvien1)
+                    gv1 = User.objects.get(pk=giangvien1)
+                    ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+                    listgv.append(gv1.email)
+                giangvien2 = data.get('giangvien2')
+                if giangvien2:
+                    giangvien2 = int(giangvien2)
+                    gv2 = User.objects.get(pk=giangvien2)
+                    ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+                    listgv.append(gv2.email)
+                # gửi email thông báo
+                send_email(listreceiver=listgv)
+            except ValueError:
+                return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            # Nếu mọi thứ ổn, commit
+            # transaction.commit()
+
+            return Response({'success': 'Thêm Thành Công.'}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            # Nếu có lỗi xảy ra, rollback
+            # transaction.rollback()
+            return Response({'error': f'Lỗi : {str(e)}'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods='PATCH', url_name='update-thesis', detail=True)
+    def update_thesis(self, request, pk):
+
+        thesis = self.get_object() # khóa luận
+
+        data = request.data
+
+        committee_id_str = data.get('committee')
+        if committee_id_str:
+            try:
+                committee_id = int(committee_id_str)
+                committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+            except ObjectDoesNotExist:
+                return Response({'error': 'Hội Đồng không tồn tại!'}, status=status.HTTP_404_NOT_FOUND)
+
+            count_committee = Thesis.objects.filter(committee=committee_id).count()
+
+            if count_committee <= 5:
+                thesis.committee = committee
+                thesis.save()
+                # return Response({'success': 'Cập nhật thành công!'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Hội Đồng Này Đã Được Phân Công Đủ 5 Khóa Luận!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        # return Response({'error': 'Thiếu thông tin hội đồng!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        sv = data.get('sinhvien')  # idsv là chuỗi "1,3,5,6"
+        if sv:
+            svth_str = sv.split(',')  # kết quả sẽ là list ['1', '3', '5', '6']
+
+            try:
+                svth_int = [int(value) for value in svth_str]
+            except ValueError:
+                return Response({'error': 'Mã Sinh Viên Không Hợp Lệ!!!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            thesis_students = ThesisStudent.objects.filter(thesis=thesis)
+            thesis_students.delete()
+            for s in svth_int:
+                user = User.objects.get(id=s)
+                ThesisStudent.objects.create(user=user, thesis=thesis)
+
+        try:
+            # sua la ne ==============================================================
+            listgv = []
+            giangvien1 = data.get('giangvien1')
+            if giangvien1:
+                # giangvien1 = int(giangvien1)
+                # thesis_supervisor = ThesisSupervisor.objects.filter(thesis=thesis, type='gv1')
+                # thesis_supervisor.delete()
+                lecturer1 = ThesisSupervisor.objects.filter(thesis=thesis, type='gv1')
+                gv1 = User.objects.get(pk=giangvien1)
+                lecturer1.user = gv1
+                lecturer1.save()
+                listgv.append(gv1.email)
+            giangvien2 = data.get('giangvien2')
+            if giangvien2:
+                # giangvien2 = int(giangvien2)
+                # thesis_supervisor2 = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
+                # thesis_supervisor2.delete()
+                gv2 = User.objects.get(pk=giangvien2)
+                # ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+                lecturer2 = ThesisSupervisor.objects.filter(thesis=thesis, type='gv2')
+                gv2 = User.objects.get(pk=giangvien2)
+                lecturer2.user = gv2
+                lecturer2.save()
+                listgv.append(gv2.email)
+            # gửi email thông báo
+            send_email(listreceiver=listgv)
+            return Response(serializers.ThesisSerializers(thesis).data, status=status.HTTP_201_CREATED)
+        except User.DoesNotExist:
+            return Response({'error': 'Mã Giảng Viên Không Tồn Tại!!!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'data': 'Thành Công!!!'},
                         status=status.HTTP_200_OK)
 
 
@@ -283,13 +434,13 @@ class AddThesisViewSet(viewsets.ViewSet, generics.CreateAPIView):
                 if giangvien1:
                     giangvien1 = int(giangvien1)
                     gv1 = User.objects.get(pk=giangvien1)
-                    ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+                    ThesisSupervisor.objects.create(user=gv1, thesis=thesis, type='gv1')
                     listgv.append(gv1.email)
                 giangvien2 = data.get('giangvien2')
                 if giangvien2:
                     giangvien2 = int(giangvien2)
                     gv2 = User.objects.get(pk=giangvien2)
-                    ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+                    ThesisSupervisor.objects.create(user=gv2, thesis=thesis, type='gv1')
                     listgv.append(gv2.email)
                 # gửi email thông báo
                 send_email(listreceiver=listgv)
@@ -327,6 +478,79 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
         },
         # required=['name', 'sinhvien', 'giangvien1', 'giangvien2']
     ))
+    # def partial_update(self, request, *args, **kwargs):
+    #     thesis_id = kwargs.get('pk', None)
+    #
+    #     try:
+    #         thesis = Thesis.objects.get(pk=thesis_id)
+    #     except ObjectDoesNotExist:
+    #         return Response({'error': 'Không tìm thấy khóa luận!'}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     data = request.data
+    #
+    #     committee_id_str = data.get('committee')
+    #     if committee_id_str:
+    #         try:
+    #             committee_id = int(committee_id_str)
+    #             committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
+    #         except ObjectDoesNotExist:
+    #             return Response({'error': 'Hội Đồng không tồn tại!'}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #         count_committee = Thesis.objects.filter(committee=committee_id).count()
+    #
+    #         if count_committee <= 5:
+    #             thesis.committee = committee
+    #             thesis.save()
+    #             # return Response({'success': 'Cập nhật thành công!'}, status=status.HTTP_200_OK)
+    #         else:
+    #             return Response({'error': 'Hội Đồng Này Đã Được Phân Công Đủ 5 Khóa Luận!'},
+    #                             status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     # return Response({'error': 'Thiếu thông tin hội đồng!'}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     sv = data.get('sinhvien')  # idsv là chuỗi "1,3,5,6"
+    #     if sv:
+    #         svth_str = sv.split(',')  # kết quả sẽ là list ['1', '3', '5', '6']
+    #
+    #         try:
+    #             svth_int = [int(value) for value in svth_str]
+    #         except ValueError:
+    #             return Response({'error': 'Mã Sinh Viên Không Hợp Lệ!!!'},
+    #                             status=status.HTTP_400_BAD_REQUEST)
+    #
+    #         thesis_students = ThesisStudent.objects.filter(thesis_id=thesis_id)
+    #         thesis_students.delete()
+    #         for s in svth_int:
+    #             user = User.objects.get(id=s)
+    #             ThesisStudent.objects.create(user=user, thesis=thesis)
+    #
+    #     try:
+    #         #sua la ne ==============================================================
+    #         listgv = []
+    #         giangvien1 = data.get('giangvien1')
+    #         if giangvien1:
+    #             giangvien1 = int(giangvien1)
+    #             thesis_supervisor = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
+    #             # thesis_supervisor.delete()
+    #             gv1 = User.objects.get(pk=giangvien1)
+    #             ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+    #             listgv.append(gv1.email)
+    #         giangvien2 = data.get('giangvien2')
+    #         if giangvien2:
+    #             giangvien2 = int(giangvien2)
+    #             # thesis_supervisor2 = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
+    #             # thesis_supervisor2.delete()
+    #             gv2 = User.objects.get(pk=giangvien2)
+    #             ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+    #             listgv.append(gv2.email)
+    #         # gửi email thông báo
+    #         send_email(listreceiver=listgv)
+    #     except ValueError:
+    #         return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
+    #                         status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     return Response({'data': 'Thành Công!!!'},
+    #                     status=status.HTTP_200_OK)
     def partial_update(self, request, *args, **kwargs):
         thesis_id = kwargs.get('pk', None)
 
@@ -334,6 +558,9 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
             thesis = Thesis.objects.get(pk=thesis_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Không tìm thấy khóa luận!'}, status=status.HTTP_404_NOT_FOUND)
+
+
+        # thesis = self.get_object()  # khóa luận
 
         data = request.data
 
@@ -367,34 +594,47 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
                 return Response({'error': 'Mã Sinh Viên Không Hợp Lệ!!!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            thesis_students = ThesisStudent.objects.filter(thesis_id=thesis_id)
+            thesis_students = ThesisStudent.objects.filter(thesis=thesis)
             thesis_students.delete()
             for s in svth_int:
                 user = User.objects.get(id=s)
                 ThesisStudent.objects.create(user=user, thesis=thesis)
 
         try:
+            # sua la ne ==============================================================
             listgv = []
             giangvien1 = data.get('giangvien1')
             if giangvien1:
-                giangvien1 = int(giangvien1)
-                thesis_supervisor = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
-                thesis_supervisor.delete()
+                # print(giangvien1)
+                # giangvien1 = int(giangvien1)
+                # thesis_supervisor = ThesisSupervisor.objects.filter(thesis=thesis, type='gv1')
+                # thesis_supervisor.delete()
+                lecturer1 = ThesisSupervisor.objects.filter(thesis=thesis, type='gv1')
                 gv1 = User.objects.get(pk=giangvien1)
-                ThesisSupervisor.objects.create(user=gv1, thesis=thesis)
+                # print(gv1.id)
+                lecturer = lecturer1[0]
+                lecturer.user = gv1
+                lecturer.save()
                 listgv.append(gv1.email)
             giangvien2 = data.get('giangvien2')
             if giangvien2:
-                giangvien2 = int(giangvien2)
+                # giangvien2 = int(giangvien2)
                 # thesis_supervisor2 = ThesisSupervisor.objects.filter(thesis_id=thesis_id)
                 # thesis_supervisor2.delete()
                 gv2 = User.objects.get(pk=giangvien2)
-                ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+                # ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
+                lecturer2 = ThesisSupervisor.objects.filter(thesis=thesis, type='gv2')
+                gv2 = User.objects.get(pk=giangvien2)
+                lecturer = lecturer2[0]
+                lecturer.user = gv2
+                lecturer.save()
                 listgv.append(gv2.email)
             # gửi email thông báo
             send_email(listreceiver=listgv)
-        except ValueError:
-            return Response({'error': 'Mã Giảng Viên Không Hợp Lệ!!!'},
+            return super().partial_update(request, *args, **kwargs)
+            # return Response(serializers.ThesisSerializers(thesis).data, status=status.HTTP_201_CREATED)
+        except User.DoesNotExist:
+            return Response({'error': 'Mã Giảng Viên Không Tồn Tại!!!'},
                             status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'data': 'Thành Công!!!'},
@@ -740,43 +980,80 @@ class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Up
         if not committee_id:
             return Response({'error': 'Thiếu ID hội đồng!!!'}, status=status.HTTP_400_BAD_REQUEST)
         committee = ThesisDefenseCommittee.objects.get(pk=committee_id)
-        memberofcommittee = MemberOfThesisDefenseCommittee.objects.filter(Committee_id=committee_id)
-        memberofcommittee.delete()
+        # memberofcommittee = MemberOfThesisDefenseCommittee.objects.filter(Committee_id=committee_id)
+        # memberofcommittee.delete()
         try:
             # member1
             member1_id = data.get('member1')
             position1_id = data.get('position1')
 
+            if member1_id and position1_id:
+                position1 = Position.objects.get(pk=position1_id)
+                user = User.objects.get(pk=member1_id)
+                mem1 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position1)
+                mem1.user = user
+                mem1.save()
+
             # member2
             member2_id = data.get('member2')
             position2_id = data.get('position2')
 
+            if member2_id and position2_id:
+                position2 = Position.objects.get(pk=position2_id)
+                user = User.objects.get(pk=member2_id)
+                mem2 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position2)
+                mem2.user = user
+                mem2.save()
+
             # member3
             member3_id = data.get('member3')
             position3_id = data.get('position3')
-            if member1_id and position1_id:
-                AddAllMember(committee, member1_id, position1_id)
 
-            if member2_id and position2_id:
-                AddAllMember(committee, member2_id, position2_id)
-
-            if member3_id and position3_id:
-                AddAllMember(committee, member3_id, position3_id)
+            if member3_id and position1_id:
+                position3 = Position.objects.get(pk=position3_id)
+                user = User.objects.get(pk=member3_id)
+                mem3 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position3)
+                mem3.user = user
+                mem3.save()
 
             # member4
             member4_id = data.get('member4')
             position4_id = data.get('position4')
-            if member4_id and position4_id:
-                AddAllMember(committee, member4_id, position4_id)
 
-            # member4
+            if member4_id and position4_id:
+                position4 = Position.objects.get(pk=position4_id)
+                user = User.objects.get(pk=member4_id)
+                mem4 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position4)
+                mem4.user = user
+                mem4.save()
+
+            # member5
             member5_id = data.get('member5')
             position5_id = data.get('position5')
             if member5_id and position5_id:
-                AddAllMember(committee, member5_id, position5_id)
+                position5 = Position.objects.get(pk=position5_id)
+                user = User.objects.get(pk=member5_id)
+                mem5 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position5)
+                mem5.user = user
+                mem5.save()
+            # if member1_id and position1_id:
+            #     AddAllMember(committee, member1_id, position1_id)
+            #
+            # if member2_id and position2_id:
+            #     AddAllMember(committee, member2_id, position2_id)
+            #
+            # if member3_id and position3_id:
+            #     AddAllMember(committee, member3_id, position3_id)
+            #
+            # if member4_id and position4_id:
+            #     AddAllMember(committee, member4_id, position4_id)
+            #
+            # if member5_id and position5_id:
+            #     AddAllMember(committee, member5_id, position5_id)
             # super().create(request, *args, **kwargs)
-            return Response({'data': 'Cập Nhật Thành Công!'}, status=status.HTTP_200_OK)
-        except ValueError:
+
+            return Response({'data': serializers.ThesisDefenseCommitteeSerializers(committee).data}, status=status.HTTP_200_OK)
+        except MemberOfThesisDefenseCommittee.DoesNotExist:
             return Response({'error': 'Check Lại ID Position và ID USER!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
