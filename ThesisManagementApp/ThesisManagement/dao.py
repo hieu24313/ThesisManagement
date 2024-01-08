@@ -127,3 +127,13 @@ def load_major(params={}):
     return q
 
 
+def get_year_do_thesis(params={}):
+    list_date_time = Thesis.objects.filter().values('create_date')
+    list_year = []
+    for i in list_date_time:
+        list_year.append(i.get('create_date').year)
+    unique_years = list(set(list_year))
+    # print(unique_years)
+    return unique_years
+
+
