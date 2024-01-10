@@ -1,0 +1,99 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/stats_major.css' %}">
+{% endblock %}
+
+{% block content %}
+<a href="../stats-score/">Xem thống kê điểm</a>
+<h1 class="name-page">
+    THỐNG KÊ TẦN XUẤT THAM GIA KHÓA LUẬN CỦA CÁC NGHÀNH
+    {% if current_year == 'all' %}
+    TẤT CẢ NĂM
+    {% else %}
+    NĂM {{ current_year }}
+    {% endif %}
+</h1>
+<div class="main">
+    <div class="main1">
+        <div class="thesis">
+            <form method="get">
+            <!--    <label for="param">Parameter:</label>-->
+            <!--    <input type="text" id="param" name="param" value="{{ year }}">-->
+            <label for="select_option">Chọn năm:</label>
+            <select id="select_option" name="select_option">
+                <option value="all">Tất Cả</option>
+                {% for i in year %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Lọc</button>
+        </form>
+        <h2>Nghành và số lượng tham gia {{ current_year }}</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nghành</th>
+                <th scope="col">Số lượng</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in major_year %}
+            <tr>
+                <th scope="row">{{ i.id }}</th>
+                <td>{{i.name}}</td>
+                <td>{{i.count}} khóa luận</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <div class="main2">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.onload = () => {
+      let labels = [];
+      let values = [];
+
+      {% for l in count_thesis_current_year %}
+        labels.push("{{ l.name }}");
+        values.push({{ l.count }});
+      {% endfor %}
+
+      const ctx = document.getElementById('myChart');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Số lượng',
+            data: values,
+            borderWidth: 1,
+  <!--          backgroundColor: [-->
+  <!--            'rgb(255, 99, 132)',-->
+  <!--            'rgb(54, 162, 235)',-->
+  <!--            'rgb(255, 205, 86)'-->
+  <!--          ]-->
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: false  // Ẩn label của trục y
+              }
+            }
+          }
+        }
+      });
+    };
+</script>
+
+{% endblock %}

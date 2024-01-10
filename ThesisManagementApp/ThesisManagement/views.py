@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics, status
@@ -969,8 +969,8 @@ class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Creat
 
 
 class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.UpdateAPIView):
-    # queryset = ThesisDefenseCommittee.objects.all()
-    # serializer_class = serializers.ThesisDefenseCommitteeSerializers
+    queryset = ThesisDefenseCommittee.objects.all()
+    serializer_class = serializers.ThesisDefenseCommitteeSerializers
 
     permission_classes = [IsAdminOrUniversityAdministrator]
 

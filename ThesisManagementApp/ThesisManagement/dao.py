@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from .models import *
 
@@ -127,13 +127,57 @@ def load_major(params={}):
     return q
 
 
-def get_year_do_thesis(params={}):
+def get_year_do_thesis():
     list_date_time = Thesis.objects.filter().values('create_date')
     list_year = []
     for i in list_date_time:
         list_year.append(i.get('create_date').year)
-    unique_years = list(set(list_year))
+    unique_years = sorted(list(set(list_year)))
     # print(unique_years)
     return unique_years
 
+
+def get_thesis_by_year(year=None):
+    q = Thesis.objects.filter()
+
+    if year:
+        q = q.filter(create_date__year=year)
+
+    return q
+
+
+def get_status_by_id(status_id):
+    return StatusThesis.objects.get(pk=status_id)
+
+
+def get_student_by_thesis_id(thesis):
+    list_student_id = ThesisStudent.objects.filter(thesis=thesis)
+    list_student = []
+    for s in list_student_id:
+        list_student.append(User.objects.get(pk=s.user_id))
+    return list_student
+
+
+def get_lecturer_by_thesis_id(thesis):
+    return ThesisSupervisor.objects.filter(thesis=thesis)
+
+
+def count_thesis_by_major_and_year(year=None):
+    major = Majors.objects.all()
+
+    if year:
+        for m in major:
+            m.count = Thesis.objects.filter(major=m, create_date__year=year).count()
+    else:
+        for m in major:
+            m.count = Thesis.objects.filter(major=m).count()
+    return major
+
+
+def count_thesis_by_year_all():
+    return Majors.objects.annotate(count=Count('thesis__id')).values('id', 'name', 'count')
+
+
+def get_all_major():
+    return Majors.objects.all()
 

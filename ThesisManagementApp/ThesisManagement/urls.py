@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
 from django.urls import path, include
 from rest_framework import routers
@@ -6,6 +7,7 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
+# router.register('swagger', views.swagger_redirect, basename='swagger')
 router.register('get-user-by-token', views.GetUserByToken, basename='get-user-by-token')
 router.register('get-users', views.GetUserViewSet, basename='get-users')
 router.register('update-user', views.UpdateUserViewSet, basename='update-user')
@@ -51,5 +53,7 @@ router.register('update-committee-and-member', views.UpdateThesisDefenseCommitte
 
 # router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
 urlpatterns = [
+    # path('swagger/', views.swagger_redirect, name='swagger'),
+    path('', lambda _: redirect('/swagger/')),
     path('', include(router.urls))
 ]
