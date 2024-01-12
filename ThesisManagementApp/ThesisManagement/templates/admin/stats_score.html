@@ -32,8 +32,52 @@
         </form>
     </div>
     <div>
-        <canvas id="myChart"></canvas>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <div style="width: 500px;">
+            <canvas id="myChart"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        </div>
+        <br/>
+        <!--        <script type="module" src="dimensions.js"></script>-->
+        <script>
+    window.onload = () => {
+
+        let data = []
+        let labels = []
+        {% for s in score %}
+            data.push({{ s.count }})
+            labels.push({{ s.score }})
+        {% endfor %}
+
+        const ctx = document.getElementById('myChart');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Số lượng',
+            data: data,
+            borderWidth: 1,
+  <!--          backgroundColor: [-->
+  <!--            'rgb(255, 99, 132)',-->
+  <!--            'rgb(54, 162, 235)',-->
+  <!--            'rgb(255, 205, 86)'-->
+  <!--          ]-->
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: false  // Ẩn label của trục y
+              }
+            }
+          }
+        }
+      });
+    }
+</script>
+
     </div>
 </div>
 

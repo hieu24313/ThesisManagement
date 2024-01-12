@@ -188,7 +188,7 @@ class UpdateThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.RetrieveUpd
     permission_classes = [IsAdminOrUniversityAdministrator]
 
 
-class GetThesisViewSet(viewsets.ViewSet, generics.ListAPIView):
+class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
 
@@ -217,10 +217,20 @@ class GetThesisViewSet(viewsets.ViewSet, generics.ListAPIView):
 
     @action(methods=['GET'], url_name='score', detail=True)
     def score(self, request, pk):
-        score = Score.objects.filter(thesis_id=pk)
-        print(score)
-        return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
-                        status=status.HTTP_200_OK)
+        user = request.user
+        if user.is_anonymous:
+            print('no user')
+            score = Score.objects.filter(thesis_id=pk)
+            print(score)
+            return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
+                            status=status.HTTP_200_OK)
+        else:
+            print('co user')
+            print(user)
+            score = Score.objects.filter(thesis_id=pk, lecturer_id=user.id)
+            print(score)
+            return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
+                            status=status.HTTP_200_OK)
 
     @action(methods=['GET'], url_name='student', detail=True)
     def student(self, request, pk):
@@ -601,7 +611,7 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
                 ThesisStudent.objects.create(user=user, thesis=thesis)
 
         try:
-            # sua la ne ==============================================================
+            # sua lai ne ==============================================================
             listgv = []
             giangvien1 = data.get('giangvien1')
             if giangvien1:
@@ -611,10 +621,14 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
                 # thesis_supervisor.delete()
                 lecturer1 = ThesisSupervisor.objects.filter(thesis=thesis, type='gv1')
                 gv1 = User.objects.get(pk=giangvien1)
-                # print(gv1.id)
-                lecturer = lecturer1[0]
-                lecturer.user = gv1
-                lecturer.save()
+                if lecturer1.count() > 0:
+
+                    # print(gv1.id)
+                    lecturer = lecturer1[0]
+                    lecturer.user = gv1
+                    lecturer.save()
+                else:
+                    ThesisSupervisor.objects.create(user=gv1, thesis=thesis, type=gv1)
                 listgv.append(gv1.email)
             giangvien2 = data.get('giangvien2')
             if giangvien2:
@@ -625,9 +639,12 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
                 # ThesisSupervisor.objects.create(user=gv2, thesis=thesis)
                 lecturer2 = ThesisSupervisor.objects.filter(thesis=thesis, type='gv2')
                 gv2 = User.objects.get(pk=giangvien2)
-                lecturer = lecturer2[0]
-                lecturer.user = gv2
-                lecturer.save()
+                if lecturer2.count() > 0:
+                    lecturer = lecturer2[0]
+                    lecturer.user = gv2
+                    lecturer.save()
+                else:
+                    ThesisSupervisor.objects.create(user=gv2, thesis=thesis, type=gv2)
                 listgv.append(gv2.email)
             # gửi email thông báo
             send_email(listreceiver=listgv)
@@ -828,8 +845,8 @@ def totalscore(thesis_id):
             print('loai diem')
             print(score.criteria.percent)
             # criteria = Criteria.objects.get(score.criteria_id)
-        s.total = tong_diem / tong_tieu_chi
-        print(s.total)
+        s.total = round(tong_diem / tong_tieu_chi, 1)
+        # print(s.total)
         s.save()
 
 
@@ -854,8 +871,10 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                 for s in student:
                     listidsv.append(s.user_id)
 
-                totalscore(thesis_id)  # tinh diem ne
-
+                try:
+                    totalscore(thesis_id)# tinh diem ne
+                except ZeroDivisionError:
+                    return Response({'Có sinh viên chưa được chấm điểm'}, status=status.HTTP_400_BAD_REQUEST)
                 for i in listidsv:
                     user = User.objects.get(pk=i)
                     listemail.append(user.email)
@@ -990,9 +1009,12 @@ class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Up
             if member1_id and position1_id:
                 position1 = Position.objects.get(pk=position1_id)
                 user = User.objects.get(pk=member1_id)
-                mem1 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position1)
-                mem1.user = user
-                mem1.save()
+                try:
+                    mem1 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position1)
+                    mem1.user = user
+                    mem1.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member1_id, position1_id)
 
             # member2
             member2_id = data.get('member2')
@@ -1001,9 +1023,12 @@ class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Up
             if member2_id and position2_id:
                 position2 = Position.objects.get(pk=position2_id)
                 user = User.objects.get(pk=member2_id)
-                mem2 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position2)
-                mem2.user = user
-                mem2.save()
+                try:
+                    mem2 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position2)
+                    mem2.user = user
+                    mem2.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member2_id, position2_id)
 
             # member3
             member3_id = data.get('member3')
@@ -1012,9 +1037,12 @@ class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Up
             if member3_id and position1_id:
                 position3 = Position.objects.get(pk=position3_id)
                 user = User.objects.get(pk=member3_id)
-                mem3 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position3)
-                mem3.user = user
-                mem3.save()
+                try:
+                    mem3 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position3)
+                    mem3.user = user
+                    mem3.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member3_id, position3_id)
 
             # member4
             member4_id = data.get('member4')
@@ -1023,9 +1051,12 @@ class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Up
             if member4_id and position4_id:
                 position4 = Position.objects.get(pk=position4_id)
                 user = User.objects.get(pk=member4_id)
-                mem4 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position4)
-                mem4.user = user
-                mem4.save()
+                try:
+                    mem4 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position4)
+                    mem4.user = user
+                    mem4.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member4_id, position4_id)
 
             # member5
             member5_id = data.get('member5')
@@ -1033,9 +1064,12 @@ class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Up
             if member5_id and position5_id:
                 position5 = Position.objects.get(pk=position5_id)
                 user = User.objects.get(pk=member5_id)
-                mem5 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position5)
-                mem5.user = user
-                mem5.save()
+                try:
+                    mem5 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position5)
+                    mem5.user = user
+                    mem5.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member5_id, position5_id)
             # if member1_id and position1_id:
             #     AddAllMember(committee, member1_id, position1_id)
             #

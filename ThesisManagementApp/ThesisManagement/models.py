@@ -50,7 +50,7 @@ class User(AbstractUser):
     major = models.ForeignKey(Majors, null=True, blank=True, on_delete=models.CASCADE)
     date_of_birth = models.DateTimeField(null=True, blank=True)
     gender = models.CharField(max_length=255, null=True, choices=Gender_choice)
-    address = models.CharField(max_length=255 ,null=True)
+    address = models.CharField(max_length=255, null=True)
     temp_password = models.CharField(max_length=255, null=True, blank=True)
 
     def has_role(self, required_role):

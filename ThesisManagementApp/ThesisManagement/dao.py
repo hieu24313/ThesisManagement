@@ -1,5 +1,5 @@
 from django.db.models import Q, Count
-
+from collections import Counter
 from .models import *
 
 
@@ -180,4 +180,23 @@ def count_thesis_by_year_all():
 
 def get_all_major():
     return Majors.objects.all()
+
+
+def get_score(year=None, major=None):
+    score = ThesisStudent.objects.filter()
+    if year:
+        score = score.filter(create_date__year=year).values('total')
+    else:
+        score = score.filter().values('total')
+
+    if major:
+        score = score.filter(thesis__major_id=major)
+    non_none_values = [result['total'] for result in score if result['total'] is not None]
+    counts = Counter(non_none_values)
+    print(counts)
+    list_diem = []
+    for s in non_none_values:
+        count = ThesisStudent.objects.filter(total=s).count()
+        list_diem.append({'score': s, 'count': count})
+    return list_diem
 

@@ -56,16 +56,30 @@ class CourseAppAdminSite(admin.AdminSite):
     def stats_view_score(self, request):
         year = request.GET.get('year')
         major = request.GET.get('major')
+
         if year:
             pass
         else:
             today = datetime.date.today()
             year = today.year
+
+        # if year == 'all' and major == 'all':
+        score = dao.get_score()
+        if year != 'all' and major == 'all':
+            score = dao.get_score(year=year)
+        if year == 'all' and major != 'all':
+            score = dao.get_score(year=year)
+        if year != 'all' and major != 'all':
+            score = dao.get_score(year=year, major=major)
+
         get_year_has_thesis = dao.get_year_do_thesis()
+        # print(score)
+
         return TemplateResponse(request, 'admin/stats_score.html', {
             'year_has_thesis': get_year_has_thesis,
             'current_year': year,
-            'major': dao.get_all_major()
+            'major': dao.get_all_major(),
+            'score': score
         })
 
 
