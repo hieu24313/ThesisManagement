@@ -9,7 +9,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from ThesisManagementApp import settings
 from django.shortcuts import get_object_or_404
@@ -197,9 +197,31 @@ class UpdateThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.RetrieveUpd
 class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
+    permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.action == 'lecturer':
+            return [IsAuthenticated()]
+        else:
+            return [AllowAny()]
 
     def filter_queryset(self, queryset):
         return dao.load_thesis(self.request.query_params)
+
+    @action(methods=['get'], url_name='lecturer', detail=False)
+    def lecturer(self, request, pk=None):
+        user = request.user
+        if user.is_anonymous:
+            return Response('Chưa đăng nhập!', status=status.HTTP_400_BAD_REQUEST)
+        else:
+            list_committee_user = list(MemberOfThesisDefenseCommittee.objects.filter(user=user))
+            list_thesis = []
+            for c in list_committee_user:
+                # list_thesis.append(Thesis.objects.filter(status__name='Open', committee=c.Committee))
+                list_thesis += Thesis.objects.filter(status__name='Open', committee=c.Committee)
+
+            return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data,
+                            status=status.HTTP_200_OK)
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('name', openapi.IN_QUERY, description="Lọc theo tên",
@@ -233,7 +255,9 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
         else:
             print('co user')
             print(user)
-            score = Score.objects.filter(thesis_id=pk, lecturer_id=user.id)
+            thesis = Thesis.objects.get(pk=pk)
+            user_committee = MemberOfThesisDefenseCommittee.objects.get(Committee=thesis.committee, user=user)
+            score = Score.objects.filter(thesis_id=pk, lecturer_id=user_committee.id)
             print(score)
             return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
                             status=status.HTTP_200_OK)
@@ -1235,7 +1259,7 @@ class AddOrUpdateManyScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
             print('111')
             return Response({'error': 'Không có quyền! Chưa đăng nhập!'}, status=status.HTTP_403_FORBIDDEN)
         score_json = data.get('score')
-        score_data = json.loads(score_json)
+        score_data = json.loads(json.dumps(score_json))
         list_changed_score = []
         for item in score_data:
             student_id = item['student']

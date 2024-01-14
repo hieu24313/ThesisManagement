@@ -74,6 +74,10 @@ def load_thesis(params={}):
     if active:
         q = q.filter(active=active)
 
+    status_name = params.get('status')
+    if status_name:
+        q = q.filter(status__name__icontains=status_name)
+
     return q
 
 
