@@ -50,8 +50,10 @@ router.register('forgot-password', views.ForgotPasswordViewSet, basename='forgot
 router.register('accept-new-password', views.AcceptNewPasswordViewSet, basename='accept-new-password')
 router.register('update-committee-and-member', views.UpdateThesisDefenseCommitteeAndMemberViewSet,
                 basename='update-committee-and-member')
+router.register('add-or-update-score', views.AddOrUpdateManyScoreViewSet,
+                basename='add-or-update-score')
 
-# router.register('a', views.MemberOfThesisDefenseCommitteeViewSetGET)
+router.register('a', views.TestSendArr)
 urlpatterns = [
     # path('swagger/', views.swagger_redirect, name='swagger'),
     path('', lambda _: redirect('/swagger/')),

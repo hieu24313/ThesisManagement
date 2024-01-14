@@ -1,3 +1,4 @@
+import json
 from urllib.parse import urljoin
 
 from django.contrib.auth.hashers import check_password
@@ -61,14 +62,14 @@ class GetUserViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
         return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
 
-    @action(methods=['get'], url_name='committee', detail=True)
+    @action(methods=['get'], url_name='committee', detail=True) #hội đồng user tham gia
     def committee(self, request, pk):
         committee = ThesisDefenseCommittee.objects.filter(memberofthesisdefensecommittee__user_id=pk)
         return Response(
             serializers.ThesisDefenseCommitteeSerializers(committee, many=True, context={'request': request}).data,
             status=status.HTTP_200_OK)
 
-    @action(methods=['get'], url_name='score', detail=True)
+    @action(methods=['get'], url_name='score', detail=True) # lấy điểm của user
     def score(self, request, pk):
         params = request.query_params
         thesis = params.get('thesis')
@@ -172,6 +173,11 @@ class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.L
 
     def filter_queryset(self, queryset):
         return dao.load_committee(self.request.query_params)
+
+    @action(methods=['get'], url_name='thesis', detail=True)
+    def thesis(self, request, pk):
+        list_thesis = Thesis.objects.filter(committee_id=pk)
+        return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data, status=status.HTTP_200_OK)
 
 
 class AddThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -314,7 +320,7 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     @action(methods='PATCH', url_name='update-thesis', detail=True)
     def update_thesis(self, request, pk):
 
-        thesis = self.get_object() # khóa luận
+        thesis = self.get_object()  # khóa luận
 
         data = request.data
 
@@ -569,7 +575,6 @@ class UpdateThesisViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
         except ObjectDoesNotExist:
             return Response({'error': 'Không tìm thấy khóa luận!'}, status=status.HTTP_404_NOT_FOUND)
 
-
         # thesis = self.get_object()  # khóa luận
 
         data = request.data
@@ -747,7 +752,7 @@ class AddScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
                 print(thesis_user.committee_id)
                 print('11wd')
                 lecturer_user = MemberOfThesisDefenseCommittee.objects.get(user_id=lecturer,
-                                                             Committee_id=thesis_user.committee_id)  # id của gv trong bảng trung gian thesissupervisor
+                                                                           Committee_id=thesis_user.committee_id)  # id của gv trong bảng trung gian thesissupervisor
                 try:
                     print('toi day')
                     score = get_object_or_404(Score, lecturer_id=lecturer_user.id, student_id=student_user.id,
@@ -793,6 +798,8 @@ class UpdateScoreViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                     return Response({'error': 'Khóa Luận Không Tồn Tại!!'},
                                     status=status.HTTP_400_BAD_REQUEST)
                 if status_thesis == 'Open':
+
+                    # edit o day
                     return super().partial_update(request, *args, **kwargs)
                 else:
                     return Response({'error': 'Khóa Luận Này Đã Đóng Không Thể Sửa Điểm!!'},
@@ -872,7 +879,7 @@ class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                     listidsv.append(s.user_id)
 
                 try:
-                    totalscore(thesis_id)# tinh diem ne
+                    totalscore(thesis_id)  # tinh diem ne
                 except ZeroDivisionError:
                     return Response({'Có sinh viên chưa được chấm điểm'}, status=status.HTTP_400_BAD_REQUEST)
                 for i in listidsv:
@@ -1086,7 +1093,8 @@ class UpdateThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.Up
             #     AddAllMember(committee, member5_id, position5_id)
             # super().create(request, *args, **kwargs)
 
-            return Response({'data': serializers.ThesisDefenseCommitteeSerializers(committee).data}, status=status.HTTP_200_OK)
+            return Response({'data': serializers.ThesisDefenseCommitteeSerializers(committee).data},
+                            status=status.HTTP_200_OK)
         except MemberOfThesisDefenseCommittee.DoesNotExist:
             return Response({'error': 'Check Lại ID Position và ID USER!'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1209,3 +1217,72 @@ class AcceptNewPasswordViewSet(viewsets.ViewSet):
                 'msg': msg,
             }
             return render(request, 'acceiptpassword.html', context)
+
+
+class AddOrUpdateManyScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = Score.objects.all()
+    serializer_class = serializers.AddUpdateScoreSerializer
+
+    permission_classes = [IsLecturer]
+
+    def create(self, request, *args, **kwargs):
+
+        data = request.data
+
+        user_logging = request.user  # user cham diem
+        print(user_logging)
+        if user_logging.is_anonymous:
+            print('111')
+            return Response({'error': 'Không có quyền! Chưa đăng nhập!'}, status=status.HTTP_403_FORBIDDEN)
+        score_json = data.get('score')
+        score_data = json.loads(score_json)
+        list_changed_score = []
+        for item in score_data:
+            student_id = item['student']
+            criteria_id = item['criteria']
+            thesis_id = item['thesis']
+            score = item['score']
+            thesis = Thesis.objects.get(pk=thesis_id)
+            if thesis.status.name == 'Open':
+                # truy vấn các objects ở đây
+                try:
+                    student = ThesisStudent.objects.get(user_id=student_id, thesis_id=thesis_id)
+                    criteria = Criteria.objects.get(pk=criteria_id)
+                    lecturer = MemberOfThesisDefenseCommittee.objects.get(user_id=user_logging.id,
+                                                                          Committee=thesis.committee)
+                except ObjectDoesNotExist:
+                    return Response('Không có quyền', status=status.HTTP_403_FORBIDDEN)
+                try:
+                    score_thesis = Score.objects.get(lecturer=lecturer, student=student, criteria=criteria,
+                                                     thesis=thesis)
+                    if score_thesis:
+                        # update
+                        score_thesis.score = score
+                        score_thesis.save()
+                        list_changed_score.append(score_thesis)
+                except Score.DoesNotExist:
+                    # add
+                    score_thesis = Score.objects.create(lecturer=lecturer, score=score, student=student, thesis=thesis,
+                                                        criteria=criteria)
+                    list_changed_score.append(score_thesis)
+
+            else:
+                return Response({'error': 'Khóa luận này đã đóng và không được thay đổi điểm số!!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializers.GetScoreSerializer(list_changed_score, many=True).data, status=status.HTTP_200_OK)
+
+
+class TestSendArr(viewsets.ViewSet, generics.CreateAPIView):
+    queryset = Criteria.objects.all()
+    serializer_class = serializers.CriteriaSerializers
+
+    def create(self, request, *args, **kwargs):
+        arr = request.data.get('arr')  # đầu vào mẫu [{"a": 1,"b":2},{"a": 3,"b":4},{"a": 5,"b":6},{"a": 7,"b":8}]
+        data = json.loads(arr)  # phải dùng dấu 2 nháy "..."
+        print(data)
+
+        for item in data:
+            print(item["a"])
+            print(item["b"])
+
+        return Response('Ok', status=status.HTTP_200_OK)
