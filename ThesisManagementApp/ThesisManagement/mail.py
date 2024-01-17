@@ -12,6 +12,7 @@ def send_email(subject='Hồi Đồng Của Bạn Vừa Được Phân Công Ch�
             listreceiver,
             connection=connection
         )
+        email1.content_subtype = 'html'
         email1.send()
         return True
     except ValueError:

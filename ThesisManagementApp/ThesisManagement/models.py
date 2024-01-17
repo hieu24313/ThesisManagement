@@ -48,7 +48,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=255, default='student', null=True, blank=True, choices=Role_choice)
     major = models.ForeignKey(Majors, null=True, blank=True, on_delete=models.CASCADE)
-    date_of_birth = models.DateTimeField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=255, null=True, choices=Gender_choice)
     address = models.CharField(max_length=255, null=True)
     temp_password = models.CharField(max_length=255, null=True, blank=True)

@@ -255,10 +255,14 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
         else:
             print('co user')
             print(user)
-            thesis = Thesis.objects.get(pk=pk)
-            user_committee = MemberOfThesisDefenseCommittee.objects.get(Committee=thesis.committee, user=user)
-            score = Score.objects.filter(thesis_id=pk, lecturer_id=user_committee.id)
-            print(score)
+            try:
+                thesis = Thesis.objects.get(pk=pk)
+                user_committee = MemberOfThesisDefenseCommittee.objects.get(Committee=thesis.committee, user=user)
+                score = Score.objects.filter(thesis_id=pk, lecturer_id=user_committee.id)
+                print(score)
+            except ObjectDoesNotExist:
+                return Response('Sai thông tin khóa chính!')
+
             return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
                             status=status.HTTP_200_OK)
 
@@ -1185,10 +1189,11 @@ class ForgotPasswordViewSet(viewsets.ViewSet, generics.CreateAPIView):
             # server_domain = settings.server_domain
             accept_new_password_url = urljoin(server_domain, f'/accept-new-password/?username={username}')
 
-            body = (f'Bạn đã yêu cầu cấp mật khẩu mới!\n'
-                    f'Tên Đăng Nhập: {user.username}\n'
-                    f'Mật khẩu mới của bạn là: {password}\n'
-                    f'Ấn vào liên kết sau để xác nhận mật khẩu mới: {accept_new_password_url}')
+            body = (f'<h5>Bạn đã yêu cầu cấp mật khẩu mới!</h5>\n'
+                    f'<h5>Tên Đăng Nhập: {user.username}\n</h5>'
+                    f'<h5>Mật khẩu mới của bạn là: {password}\n</h5>'
+                    f'<h5>Ấn vào liên kết sau để xác nhận mật khẩu mới: '
+                    f'<a href="{accept_new_password_url}">Bấm vào đây!</a></h5>')
             list_email = [email]
             send_email(subject='Mật Khẩu Mới', body=body, listreceiver=list_email)
 
@@ -1229,8 +1234,8 @@ class AcceptNewPasswordViewSet(viewsets.ViewSet):
                         'msg': msg,
                     }
                     return render(request, 'acceiptpassword.html', context)
-            except ValueError:
-                msg = 'Làm gì có ai có mail này trong cơ sở dữ liệu đâu?'
+            except ObjectDoesNotExist:
+                msg = 'Làm gì có ai có username này trong cơ sở dữ liệu đâu?'
                 context = {
                     'msg': msg,
                 }
@@ -1296,17 +1301,17 @@ class AddOrUpdateManyScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
         return Response(serializers.GetScoreSerializer(list_changed_score, many=True).data, status=status.HTTP_200_OK)
 
 
-class TestSendArr(viewsets.ViewSet, generics.CreateAPIView):
-    queryset = Criteria.objects.all()
-    serializer_class = serializers.CriteriaSerializers
-
-    def create(self, request, *args, **kwargs):
-        arr = request.data.get('arr')  # đầu vào mẫu [{"a": 1,"b":2},{"a": 3,"b":4},{"a": 5,"b":6},{"a": 7,"b":8}]
-        data = json.loads(arr)  # phải dùng dấu 2 nháy "..."
-        print(data)
-
-        for item in data:
-            print(item["a"])
-            print(item["b"])
-
-        return Response('Ok', status=status.HTTP_200_OK)
+# class TestSendArr(viewsets.ViewSet, generics.CreateAPIView):
+#     queryset = Criteria.objects.all()
+#     serializer_class = serializers.CriteriaSerializers
+#
+#     def create(self, request, *args, **kwargs):
+#         arr = request.data.get('arr')  # đầu vào mẫu [{"a": 1,"b":2},{"a": 3,"b":4},{"a": 5,"b":6},{"a": 7,"b":8}]
+#         data = json.loads(arr)  # phải dùng dấu 2 nháy "..."
+#         print(data)
+#
+#         for item in data:
+#             print(item["a"])
+#             print(item["b"])
+#
+#         return Response('Ok', status=status.HTTP_200_OK)

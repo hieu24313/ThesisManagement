@@ -53,7 +53,7 @@ router.register('update-committee-and-member', views.UpdateThesisDefenseCommitte
 router.register('add-or-update-score', views.AddOrUpdateManyScoreViewSet,
                 basename='add-or-update-score')
 
-router.register('a', views.TestSendArr)
+# router.register('a', views.TestSendArr)
 urlpatterns = [
     # path('swagger/', views.swagger_redirect, name='swagger'),
     path('', lambda _: redirect('/swagger/')),
