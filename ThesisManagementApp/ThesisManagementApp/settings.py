@@ -15,6 +15,8 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
+import ThesisManagementApp
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,6 +37,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,9 +49,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'oauth2_provider',
     'corsheaders',
-    'cloudinary'
+    'cloudinary',
+    'channels'
 ]
-
+ASGI_APPLICATION = 'ThesisManagementApp.asgi.application'
 CKEDITOR_UPLOAD_PATH = "ckeditor/images/"
 
 MIDDLEWARE = [
@@ -176,5 +180,34 @@ cloudinary.config(
     api_key="845545783724776",
     api_secret="qpXCeoAFOiuT0F_M0sY01YeO91s"
 )
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Use this for development
+        # "BACKEND": "channels_redis.core.RedisChannelLayer",  # Use this for production
+        # "CONFIG": {
+        #     "hosts": [("127.0.0.1", 6379)],
+        # },
+    },
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        'django.channels': {
+            'level': 'DEBUG',
+        },
+    },
+}
 
 

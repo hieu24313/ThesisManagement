@@ -4,7 +4,7 @@ from django.urls import path, include
 from django.urls import path, include
 from rest_framework import routers
 # from ThesisManagementApp.ThesisManagement import views
-from . import views
+from . import views, consumers
 
 router = routers.DefaultRouter()
 # router.register('swagger', views.swagger_redirect, basename='swagger')
@@ -57,5 +57,6 @@ router.register('add-or-update-score', views.AddOrUpdateManyScoreViewSet,
 urlpatterns = [
     # path('swagger/', views.swagger_redirect, name='swagger'),
     path('', lambda _: redirect('/swagger/')),
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    # path('', include(websocket_urlpatterns))
 ]

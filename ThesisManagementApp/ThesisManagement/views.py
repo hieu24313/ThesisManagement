@@ -232,16 +232,16 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @action(detail=False, methods=['GET'])
-    def status(self, request, pk=None):
-        try:
-            thesis = Thesis.objects.get(pk=pk)
-        except Thesis.DoesNotExist:
-            return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = serializers.ThesisSerializers(thesis)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # @action(detail=False, methods=['GET'])
+    # def status(self, request, pk=None):
+    #     try:
+    #         thesis = Thesis.objects.get(pk=pk)
+    #     except Thesis.DoesNotExist:
+    #         return Response({"detail": "Thesis not found"}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     serializer = serializers.ThesisSerializers(thesis)
+    #
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['GET'], url_name='score', detail=True)
     def score(self, request, pk):

@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `auth_group`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `auth_group` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -78,13 +78,13 @@ DROP TABLE IF EXISTS `auth_permission`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `auth_permission` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `content_type_id` int NOT NULL,
-  `codename` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codename` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +93,7 @@ CREATE TABLE `auth_permission` (
 
 LOCK TABLES `auth_permission` WRITE;
 /*!40000 ALTER TABLE `auth_permission` DISABLE KEYS */;
-INSERT INTO `auth_permission` VALUES (1,'Can add log entry',1,'add_logentry'),(2,'Can change log entry',1,'change_logentry'),(3,'Can delete log entry',1,'delete_logentry'),(4,'Can view log entry',1,'view_logentry'),(5,'Can add permission',2,'add_permission'),(6,'Can change permission',2,'change_permission'),(7,'Can delete permission',2,'delete_permission'),(8,'Can view permission',2,'view_permission'),(9,'Can add group',3,'add_group'),(10,'Can change group',3,'change_group'),(11,'Can delete group',3,'delete_group'),(12,'Can view group',3,'view_group'),(13,'Can add content type',4,'add_contenttype'),(14,'Can change content type',4,'change_contenttype'),(15,'Can delete content type',4,'delete_contenttype'),(16,'Can view content type',4,'view_contenttype'),(17,'Can add session',5,'add_session'),(18,'Can change session',5,'change_session'),(19,'Can delete session',5,'delete_session'),(20,'Can view session',5,'view_session'),(21,'Can add user',6,'add_user'),(22,'Can change user',6,'change_user'),(23,'Can delete user',6,'delete_user'),(24,'Can view user',6,'view_user'),(25,'Can add criteria',7,'add_criteria'),(26,'Can change criteria',7,'change_criteria'),(27,'Can delete criteria',7,'delete_criteria'),(28,'Can view criteria',7,'view_criteria'),(29,'Can add member of thesis defense committee',8,'add_memberofthesisdefensecommittee'),(30,'Can change member of thesis defense committee',8,'change_memberofthesisdefensecommittee'),(31,'Can delete member of thesis defense committee',8,'delete_memberofthesisdefensecommittee'),(32,'Can view member of thesis defense committee',8,'view_memberofthesisdefensecommittee'),(33,'Can add position',9,'add_position'),(34,'Can change position',9,'change_position'),(35,'Can delete position',9,'delete_position'),(36,'Can view position',9,'view_position'),(37,'Can add status thesis',10,'add_statusthesis'),(38,'Can change status thesis',10,'change_statusthesis'),(39,'Can delete status thesis',10,'delete_statusthesis'),(40,'Can view status thesis',10,'view_statusthesis'),(41,'Can add thesis',11,'add_thesis'),(42,'Can change thesis',11,'change_thesis'),(43,'Can delete thesis',11,'delete_thesis'),(44,'Can view thesis',11,'view_thesis'),(45,'Can add thesis defense committee',12,'add_thesisdefensecommittee'),(46,'Can change thesis defense committee',12,'change_thesisdefensecommittee'),(47,'Can delete thesis defense committee',12,'delete_thesisdefensecommittee'),(48,'Can view thesis defense committee',12,'view_thesisdefensecommittee'),(49,'Can add thesis supervisor',13,'add_thesissupervisor'),(50,'Can change thesis supervisor',13,'change_thesissupervisor'),(51,'Can delete thesis supervisor',13,'delete_thesissupervisor'),(52,'Can view thesis supervisor',13,'view_thesissupervisor'),(53,'Can add thesis student',14,'add_thesisstudent'),(54,'Can change thesis student',14,'change_thesisstudent'),(55,'Can delete thesis student',14,'delete_thesisstudent'),(56,'Can view thesis student',14,'view_thesisstudent'),(57,'Can add thesis examination committee',15,'add_thesisexaminationcommittee'),(58,'Can change thesis examination committee',15,'change_thesisexaminationcommittee'),(59,'Can delete thesis examination committee',15,'delete_thesisexaminationcommittee'),(60,'Can view thesis examination committee',15,'view_thesisexaminationcommittee'),(61,'Can add score',16,'add_score'),(62,'Can change score',16,'change_score'),(63,'Can delete score',16,'delete_score'),(64,'Can view score',16,'view_score'),(65,'Can add role',17,'add_role'),(66,'Can change role',17,'change_role'),(67,'Can delete role',17,'delete_role'),(68,'Can view role',17,'view_role'),(69,'Can add majors',18,'add_majors'),(70,'Can change majors',18,'change_majors'),(71,'Can delete majors',18,'delete_majors'),(72,'Can view majors',18,'view_majors'),(73,'Can add application',19,'add_application'),(74,'Can change application',19,'change_application'),(75,'Can delete application',19,'delete_application'),(76,'Can view application',19,'view_application'),(77,'Can add access token',20,'add_accesstoken'),(78,'Can change access token',20,'change_accesstoken'),(79,'Can delete access token',20,'delete_accesstoken'),(80,'Can view access token',20,'view_accesstoken'),(81,'Can add grant',21,'add_grant'),(82,'Can change grant',21,'change_grant'),(83,'Can delete grant',21,'delete_grant'),(84,'Can view grant',21,'view_grant'),(85,'Can add refresh token',22,'add_refreshtoken'),(86,'Can change refresh token',22,'change_refreshtoken'),(87,'Can delete refresh token',22,'delete_refreshtoken'),(88,'Can view refresh token',22,'view_refreshtoken'),(89,'Can add id token',23,'add_idtoken'),(90,'Can change id token',23,'change_idtoken'),(91,'Can delete id token',23,'delete_idtoken'),(92,'Can view id token',23,'view_idtoken');
+INSERT INTO `auth_permission` VALUES (1,'Can add log entry',1,'add_logentry'),(2,'Can change log entry',1,'change_logentry'),(3,'Can delete log entry',1,'delete_logentry'),(4,'Can view log entry',1,'view_logentry'),(5,'Can add permission',2,'add_permission'),(6,'Can change permission',2,'change_permission'),(7,'Can delete permission',2,'delete_permission'),(8,'Can view permission',2,'view_permission'),(9,'Can add group',3,'add_group'),(10,'Can change group',3,'change_group'),(11,'Can delete group',3,'delete_group'),(12,'Can view group',3,'view_group'),(13,'Can add content type',4,'add_contenttype'),(14,'Can change content type',4,'change_contenttype'),(15,'Can delete content type',4,'delete_contenttype'),(16,'Can view content type',4,'view_contenttype'),(17,'Can add session',5,'add_session'),(18,'Can change session',5,'change_session'),(19,'Can delete session',5,'delete_session'),(20,'Can view session',5,'view_session'),(21,'Can add user',6,'add_user'),(22,'Can change user',6,'change_user'),(23,'Can delete user',6,'delete_user'),(24,'Can view user',6,'view_user'),(25,'Can add criteria',7,'add_criteria'),(26,'Can change criteria',7,'change_criteria'),(27,'Can delete criteria',7,'delete_criteria'),(28,'Can view criteria',7,'view_criteria'),(29,'Can add member of thesis defense committee',8,'add_memberofthesisdefensecommittee'),(30,'Can change member of thesis defense committee',8,'change_memberofthesisdefensecommittee'),(31,'Can delete member of thesis defense committee',8,'delete_memberofthesisdefensecommittee'),(32,'Can view member of thesis defense committee',8,'view_memberofthesisdefensecommittee'),(33,'Can add position',9,'add_position'),(34,'Can change position',9,'change_position'),(35,'Can delete position',9,'delete_position'),(36,'Can view position',9,'view_position'),(37,'Can add status thesis',10,'add_statusthesis'),(38,'Can change status thesis',10,'change_statusthesis'),(39,'Can delete status thesis',10,'delete_statusthesis'),(40,'Can view status thesis',10,'view_statusthesis'),(41,'Can add thesis',11,'add_thesis'),(42,'Can change thesis',11,'change_thesis'),(43,'Can delete thesis',11,'delete_thesis'),(44,'Can view thesis',11,'view_thesis'),(45,'Can add thesis defense committee',12,'add_thesisdefensecommittee'),(46,'Can change thesis defense committee',12,'change_thesisdefensecommittee'),(47,'Can delete thesis defense committee',12,'delete_thesisdefensecommittee'),(48,'Can view thesis defense committee',12,'view_thesisdefensecommittee'),(49,'Can add thesis supervisor',13,'add_thesissupervisor'),(50,'Can change thesis supervisor',13,'change_thesissupervisor'),(51,'Can delete thesis supervisor',13,'delete_thesissupervisor'),(52,'Can view thesis supervisor',13,'view_thesissupervisor'),(53,'Can add thesis student',14,'add_thesisstudent'),(54,'Can change thesis student',14,'change_thesisstudent'),(55,'Can delete thesis student',14,'delete_thesisstudent'),(56,'Can view thesis student',14,'view_thesisstudent'),(57,'Can add thesis examination committee',15,'add_thesisexaminationcommittee'),(58,'Can change thesis examination committee',15,'change_thesisexaminationcommittee'),(59,'Can delete thesis examination committee',15,'delete_thesisexaminationcommittee'),(60,'Can view thesis examination committee',15,'view_thesisexaminationcommittee'),(61,'Can add score',16,'add_score'),(62,'Can change score',16,'change_score'),(63,'Can delete score',16,'delete_score'),(64,'Can view score',16,'view_score'),(65,'Can add role',17,'add_role'),(66,'Can change role',17,'change_role'),(67,'Can delete role',17,'delete_role'),(68,'Can view role',17,'view_role'),(69,'Can add majors',18,'add_majors'),(70,'Can change majors',18,'change_majors'),(71,'Can delete majors',18,'delete_majors'),(72,'Can view majors',18,'view_majors'),(73,'Can add application',19,'add_application'),(74,'Can change application',19,'change_application'),(75,'Can delete application',19,'delete_application'),(76,'Can view application',19,'view_application'),(77,'Can add access token',20,'add_accesstoken'),(78,'Can change access token',20,'change_accesstoken'),(79,'Can delete access token',20,'delete_accesstoken'),(80,'Can view access token',20,'view_accesstoken'),(81,'Can add grant',21,'add_grant'),(82,'Can change grant',21,'change_grant'),(83,'Can delete grant',21,'delete_grant'),(84,'Can view grant',21,'view_grant'),(85,'Can add refresh token',22,'add_refreshtoken'),(86,'Can change refresh token',22,'change_refreshtoken'),(87,'Can delete refresh token',22,'delete_refreshtoken'),(88,'Can view refresh token',22,'view_refreshtoken'),(89,'Can add id token',23,'add_idtoken'),(90,'Can change id token',23,'change_idtoken'),(91,'Can delete id token',23,'delete_idtoken'),(92,'Can view id token',23,'view_idtoken'),(93,'Can add user profile',24,'add_userprofile'),(94,'Can change user profile',24,'change_userprofile'),(95,'Can delete user profile',24,'delete_userprofile'),(96,'Can view user profile',24,'view_userprofile'),(97,'Can add message model',25,'add_messagemodel'),(98,'Can change message model',25,'change_messagemodel'),(99,'Can delete message model',25,'delete_messagemodel'),(100,'Can view message model',25,'view_messagemodel'),(101,'Can add room',26,'add_room'),(102,'Can change room',26,'change_room'),(103,'Can delete room',26,'delete_room'),(104,'Can view room',26,'view_room'),(105,'Can add message',27,'add_message'),(106,'Can change message',27,'change_message'),(107,'Can delete message',27,'delete_message'),(108,'Can view message',27,'view_message');
 /*!40000 ALTER TABLE `auth_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,10 +107,10 @@ DROP TABLE IF EXISTS `django_admin_log`;
 CREATE TABLE `django_admin_log` (
   `id` int NOT NULL AUTO_INCREMENT,
   `action_time` datetime(6) NOT NULL,
-  `object_id` longtext COLLATE utf8mb4_unicode_ci,
-  `object_repr` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `object_id` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `object_repr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `action_flag` smallint unsigned NOT NULL,
-  `change_message` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `change_message` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `content_type_id` int DEFAULT NULL,
   `user_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
@@ -141,11 +141,11 @@ DROP TABLE IF EXISTS `django_content_type`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `django_content_type` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `app_label` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `model` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `app_label` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,7 +154,7 @@ CREATE TABLE `django_content_type` (
 
 LOCK TABLES `django_content_type` WRITE;
 /*!40000 ALTER TABLE `django_content_type` DISABLE KEYS */;
-INSERT INTO `django_content_type` VALUES (1,'admin','logentry'),(3,'auth','group'),(2,'auth','permission'),(4,'contenttypes','contenttype'),(20,'oauth2_provider','accesstoken'),(19,'oauth2_provider','application'),(21,'oauth2_provider','grant'),(23,'oauth2_provider','idtoken'),(22,'oauth2_provider','refreshtoken'),(5,'sessions','session'),(7,'ThesisManagement','criteria'),(18,'ThesisManagement','majors'),(8,'ThesisManagement','memberofthesisdefensecommittee'),(9,'ThesisManagement','position'),(17,'ThesisManagement','role'),(16,'ThesisManagement','score'),(10,'ThesisManagement','statusthesis'),(11,'ThesisManagement','thesis'),(12,'ThesisManagement','thesisdefensecommittee'),(15,'ThesisManagement','thesisexaminationcommittee'),(14,'ThesisManagement','thesisstudent'),(13,'ThesisManagement','thesissupervisor'),(6,'ThesisManagement','user');
+INSERT INTO `django_content_type` VALUES (1,'admin','logentry'),(3,'auth','group'),(2,'auth','permission'),(4,'contenttypes','contenttype'),(20,'oauth2_provider','accesstoken'),(19,'oauth2_provider','application'),(21,'oauth2_provider','grant'),(23,'oauth2_provider','idtoken'),(22,'oauth2_provider','refreshtoken'),(5,'sessions','session'),(7,'ThesisManagement','criteria'),(18,'ThesisManagement','majors'),(8,'ThesisManagement','memberofthesisdefensecommittee'),(27,'ThesisManagement','message'),(25,'ThesisManagement','messagemodel'),(9,'ThesisManagement','position'),(17,'ThesisManagement','role'),(26,'ThesisManagement','room'),(16,'ThesisManagement','score'),(10,'ThesisManagement','statusthesis'),(11,'ThesisManagement','thesis'),(12,'ThesisManagement','thesisdefensecommittee'),(15,'ThesisManagement','thesisexaminationcommittee'),(14,'ThesisManagement','thesisstudent'),(13,'ThesisManagement','thesissupervisor'),(6,'ThesisManagement','user'),(24,'ThesisManagement','userprofile');
 /*!40000 ALTER TABLE `django_content_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,11 +167,11 @@ DROP TABLE IF EXISTS `django_migrations`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `django_migrations` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `app` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `app` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2024-01-04 02:28:52.274562'),(2,'contenttypes','0002_remove_content_type_name','2024-01-04 02:28:52.326643'),(3,'auth','0001_initial','2024-01-04 02:28:52.514248'),(4,'auth','0002_alter_permission_name_max_length','2024-01-04 02:28:52.559387'),(5,'auth','0003_alter_user_email_max_length','2024-01-04 02:28:52.566184'),(6,'auth','0004_alter_user_username_opts','2024-01-04 02:28:52.573699'),(7,'auth','0005_alter_user_last_login_null','2024-01-04 02:28:52.580400'),(8,'auth','0006_require_contenttypes_0002','2024-01-04 02:28:52.583695'),(9,'auth','0007_alter_validators_add_error_messages','2024-01-04 02:28:52.589303'),(10,'auth','0008_alter_user_username_max_length','2024-01-04 02:28:52.598262'),(11,'auth','0009_alter_user_last_name_max_length','2024-01-04 02:28:52.604715'),(12,'auth','0010_alter_group_name_max_length','2024-01-04 02:28:52.617509'),(13,'auth','0011_update_proxy_permissions','2024-01-04 02:28:52.624953'),(14,'auth','0012_alter_user_first_name_max_length','2024-01-04 02:28:52.632441'),(15,'ThesisManagement','0001_initial','2024-01-04 02:28:53.436992'),(16,'ThesisManagement','0002_user_avatar_user_phone_alter_criteria_name_and_more','2024-01-04 02:28:53.587152'),(17,'ThesisManagement','0003_delete_criteria_and_more','2024-01-04 02:28:54.212169'),(18,'ThesisManagement','0004_alter_user_groups_alter_user_user_permissions','2024-01-04 02:28:54.221932'),(19,'ThesisManagement','0005_criteria_memberofthesisdefensecommittee_position_and_more','2024-01-04 02:28:54.861509'),(20,'ThesisManagement','0006_alter_user_groups_alter_user_user_permissions','2024-01-04 02:28:54.879354'),(21,'ThesisManagement','0007_score_thesis','2024-01-04 02:28:54.935559'),(22,'ThesisManagement','0008_alter_user_avatar_alter_user_phone','2024-01-04 02:28:54.952425'),(23,'ThesisManagement','0009_user_role','2024-01-04 02:28:54.999423'),(24,'ThesisManagement','0010_role_alter_user_role','2024-01-04 02:28:55.185389'),(25,'ThesisManagement','0011_alter_user_role','2024-01-04 02:28:55.315532'),(26,'ThesisManagement','0012_alter_user_role','2024-01-04 02:28:55.367316'),(27,'ThesisManagement','0013_alter_user_role','2024-01-04 02:28:55.378403'),(28,'ThesisManagement','0014_alter_user_role','2024-01-04 02:28:55.387128'),(29,'ThesisManagement','0015_remove_thesisexaminationcommittee_committee_and_more','2024-01-04 02:28:55.584320'),(30,'ThesisManagement','0016_thesis_status','2024-01-04 02:28:55.655875'),(31,'ThesisManagement','0017_remove_thesisdefensecommittee_thesis_and_more','2024-01-04 02:28:55.780422'),(32,'ThesisManagement','0018_remove_thesis_committee_thesis_committee','2024-01-04 02:28:55.849941'),(33,'ThesisManagement','0019_alter_user_avatar','2024-01-04 02:28:55.953662'),(34,'ThesisManagement','0020_rename_memberofcommittee_score_lecturer_and_more','2024-01-04 02:28:56.106985'),(35,'ThesisManagement','0021_score_criteria','2024-01-04 02:28:56.163238'),(36,'ThesisManagement','0022_alter_score_lecturer_alter_score_student','2024-01-04 02:28:56.372392'),(37,'ThesisManagement','0023_alter_score_score','2024-01-04 02:28:56.420818'),(38,'ThesisManagement','0024_majors_alter_user_role_thesis_major_user_major','2024-01-04 02:28:56.623785'),(39,'ThesisManagement','0025_user_temp_password','2024-01-04 02:28:56.654122'),(40,'ThesisManagement','0026_thesisstudent_total_alter_score_score','2024-01-04 02:28:56.721073'),(41,'admin','0001_initial','2024-01-04 02:28:56.820461'),(42,'admin','0002_logentry_remove_auto_add','2024-01-04 02:28:56.830421'),(43,'admin','0003_logentry_add_action_flag_choices','2024-01-04 02:28:56.839969'),(44,'oauth2_provider','0001_initial','2024-01-04 02:28:57.439011'),(45,'oauth2_provider','0002_auto_20190406_1805','2024-01-04 02:28:57.493662'),(46,'oauth2_provider','0003_auto_20201211_1314','2024-01-04 02:28:57.540925'),(47,'oauth2_provider','0004_auto_20200902_2022','2024-01-04 02:28:57.889105'),(48,'oauth2_provider','0005_auto_20211222_2352','2024-01-04 02:28:57.955322'),(49,'oauth2_provider','0006_alter_application_client_secret','2024-01-04 02:28:57.982934'),(50,'oauth2_provider','0007_application_post_logout_redirect_uris','2024-01-04 02:28:58.056041'),(51,'sessions','0001_initial','2024-01-04 02:28:58.092766'),(52,'ThesisManagement','0027_alter_user_avatar','2024-01-04 02:43:57.386364'),(53,'ThesisManagement','0028_thesissupervisor_type_user_address_and_more','2024-01-07 05:58:17.116187');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2024-01-04 02:28:52.274562'),(2,'contenttypes','0002_remove_content_type_name','2024-01-04 02:28:52.326643'),(3,'auth','0001_initial','2024-01-04 02:28:52.514248'),(4,'auth','0002_alter_permission_name_max_length','2024-01-04 02:28:52.559387'),(5,'auth','0003_alter_user_email_max_length','2024-01-04 02:28:52.566184'),(6,'auth','0004_alter_user_username_opts','2024-01-04 02:28:52.573699'),(7,'auth','0005_alter_user_last_login_null','2024-01-04 02:28:52.580400'),(8,'auth','0006_require_contenttypes_0002','2024-01-04 02:28:52.583695'),(9,'auth','0007_alter_validators_add_error_messages','2024-01-04 02:28:52.589303'),(10,'auth','0008_alter_user_username_max_length','2024-01-04 02:28:52.598262'),(11,'auth','0009_alter_user_last_name_max_length','2024-01-04 02:28:52.604715'),(12,'auth','0010_alter_group_name_max_length','2024-01-04 02:28:52.617509'),(13,'auth','0011_update_proxy_permissions','2024-01-04 02:28:52.624953'),(14,'auth','0012_alter_user_first_name_max_length','2024-01-04 02:28:52.632441'),(15,'ThesisManagement','0001_initial','2024-01-04 02:28:53.436992'),(16,'ThesisManagement','0002_user_avatar_user_phone_alter_criteria_name_and_more','2024-01-04 02:28:53.587152'),(17,'ThesisManagement','0003_delete_criteria_and_more','2024-01-04 02:28:54.212169'),(18,'ThesisManagement','0004_alter_user_groups_alter_user_user_permissions','2024-01-04 02:28:54.221932'),(19,'ThesisManagement','0005_criteria_memberofthesisdefensecommittee_position_and_more','2024-01-04 02:28:54.861509'),(20,'ThesisManagement','0006_alter_user_groups_alter_user_user_permissions','2024-01-04 02:28:54.879354'),(21,'ThesisManagement','0007_score_thesis','2024-01-04 02:28:54.935559'),(22,'ThesisManagement','0008_alter_user_avatar_alter_user_phone','2024-01-04 02:28:54.952425'),(23,'ThesisManagement','0009_user_role','2024-01-04 02:28:54.999423'),(24,'ThesisManagement','0010_role_alter_user_role','2024-01-04 02:28:55.185389'),(25,'ThesisManagement','0011_alter_user_role','2024-01-04 02:28:55.315532'),(26,'ThesisManagement','0012_alter_user_role','2024-01-04 02:28:55.367316'),(27,'ThesisManagement','0013_alter_user_role','2024-01-04 02:28:55.378403'),(28,'ThesisManagement','0014_alter_user_role','2024-01-04 02:28:55.387128'),(29,'ThesisManagement','0015_remove_thesisexaminationcommittee_committee_and_more','2024-01-04 02:28:55.584320'),(30,'ThesisManagement','0016_thesis_status','2024-01-04 02:28:55.655875'),(31,'ThesisManagement','0017_remove_thesisdefensecommittee_thesis_and_more','2024-01-04 02:28:55.780422'),(32,'ThesisManagement','0018_remove_thesis_committee_thesis_committee','2024-01-04 02:28:55.849941'),(33,'ThesisManagement','0019_alter_user_avatar','2024-01-04 02:28:55.953662'),(34,'ThesisManagement','0020_rename_memberofcommittee_score_lecturer_and_more','2024-01-04 02:28:56.106985'),(35,'ThesisManagement','0021_score_criteria','2024-01-04 02:28:56.163238'),(36,'ThesisManagement','0022_alter_score_lecturer_alter_score_student','2024-01-04 02:28:56.372392'),(37,'ThesisManagement','0023_alter_score_score','2024-01-04 02:28:56.420818'),(38,'ThesisManagement','0024_majors_alter_user_role_thesis_major_user_major','2024-01-04 02:28:56.623785'),(39,'ThesisManagement','0025_user_temp_password','2024-01-04 02:28:56.654122'),(40,'ThesisManagement','0026_thesisstudent_total_alter_score_score','2024-01-04 02:28:56.721073'),(41,'admin','0001_initial','2024-01-04 02:28:56.820461'),(42,'admin','0002_logentry_remove_auto_add','2024-01-04 02:28:56.830421'),(43,'admin','0003_logentry_add_action_flag_choices','2024-01-04 02:28:56.839969'),(44,'oauth2_provider','0001_initial','2024-01-04 02:28:57.439011'),(45,'oauth2_provider','0002_auto_20190406_1805','2024-01-04 02:28:57.493662'),(46,'oauth2_provider','0003_auto_20201211_1314','2024-01-04 02:28:57.540925'),(47,'oauth2_provider','0004_auto_20200902_2022','2024-01-04 02:28:57.889105'),(48,'oauth2_provider','0005_auto_20211222_2352','2024-01-04 02:28:57.955322'),(49,'oauth2_provider','0006_alter_application_client_secret','2024-01-04 02:28:57.982934'),(50,'oauth2_provider','0007_application_post_logout_redirect_uris','2024-01-04 02:28:58.056041'),(51,'sessions','0001_initial','2024-01-04 02:28:58.092766'),(52,'ThesisManagement','0027_alter_user_avatar','2024-01-04 02:43:57.386364'),(53,'ThesisManagement','0028_thesissupervisor_type_user_address_and_more','2024-01-07 05:58:17.116187'),(54,'ThesisManagement','0029_alter_user_date_of_birth','2024-01-17 06:45:11.317615'),(55,'ThesisManagement','0030_userprofile_messagemodel','2024-01-17 06:45:11.554109'),(56,'ThesisManagement','0030_room_message','2024-01-17 09:04:01.000010');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -192,8 +192,8 @@ DROP TABLE IF EXISTS `django_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `django_session` (
-  `session_key` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `session_data` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `session_key` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `session_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expire_date` datetime(6) NOT NULL,
   PRIMARY KEY (`session_key`),
   KEY `django_session_expire_date_a5c62663` (`expire_date`)
@@ -219,9 +219,9 @@ DROP TABLE IF EXISTS `oauth2_provider_accesstoken`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `oauth2_provider_accesstoken` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expires` datetime(6) NOT NULL,
-  `scope` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `scope` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `application_id` bigint DEFAULT NULL,
   `user_id` bigint DEFAULT NULL,
   `created` datetime(6) NOT NULL,
@@ -238,7 +238,7 @@ CREATE TABLE `oauth2_provider_accesstoken` (
   CONSTRAINT `oauth2_provider_acce_id_token_id_85db651b_fk_oauth2_pr` FOREIGN KEY (`id_token_id`) REFERENCES `oauth2_provider_idtoken` (`id`),
   CONSTRAINT `oauth2_provider_acce_source_refresh_token_e66fbc72_fk_oauth2_pr` FOREIGN KEY (`source_refresh_token_id`) REFERENCES `oauth2_provider_refreshtoken` (`id`),
   CONSTRAINT `oauth2_provider_acce_user_id_6e4c9a65_fk_ThesisMan` FOREIGN KEY (`user_id`) REFERENCES `thesismanagement_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -247,7 +247,7 @@ CREATE TABLE `oauth2_provider_accesstoken` (
 
 LOCK TABLES `oauth2_provider_accesstoken` WRITE;
 /*!40000 ALTER TABLE `oauth2_provider_accesstoken` DISABLE KEYS */;
-INSERT INTO `oauth2_provider_accesstoken` VALUES (1,'t1FjfnEkCCa9yMG1qNZzzPBBGSb43L','2024-01-04 13:00:25.726908','read write',1,1,'2024-01-04 03:00:25.726908','2024-01-04 03:00:25.726908',NULL,NULL),(2,'EeD6VTNp2L11hyFzg1VG7wCOtpnemQ','2024-01-04 14:58:28.507926','read write',1,1,'2024-01-04 04:58:28.507926','2024-01-04 04:58:28.507926',NULL,NULL),(3,'JvcJjQr8cyauTu3cGrFkHw9H4v573s','2024-01-04 15:00:54.326523','read write',1,1,'2024-01-04 05:00:54.327486','2024-01-04 05:00:54.327486',NULL,NULL),(4,'PO3OL7wfJAk082vhpNrXpOUudVipqz','2024-01-04 15:15:25.707755','read write',1,1,'2024-01-04 05:15:25.707755','2024-01-04 05:15:25.707755',NULL,NULL),(5,'2RkLkHK1hgzlAOAe4RMnT3pufHh73v','2024-01-04 15:38:15.527567','read write',1,1,'2024-01-04 05:38:15.527567','2024-01-04 05:38:15.527567',NULL,NULL),(6,'xVMknFeDl2yK7g3h4WSytRHcpfCPQS','2024-01-04 16:33:45.761732','read write',1,1,'2024-01-04 06:33:45.761732','2024-01-04 06:33:45.761732',NULL,NULL),(7,'sXLmKAlvUb2TxvQSLuuroeZMmobk3P','2024-01-04 16:42:59.754286','read write',1,1,'2024-01-04 06:42:59.754286','2024-01-04 06:42:59.754286',NULL,NULL),(8,'v87hI4hgUtZQW0aI6aslthb6Mzmq5F','2024-01-04 16:43:24.504966','read write',1,1,'2024-01-04 06:43:24.504966','2024-01-04 06:43:24.504966',NULL,NULL),(9,'ga4XDmsVXuZdj6OFZxPIUeBfqluOfk','2024-01-04 16:44:33.872057','read write',1,1,'2024-01-04 06:44:33.872057','2024-01-04 06:44:33.872057',NULL,NULL),(10,'7ZEEfJl3TNAkPrmgp4eLSUNAR2YUN1','2024-01-04 16:45:34.377491','read write',1,1,'2024-01-04 06:45:34.377491','2024-01-04 06:45:34.377491',NULL,NULL),(11,'hEc7OMuC8qcb2El52QuK5rfpVkPNkS','2024-01-04 16:46:17.829470','read write',1,1,'2024-01-04 06:46:17.829470','2024-01-04 06:46:17.829470',NULL,NULL),(12,'UJ85bkYWPO8uh5AQCDnq5wLJzn1jXX','2024-01-04 16:52:01.894258','read write',1,1,'2024-01-04 06:52:01.894258','2024-01-04 06:52:01.894258',NULL,NULL),(13,'wv9UuF4xC4DfwBjQ8gGL7R6vxWC6Kz','2024-01-04 16:52:29.485949','read write',1,1,'2024-01-04 06:52:29.485949','2024-01-04 06:52:29.485949',NULL,NULL),(14,'1pscWQo5rj3Iokh6eatuMAxmoCDlEY','2024-01-04 16:57:48.117984','read write',1,1,'2024-01-04 06:57:48.117984','2024-01-04 06:57:48.117984',NULL,NULL),(15,'DMOOqqzVVtE94OtJMwXr8XhyF3iHXI','2024-01-04 17:01:57.012047','read write',1,1,'2024-01-04 07:01:57.013553','2024-01-04 07:01:57.013553',NULL,NULL),(16,'G0vCbbNptUsZe1GnbqruLEbdbzccrM','2024-01-04 17:02:21.533198','read write',1,1,'2024-01-04 07:02:21.533198','2024-01-04 07:02:21.533198',NULL,NULL),(17,'3Kbsvki4KC3pHpk8FKdxh0jElXzoHU','2024-01-04 17:04:20.546785','read write',1,1,'2024-01-04 07:04:20.546785','2024-01-04 07:04:20.546785',NULL,NULL),(18,'LPD5SO5E3MpViNC9fKKHQh2tPfUED3','2024-01-04 17:05:08.695878','read write',1,1,'2024-01-04 07:05:08.696844','2024-01-04 07:05:08.696844',NULL,NULL),(19,'oiTJKTGfQcKekCme5KhlC3AZwhkT8r','2024-01-04 17:05:52.626915','read write',1,1,'2024-01-04 07:05:52.627913','2024-01-04 07:05:52.627913',NULL,NULL),(20,'ScmaW8oyoX8Un2cAYhxm15mfaTrNnP','2024-01-04 17:06:37.327481','read write',1,1,'2024-01-04 07:06:37.327481','2024-01-04 07:06:37.327481',NULL,NULL),(21,'pitzb9btQKjqQaT4DFuMBqegc5wlzY','2024-01-04 17:07:21.650107','read write',1,1,'2024-01-04 07:07:21.650107','2024-01-04 07:07:21.650107',NULL,NULL),(22,'l3KEJQ4y5BiTA01FSlA68e7nz12WLu','2024-01-04 17:09:01.765238','read write',1,1,'2024-01-04 07:09:01.765238','2024-01-04 07:09:01.765238',NULL,NULL),(23,'mjC4uIhiWTd4Gz3fiCacSUg0Qh9FIw','2024-01-04 17:09:17.482452','read write',1,1,'2024-01-04 07:09:17.482452','2024-01-04 07:09:17.482452',NULL,NULL),(24,'vDsqBFhHVpBoaFFWYjrU3Z39TtGsFA','2024-01-04 17:10:07.067477','read write',1,1,'2024-01-04 07:10:07.068436','2024-01-04 07:10:07.068436',NULL,NULL),(25,'OkntC7i31kdAj42GvMGaUsP1G5gbLn','2024-01-04 17:43:36.372706','read write',1,1,'2024-01-04 07:43:36.372706','2024-01-04 07:43:36.372706',NULL,NULL),(26,'bfvpC6vEB2JDxuUAqjTic6PEl83mzc','2024-01-04 17:46:02.614329','read write',1,1,'2024-01-04 07:46:02.614329','2024-01-04 07:46:02.614329',NULL,NULL),(27,'ClQ87lLiKNPLUJO0bYrCWf4DlibreC','2024-01-04 18:04:35.832640','read write',1,35,'2024-01-04 08:04:35.832640','2024-01-04 08:04:35.832640',NULL,NULL),(28,'DK42hnGQqG3DKoybqOacPmEKIQN1Gq','2024-01-04 18:15:14.007759','read write',1,39,'2024-01-04 08:15:14.008758','2024-01-04 08:15:14.008758',NULL,NULL),(29,'kkSredOdLsA16wjOsugwDg1lT4KHrS','2024-01-04 18:40:05.459705','read write',1,41,'2024-01-04 08:40:05.460703','2024-01-04 08:40:05.460703',NULL,NULL),(30,'UZy7QfBLguSrirAJZGMwl72YleP6GK','2024-01-04 18:53:54.942196','read write',1,38,'2024-01-04 08:53:54.942196','2024-01-04 08:53:54.942196',NULL,NULL),(31,'gZkH9JMTqsDJkImc0TQ6SrxLvhPcfZ','2024-01-04 18:55:57.289264','read write',1,38,'2024-01-04 08:55:57.289264','2024-01-04 08:55:57.289264',NULL,NULL),(32,'79uwUk8DpX9s6ewnmAtQSSQSuUGaTy','2024-01-04 18:57:24.897957','read write',1,38,'2024-01-04 08:57:24.897957','2024-01-04 08:57:24.897957',NULL,NULL),(33,'V5lanUPiqFVCK4kmGd3C1b7ySgpaCd','2024-01-04 18:57:55.885378','read write',1,38,'2024-01-04 08:57:55.885378','2024-01-04 08:57:55.885378',NULL,NULL),(34,'p1mzQe29Cxnis5Uo4JjVmu6g1i9yDK','2024-01-04 19:17:49.278164','read write',1,1,'2024-01-04 09:17:49.278164','2024-01-04 09:17:49.279247',NULL,NULL),(35,'VZKmHGyzWvJDMk2BxLEMl9BbqHCJ4E','2024-01-07 15:44:17.863210','read write',1,41,'2024-01-07 05:44:17.863210','2024-01-07 05:44:17.863210',NULL,NULL),(36,'EshWc2qea8fSSCggGuNd8YQy8VHISx','2024-01-07 18:06:09.359589','read write',1,1,'2024-01-07 08:06:09.359589','2024-01-07 08:06:09.359589',NULL,NULL),(37,'1hV3edTqS5hi3oe8ULOFRUJbO1VFNX','2024-01-12 13:35:17.288212','read write',1,1,'2024-01-12 03:35:17.290677','2024-01-12 03:35:17.290677',NULL,NULL),(38,'jPFHa5VomWioOQ2qI92Qr3mZKZRQLT','2024-01-12 15:49:29.849906','read write',1,1,'2024-01-12 05:49:29.849906','2024-01-12 05:49:29.849906',NULL,NULL),(39,'N8oX5HGMBVVpOyjNtzAOPJDJ77G47G','2024-01-12 15:58:46.195671','read write',1,1,'2024-01-12 05:58:46.197725','2024-01-12 05:58:46.197725',NULL,NULL),(40,'SPCFT2J6s60Fami7fqGoxP0TvCVFRv','2024-01-12 16:06:34.395056','read write',1,1,'2024-01-12 06:06:34.396056','2024-01-12 06:06:34.396056',NULL,NULL),(41,'vCIBSqPJvRLfgQDtz0Z5LjOGFiW5Yd','2024-01-12 16:14:54.066716','read write',1,1,'2024-01-12 06:14:54.066716','2024-01-12 06:14:54.066716',NULL,NULL),(42,'MRrKyvsdpC0uaCSQ9xfh2A5DixDI9x','2024-01-12 16:23:14.813782','read write',1,1,'2024-01-12 06:23:14.813782','2024-01-12 06:23:14.813782',NULL,NULL),(43,'NYjGo3xxKGiA6mTyhct8Hf6isknJqI','2024-01-12 16:30:18.097372','read write',1,1,'2024-01-12 06:30:18.097372','2024-01-12 06:30:18.097372',NULL,NULL),(44,'U5864ggVuJqOrwov1dpiQhnRdj6KgE','2024-01-12 16:44:54.356496','read write',1,1,'2024-01-12 06:44:54.356496','2024-01-12 06:44:54.356496',NULL,NULL),(45,'SRal5vperHRnqdGDVDNcDpXArZMTDt','2024-01-12 17:33:15.917751','read write',1,1,'2024-01-12 07:33:15.917751','2024-01-12 07:33:15.917751',NULL,NULL),(46,'1pGW3l8ZlgP3MFt1SwmqlUWWcAWwoo','2024-01-12 17:37:57.689240','read write',1,1,'2024-01-12 07:37:57.689240','2024-01-12 07:37:57.689240',NULL,NULL),(47,'6pTVGCFQ5iNryliqMk0f20k5qsWJjX','2024-01-12 17:38:53.841895','read write',1,1,'2024-01-12 07:38:53.841895','2024-01-12 07:38:53.841895',NULL,NULL),(48,'WkSr0o4f6qUK9nWvche9jKv6i5jqSC','2024-01-12 17:42:41.447064','read write',1,1,'2024-01-12 07:42:41.448075','2024-01-12 07:42:41.448075',NULL,NULL),(49,'pIMMG2jTNC6olWhI1oK4sRzLhinOg5','2024-01-12 17:48:00.704926','read write',1,1,'2024-01-12 07:48:00.705888','2024-01-12 07:48:00.705888',NULL,NULL),(50,'Kvs838r4KNuuhJeX1BVF0P9PCfbuL6','2024-01-12 17:58:50.985414','read write',1,1,'2024-01-12 07:58:50.985414','2024-01-12 07:58:50.985414',NULL,NULL),(51,'zkCshYAPqqNdcFp7p5Rf5ujF9T8pTI','2024-01-12 18:03:42.593082','read write',1,1,'2024-01-12 08:03:42.593082','2024-01-12 08:03:42.593082',NULL,NULL),(52,'fECyqZxRa59zllKAbfOHOt5HGrPOIC','2024-01-12 18:12:02.869760','read write',1,1,'2024-01-12 08:12:02.869760','2024-01-12 08:12:02.869760',NULL,NULL),(53,'5Ik8Nh2HG4sV6Kp29CRPp84tsQFnr5','2024-01-12 18:13:20.852085','read write',1,1,'2024-01-12 08:13:20.852085','2024-01-12 08:13:20.852085',NULL,NULL),(54,'qnU987mdDxKZBFud5nKFTQc60SXtBm','2024-01-12 18:45:39.949724','read write',1,1,'2024-01-12 08:45:39.950716','2024-01-12 08:45:39.950716',NULL,NULL),(55,'eOc7oQE2q8m1yiuaJj6fvOGycnbXoI','2024-01-12 18:46:23.044421','read write',1,1,'2024-01-12 08:46:23.044421','2024-01-12 08:46:23.044421',NULL,NULL),(56,'gY0bhfEybQN6T4zhP2TQKR5O0J8ShE','2024-01-12 18:46:52.723450','read write',1,1,'2024-01-12 08:46:52.723450','2024-01-12 08:46:52.723450',NULL,NULL),(57,'XVQGYhRrM86tTQ17AT7LUmSg582u5f','2024-01-12 18:47:57.861213','read write',1,1,'2024-01-12 08:47:57.862210','2024-01-12 08:47:57.862210',NULL,NULL),(58,'80mzKtMtjM4UCJVXXQAiyEI0HztRuX','2024-01-12 18:49:58.185399','read write',1,1,'2024-01-12 08:49:58.185399','2024-01-12 08:49:58.185399',NULL,NULL),(59,'z1AEYzjtAfS67tlB6PeMJNm9sAVA6N','2024-01-12 18:56:42.090579','read write',1,1,'2024-01-12 08:56:42.090579','2024-01-12 08:56:42.090579',NULL,NULL),(60,'zJcP1dqkSi7EHml1FGPmdKGT4EvaVc','2024-01-12 18:59:04.636849','read write',1,1,'2024-01-12 08:59:04.636849','2024-01-12 08:59:04.636849',NULL,NULL),(61,'N18fgHSuuyoBqkegcKeB3BeonhU6fP','2024-01-12 19:00:25.230975','read write',1,1,'2024-01-12 09:00:25.230975','2024-01-12 09:00:25.230975',NULL,NULL),(62,'DkT8e2ovzAwUPMsCTlUvdFpTNxuJiW','2024-01-12 19:04:10.540914','read write',1,1,'2024-01-12 09:04:10.540914','2024-01-12 09:04:10.540914',NULL,NULL),(63,'9d8g2xLlYZypCqmvg8kgqNb3f6kNyR','2024-01-12 19:06:22.946728','read write',1,1,'2024-01-12 09:06:22.946728','2024-01-12 09:06:22.946728',NULL,NULL),(64,'DXuKhqCkpKluC1YiEg4YxQdWJS7diS','2024-01-12 19:19:08.293776','read write',1,1,'2024-01-12 09:19:08.294774','2024-01-12 09:19:08.294774',NULL,NULL),(65,'KI5d9TBf2DUjL7urjzZMX2a0mVHkas','2024-01-12 19:19:59.715935','read write',1,1,'2024-01-12 09:19:59.716933','2024-01-12 09:19:59.716933',NULL,NULL),(66,'htL9rMfo1j13SdG9EVZDEzXgkMNGDU','2024-01-12 19:33:15.337192','read write',1,1,'2024-01-12 09:33:15.337192','2024-01-12 09:33:15.337192',NULL,NULL),(67,'C46fLy7UAN3NHefiT5EM2AyFiO6Gpd','2024-01-12 19:38:10.549604','read write',1,1,'2024-01-12 09:38:10.549604','2024-01-12 09:38:10.549604',NULL,NULL),(68,'cD2zn3QJluCROjF9mG7kXKbuJGCS6w','2024-01-12 19:45:07.375864','read write',1,1,'2024-01-12 09:45:07.375864','2024-01-12 09:45:07.375864',NULL,NULL),(69,'gpFSRyxyIW5ehezJVVmCv74iAjceRX','2024-01-12 19:50:20.358961','read write',1,1,'2024-01-12 09:50:20.358961','2024-01-12 09:50:20.358961',NULL,NULL),(70,'gQ9LyUpdGaEIvsvF4xFM9OXxOHy2z8','2024-01-12 19:53:15.844416','read write',1,1,'2024-01-12 09:53:15.844416','2024-01-12 09:53:15.844416',NULL,NULL),(71,'9VexWk3pPHF6TBj6W6aj731URlrSub','2024-01-12 19:53:57.744895','read write',1,1,'2024-01-12 09:53:57.744895','2024-01-12 09:53:57.744895',NULL,NULL),(72,'0dKYXRgPVC4f99RBZwodqveRcLB7Q3','2024-01-14 15:46:45.672551','read write',1,1,'2024-01-14 05:46:45.673555','2024-01-14 05:46:45.673555',NULL,NULL),(73,'fOBFYKuGqkWutDxBDXMvoGt4szgZCb','2024-01-14 17:19:49.176048','read write',1,1,'2024-01-14 07:19:49.177073','2024-01-14 07:19:49.177073',NULL,NULL),(74,'35rRipy8ErEmoGBZo7euVAJg9SG4Qc','2024-01-14 17:20:02.759496','read write',1,35,'2024-01-14 07:20:02.759496','2024-01-14 07:20:02.759496',NULL,NULL);
+INSERT INTO `oauth2_provider_accesstoken` VALUES (1,'t1FjfnEkCCa9yMG1qNZzzPBBGSb43L','2024-01-04 13:00:25.726908','read write',1,1,'2024-01-04 03:00:25.726908','2024-01-04 03:00:25.726908',NULL,NULL),(2,'EeD6VTNp2L11hyFzg1VG7wCOtpnemQ','2024-01-04 14:58:28.507926','read write',1,1,'2024-01-04 04:58:28.507926','2024-01-04 04:58:28.507926',NULL,NULL),(3,'JvcJjQr8cyauTu3cGrFkHw9H4v573s','2024-01-04 15:00:54.326523','read write',1,1,'2024-01-04 05:00:54.327486','2024-01-04 05:00:54.327486',NULL,NULL),(4,'PO3OL7wfJAk082vhpNrXpOUudVipqz','2024-01-04 15:15:25.707755','read write',1,1,'2024-01-04 05:15:25.707755','2024-01-04 05:15:25.707755',NULL,NULL),(5,'2RkLkHK1hgzlAOAe4RMnT3pufHh73v','2024-01-04 15:38:15.527567','read write',1,1,'2024-01-04 05:38:15.527567','2024-01-04 05:38:15.527567',NULL,NULL),(6,'xVMknFeDl2yK7g3h4WSytRHcpfCPQS','2024-01-04 16:33:45.761732','read write',1,1,'2024-01-04 06:33:45.761732','2024-01-04 06:33:45.761732',NULL,NULL),(7,'sXLmKAlvUb2TxvQSLuuroeZMmobk3P','2024-01-04 16:42:59.754286','read write',1,1,'2024-01-04 06:42:59.754286','2024-01-04 06:42:59.754286',NULL,NULL),(8,'v87hI4hgUtZQW0aI6aslthb6Mzmq5F','2024-01-04 16:43:24.504966','read write',1,1,'2024-01-04 06:43:24.504966','2024-01-04 06:43:24.504966',NULL,NULL),(9,'ga4XDmsVXuZdj6OFZxPIUeBfqluOfk','2024-01-04 16:44:33.872057','read write',1,1,'2024-01-04 06:44:33.872057','2024-01-04 06:44:33.872057',NULL,NULL),(10,'7ZEEfJl3TNAkPrmgp4eLSUNAR2YUN1','2024-01-04 16:45:34.377491','read write',1,1,'2024-01-04 06:45:34.377491','2024-01-04 06:45:34.377491',NULL,NULL),(11,'hEc7OMuC8qcb2El52QuK5rfpVkPNkS','2024-01-04 16:46:17.829470','read write',1,1,'2024-01-04 06:46:17.829470','2024-01-04 06:46:17.829470',NULL,NULL),(12,'UJ85bkYWPO8uh5AQCDnq5wLJzn1jXX','2024-01-04 16:52:01.894258','read write',1,1,'2024-01-04 06:52:01.894258','2024-01-04 06:52:01.894258',NULL,NULL),(13,'wv9UuF4xC4DfwBjQ8gGL7R6vxWC6Kz','2024-01-04 16:52:29.485949','read write',1,1,'2024-01-04 06:52:29.485949','2024-01-04 06:52:29.485949',NULL,NULL),(14,'1pscWQo5rj3Iokh6eatuMAxmoCDlEY','2024-01-04 16:57:48.117984','read write',1,1,'2024-01-04 06:57:48.117984','2024-01-04 06:57:48.117984',NULL,NULL),(15,'DMOOqqzVVtE94OtJMwXr8XhyF3iHXI','2024-01-04 17:01:57.012047','read write',1,1,'2024-01-04 07:01:57.013553','2024-01-04 07:01:57.013553',NULL,NULL),(16,'G0vCbbNptUsZe1GnbqruLEbdbzccrM','2024-01-04 17:02:21.533198','read write',1,1,'2024-01-04 07:02:21.533198','2024-01-04 07:02:21.533198',NULL,NULL),(17,'3Kbsvki4KC3pHpk8FKdxh0jElXzoHU','2024-01-04 17:04:20.546785','read write',1,1,'2024-01-04 07:04:20.546785','2024-01-04 07:04:20.546785',NULL,NULL),(18,'LPD5SO5E3MpViNC9fKKHQh2tPfUED3','2024-01-04 17:05:08.695878','read write',1,1,'2024-01-04 07:05:08.696844','2024-01-04 07:05:08.696844',NULL,NULL),(19,'oiTJKTGfQcKekCme5KhlC3AZwhkT8r','2024-01-04 17:05:52.626915','read write',1,1,'2024-01-04 07:05:52.627913','2024-01-04 07:05:52.627913',NULL,NULL),(20,'ScmaW8oyoX8Un2cAYhxm15mfaTrNnP','2024-01-04 17:06:37.327481','read write',1,1,'2024-01-04 07:06:37.327481','2024-01-04 07:06:37.327481',NULL,NULL),(21,'pitzb9btQKjqQaT4DFuMBqegc5wlzY','2024-01-04 17:07:21.650107','read write',1,1,'2024-01-04 07:07:21.650107','2024-01-04 07:07:21.650107',NULL,NULL),(22,'l3KEJQ4y5BiTA01FSlA68e7nz12WLu','2024-01-04 17:09:01.765238','read write',1,1,'2024-01-04 07:09:01.765238','2024-01-04 07:09:01.765238',NULL,NULL),(23,'mjC4uIhiWTd4Gz3fiCacSUg0Qh9FIw','2024-01-04 17:09:17.482452','read write',1,1,'2024-01-04 07:09:17.482452','2024-01-04 07:09:17.482452',NULL,NULL),(24,'vDsqBFhHVpBoaFFWYjrU3Z39TtGsFA','2024-01-04 17:10:07.067477','read write',1,1,'2024-01-04 07:10:07.068436','2024-01-04 07:10:07.068436',NULL,NULL),(25,'OkntC7i31kdAj42GvMGaUsP1G5gbLn','2024-01-04 17:43:36.372706','read write',1,1,'2024-01-04 07:43:36.372706','2024-01-04 07:43:36.372706',NULL,NULL),(26,'bfvpC6vEB2JDxuUAqjTic6PEl83mzc','2024-01-04 17:46:02.614329','read write',1,1,'2024-01-04 07:46:02.614329','2024-01-04 07:46:02.614329',NULL,NULL),(27,'ClQ87lLiKNPLUJO0bYrCWf4DlibreC','2024-01-04 18:04:35.832640','read write',1,35,'2024-01-04 08:04:35.832640','2024-01-04 08:04:35.832640',NULL,NULL),(28,'DK42hnGQqG3DKoybqOacPmEKIQN1Gq','2024-01-04 18:15:14.007759','read write',1,39,'2024-01-04 08:15:14.008758','2024-01-04 08:15:14.008758',NULL,NULL),(29,'kkSredOdLsA16wjOsugwDg1lT4KHrS','2024-01-04 18:40:05.459705','read write',1,41,'2024-01-04 08:40:05.460703','2024-01-04 08:40:05.460703',NULL,NULL),(30,'UZy7QfBLguSrirAJZGMwl72YleP6GK','2024-01-04 18:53:54.942196','read write',1,38,'2024-01-04 08:53:54.942196','2024-01-04 08:53:54.942196',NULL,NULL),(31,'gZkH9JMTqsDJkImc0TQ6SrxLvhPcfZ','2024-01-04 18:55:57.289264','read write',1,38,'2024-01-04 08:55:57.289264','2024-01-04 08:55:57.289264',NULL,NULL),(32,'79uwUk8DpX9s6ewnmAtQSSQSuUGaTy','2024-01-04 18:57:24.897957','read write',1,38,'2024-01-04 08:57:24.897957','2024-01-04 08:57:24.897957',NULL,NULL),(33,'V5lanUPiqFVCK4kmGd3C1b7ySgpaCd','2024-01-04 18:57:55.885378','read write',1,38,'2024-01-04 08:57:55.885378','2024-01-04 08:57:55.885378',NULL,NULL),(34,'p1mzQe29Cxnis5Uo4JjVmu6g1i9yDK','2024-01-04 19:17:49.278164','read write',1,1,'2024-01-04 09:17:49.278164','2024-01-04 09:17:49.279247',NULL,NULL),(35,'VZKmHGyzWvJDMk2BxLEMl9BbqHCJ4E','2024-01-07 15:44:17.863210','read write',1,41,'2024-01-07 05:44:17.863210','2024-01-07 05:44:17.863210',NULL,NULL),(36,'EshWc2qea8fSSCggGuNd8YQy8VHISx','2024-01-07 18:06:09.359589','read write',1,1,'2024-01-07 08:06:09.359589','2024-01-07 08:06:09.359589',NULL,NULL),(37,'1hV3edTqS5hi3oe8ULOFRUJbO1VFNX','2024-01-12 13:35:17.288212','read write',1,1,'2024-01-12 03:35:17.290677','2024-01-12 03:35:17.290677',NULL,NULL),(38,'jPFHa5VomWioOQ2qI92Qr3mZKZRQLT','2024-01-12 15:49:29.849906','read write',1,1,'2024-01-12 05:49:29.849906','2024-01-12 05:49:29.849906',NULL,NULL),(39,'N8oX5HGMBVVpOyjNtzAOPJDJ77G47G','2024-01-12 15:58:46.195671','read write',1,1,'2024-01-12 05:58:46.197725','2024-01-12 05:58:46.197725',NULL,NULL),(40,'SPCFT2J6s60Fami7fqGoxP0TvCVFRv','2024-01-12 16:06:34.395056','read write',1,1,'2024-01-12 06:06:34.396056','2024-01-12 06:06:34.396056',NULL,NULL),(41,'vCIBSqPJvRLfgQDtz0Z5LjOGFiW5Yd','2024-01-12 16:14:54.066716','read write',1,1,'2024-01-12 06:14:54.066716','2024-01-12 06:14:54.066716',NULL,NULL),(42,'MRrKyvsdpC0uaCSQ9xfh2A5DixDI9x','2024-01-12 16:23:14.813782','read write',1,1,'2024-01-12 06:23:14.813782','2024-01-12 06:23:14.813782',NULL,NULL),(43,'NYjGo3xxKGiA6mTyhct8Hf6isknJqI','2024-01-12 16:30:18.097372','read write',1,1,'2024-01-12 06:30:18.097372','2024-01-12 06:30:18.097372',NULL,NULL),(44,'U5864ggVuJqOrwov1dpiQhnRdj6KgE','2024-01-12 16:44:54.356496','read write',1,1,'2024-01-12 06:44:54.356496','2024-01-12 06:44:54.356496',NULL,NULL),(45,'SRal5vperHRnqdGDVDNcDpXArZMTDt','2024-01-12 17:33:15.917751','read write',1,1,'2024-01-12 07:33:15.917751','2024-01-12 07:33:15.917751',NULL,NULL),(46,'1pGW3l8ZlgP3MFt1SwmqlUWWcAWwoo','2024-01-12 17:37:57.689240','read write',1,1,'2024-01-12 07:37:57.689240','2024-01-12 07:37:57.689240',NULL,NULL),(47,'6pTVGCFQ5iNryliqMk0f20k5qsWJjX','2024-01-12 17:38:53.841895','read write',1,1,'2024-01-12 07:38:53.841895','2024-01-12 07:38:53.841895',NULL,NULL),(48,'WkSr0o4f6qUK9nWvche9jKv6i5jqSC','2024-01-12 17:42:41.447064','read write',1,1,'2024-01-12 07:42:41.448075','2024-01-12 07:42:41.448075',NULL,NULL),(49,'pIMMG2jTNC6olWhI1oK4sRzLhinOg5','2024-01-12 17:48:00.704926','read write',1,1,'2024-01-12 07:48:00.705888','2024-01-12 07:48:00.705888',NULL,NULL),(50,'Kvs838r4KNuuhJeX1BVF0P9PCfbuL6','2024-01-12 17:58:50.985414','read write',1,1,'2024-01-12 07:58:50.985414','2024-01-12 07:58:50.985414',NULL,NULL),(51,'zkCshYAPqqNdcFp7p5Rf5ujF9T8pTI','2024-01-12 18:03:42.593082','read write',1,1,'2024-01-12 08:03:42.593082','2024-01-12 08:03:42.593082',NULL,NULL),(52,'fECyqZxRa59zllKAbfOHOt5HGrPOIC','2024-01-12 18:12:02.869760','read write',1,1,'2024-01-12 08:12:02.869760','2024-01-12 08:12:02.869760',NULL,NULL),(53,'5Ik8Nh2HG4sV6Kp29CRPp84tsQFnr5','2024-01-12 18:13:20.852085','read write',1,1,'2024-01-12 08:13:20.852085','2024-01-12 08:13:20.852085',NULL,NULL),(54,'qnU987mdDxKZBFud5nKFTQc60SXtBm','2024-01-12 18:45:39.949724','read write',1,1,'2024-01-12 08:45:39.950716','2024-01-12 08:45:39.950716',NULL,NULL),(55,'eOc7oQE2q8m1yiuaJj6fvOGycnbXoI','2024-01-12 18:46:23.044421','read write',1,1,'2024-01-12 08:46:23.044421','2024-01-12 08:46:23.044421',NULL,NULL),(56,'gY0bhfEybQN6T4zhP2TQKR5O0J8ShE','2024-01-12 18:46:52.723450','read write',1,1,'2024-01-12 08:46:52.723450','2024-01-12 08:46:52.723450',NULL,NULL),(57,'XVQGYhRrM86tTQ17AT7LUmSg582u5f','2024-01-12 18:47:57.861213','read write',1,1,'2024-01-12 08:47:57.862210','2024-01-12 08:47:57.862210',NULL,NULL),(58,'80mzKtMtjM4UCJVXXQAiyEI0HztRuX','2024-01-12 18:49:58.185399','read write',1,1,'2024-01-12 08:49:58.185399','2024-01-12 08:49:58.185399',NULL,NULL),(59,'z1AEYzjtAfS67tlB6PeMJNm9sAVA6N','2024-01-12 18:56:42.090579','read write',1,1,'2024-01-12 08:56:42.090579','2024-01-12 08:56:42.090579',NULL,NULL),(60,'zJcP1dqkSi7EHml1FGPmdKGT4EvaVc','2024-01-12 18:59:04.636849','read write',1,1,'2024-01-12 08:59:04.636849','2024-01-12 08:59:04.636849',NULL,NULL),(61,'N18fgHSuuyoBqkegcKeB3BeonhU6fP','2024-01-12 19:00:25.230975','read write',1,1,'2024-01-12 09:00:25.230975','2024-01-12 09:00:25.230975',NULL,NULL),(62,'DkT8e2ovzAwUPMsCTlUvdFpTNxuJiW','2024-01-12 19:04:10.540914','read write',1,1,'2024-01-12 09:04:10.540914','2024-01-12 09:04:10.540914',NULL,NULL),(63,'9d8g2xLlYZypCqmvg8kgqNb3f6kNyR','2024-01-12 19:06:22.946728','read write',1,1,'2024-01-12 09:06:22.946728','2024-01-12 09:06:22.946728',NULL,NULL),(64,'DXuKhqCkpKluC1YiEg4YxQdWJS7diS','2024-01-12 19:19:08.293776','read write',1,1,'2024-01-12 09:19:08.294774','2024-01-12 09:19:08.294774',NULL,NULL),(65,'KI5d9TBf2DUjL7urjzZMX2a0mVHkas','2024-01-12 19:19:59.715935','read write',1,1,'2024-01-12 09:19:59.716933','2024-01-12 09:19:59.716933',NULL,NULL),(66,'htL9rMfo1j13SdG9EVZDEzXgkMNGDU','2024-01-12 19:33:15.337192','read write',1,1,'2024-01-12 09:33:15.337192','2024-01-12 09:33:15.337192',NULL,NULL),(67,'C46fLy7UAN3NHefiT5EM2AyFiO6Gpd','2024-01-12 19:38:10.549604','read write',1,1,'2024-01-12 09:38:10.549604','2024-01-12 09:38:10.549604',NULL,NULL),(68,'cD2zn3QJluCROjF9mG7kXKbuJGCS6w','2024-01-12 19:45:07.375864','read write',1,1,'2024-01-12 09:45:07.375864','2024-01-12 09:45:07.375864',NULL,NULL),(69,'gpFSRyxyIW5ehezJVVmCv74iAjceRX','2024-01-12 19:50:20.358961','read write',1,1,'2024-01-12 09:50:20.358961','2024-01-12 09:50:20.358961',NULL,NULL),(70,'gQ9LyUpdGaEIvsvF4xFM9OXxOHy2z8','2024-01-12 19:53:15.844416','read write',1,1,'2024-01-12 09:53:15.844416','2024-01-12 09:53:15.844416',NULL,NULL),(71,'9VexWk3pPHF6TBj6W6aj731URlrSub','2024-01-12 19:53:57.744895','read write',1,1,'2024-01-12 09:53:57.744895','2024-01-12 09:53:57.744895',NULL,NULL),(72,'0dKYXRgPVC4f99RBZwodqveRcLB7Q3','2024-01-14 15:46:45.672551','read write',1,1,'2024-01-14 05:46:45.673555','2024-01-14 05:46:45.673555',NULL,NULL),(73,'fOBFYKuGqkWutDxBDXMvoGt4szgZCb','2024-01-14 17:19:49.176048','read write',1,1,'2024-01-14 07:19:49.177073','2024-01-14 07:19:49.177073',NULL,NULL),(74,'35rRipy8ErEmoGBZo7euVAJg9SG4Qc','2024-01-14 17:20:02.759496','read write',1,35,'2024-01-14 07:20:02.759496','2024-01-14 07:20:02.759496',NULL,NULL),(75,'CAYf3isLQg7O3pL7AEmXpeEaYAeNA1','2024-01-19 15:56:55.772689','read write',1,1,'2024-01-19 05:56:55.772689','2024-01-19 05:56:55.772689',NULL,NULL),(76,'Fx6WVh5Pjolc0FEiTR09RNOZoUlhxl','2024-01-19 16:09:05.184427','read write',1,1,'2024-01-19 06:09:05.185424','2024-01-19 06:09:05.185424',NULL,NULL),(77,'EpBP7MGx51RVDJJyhO30qkLprwqRxW','2024-01-19 17:40:29.198055','read write',1,2,'2024-01-19 07:40:29.199046','2024-01-19 07:40:29.199046',NULL,NULL);
 /*!40000 ALTER TABLE `oauth2_provider_accesstoken` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -260,18 +260,18 @@ DROP TABLE IF EXISTS `oauth2_provider_application`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `oauth2_provider_application` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `client_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `redirect_uris` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `client_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `authorization_grant_type` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `client_secret` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `client_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `redirect_uris` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `client_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `authorization_grant_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `client_secret` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` bigint DEFAULT NULL,
   `skip_authorization` tinyint(1) NOT NULL,
   `created` datetime(6) NOT NULL,
   `updated` datetime(6) NOT NULL,
-  `algorithm` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `post_logout_redirect_uris` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb3''),
+  `algorithm` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `post_logout_redirect_uris` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb3''),
   PRIMARY KEY (`id`),
   UNIQUE KEY `client_id` (`client_id`),
   KEY `oauth2_provider_appl_user_id_79829054_fk_ThesisMan` (`user_id`),
@@ -299,18 +299,18 @@ DROP TABLE IF EXISTS `oauth2_provider_grant`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `oauth2_provider_grant` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expires` datetime(6) NOT NULL,
-  `redirect_uri` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `scope` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `redirect_uri` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `scope` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `application_id` bigint NOT NULL,
   `user_id` bigint NOT NULL,
   `created` datetime(6) NOT NULL,
   `updated` datetime(6) NOT NULL,
-  `code_challenge` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code_challenge_method` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nonce` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `claims` longtext COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb3''),
+  `code_challenge` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_challenge_method` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nonce` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `claims` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb3''),
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`),
   KEY `oauth2_provider_gran_application_id_81923564_fk_oauth2_pr` (`application_id`),
@@ -338,9 +338,9 @@ DROP TABLE IF EXISTS `oauth2_provider_idtoken`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `oauth2_provider_idtoken` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `jti` char(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `jti` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expires` datetime(6) NOT NULL,
-  `scope` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `scope` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` datetime(6) NOT NULL,
   `updated` datetime(6) NOT NULL,
   `application_id` bigint DEFAULT NULL,
@@ -372,7 +372,7 @@ DROP TABLE IF EXISTS `oauth2_provider_refreshtoken`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `oauth2_provider_refreshtoken` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `access_token_id` bigint DEFAULT NULL,
   `application_id` bigint NOT NULL,
   `user_id` bigint NOT NULL,
@@ -387,7 +387,7 @@ CREATE TABLE `oauth2_provider_refreshtoken` (
   CONSTRAINT `oauth2_provider_refr_access_token_id_775e84e8_fk_oauth2_pr` FOREIGN KEY (`access_token_id`) REFERENCES `oauth2_provider_accesstoken` (`id`),
   CONSTRAINT `oauth2_provider_refr_application_id_2d1c311b_fk_oauth2_pr` FOREIGN KEY (`application_id`) REFERENCES `oauth2_provider_application` (`id`),
   CONSTRAINT `oauth2_provider_refr_user_id_da837fce_fk_ThesisMan` FOREIGN KEY (`user_id`) REFERENCES `thesismanagement_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -396,7 +396,7 @@ CREATE TABLE `oauth2_provider_refreshtoken` (
 
 LOCK TABLES `oauth2_provider_refreshtoken` WRITE;
 /*!40000 ALTER TABLE `oauth2_provider_refreshtoken` DISABLE KEYS */;
-INSERT INTO `oauth2_provider_refreshtoken` VALUES (1,'79bXVFk5ucxM0mDi18FEQH751FkUbh',1,1,1,'2024-01-04 03:00:25.728814','2024-01-04 03:00:25.728814',NULL),(2,'CWO9Mvfaxo0cSgVeJd0IFStHb3kzr9',2,1,1,'2024-01-04 04:58:28.527678','2024-01-04 04:58:28.527678',NULL),(3,'NPHnE6F9Pi6kgpiXNjOo88Ov54ekIO',3,1,1,'2024-01-04 05:00:54.333621','2024-01-04 05:00:54.333621',NULL),(4,'W30rGLtl9r8L9FH3pcRJaLjLCyYYW7',4,1,1,'2024-01-04 05:15:25.707755','2024-01-04 05:15:25.707755',NULL),(5,'chIGaNuq9NimFFoVmirsnouqPNSf0S',5,1,1,'2024-01-04 05:38:15.543220','2024-01-04 05:38:15.543220',NULL),(6,'h6CrpvpkcY2SGZ5jdBJ0fYVfaIVDA6',6,1,1,'2024-01-04 06:33:45.775774','2024-01-04 06:33:45.775774',NULL),(7,'UJvXUJX6rMPAyjBRG8oIWJuvDWs7pz',7,1,1,'2024-01-04 06:42:59.757815','2024-01-04 06:42:59.757815',NULL),(8,'n0hrVfwcGg7RXd1ksRm751aKc7mxyY',8,1,1,'2024-01-04 06:43:24.508981','2024-01-04 06:43:24.508981',NULL),(9,'ZYBFPZ6Q9yLaoBjIyhSixiVizAxJj5',9,1,1,'2024-01-04 06:44:33.872057','2024-01-04 06:44:33.872057',NULL),(10,'YuZCwlhpMizmoSPZrDzvc0bRhPd8vn',10,1,1,'2024-01-04 06:45:34.377491','2024-01-04 06:45:34.377491',NULL),(11,'0x3LNYPLz7l9hewYlOCMHOvvC8jlH6',11,1,1,'2024-01-04 06:46:17.834318','2024-01-04 06:46:17.834318',NULL),(12,'lBvWG1XcBBYAZBbP3Kgzn14CL3DuBm',12,1,1,'2024-01-04 06:52:01.909880','2024-01-04 06:52:01.909880',NULL),(13,'YYo2vTVtfpV3ZhUMZdl3IJjkWbC8ay',13,1,1,'2024-01-04 06:52:29.485949','2024-01-04 06:52:29.485949',NULL),(14,'EGJao0YACty3BouGD7grMWW6UgCnp5',14,1,1,'2024-01-04 06:57:48.121657','2024-01-04 06:57:48.121657',NULL),(15,'VYzKrdiZzzpm8ErKB5NVlibHKjY23T',15,1,1,'2024-01-04 07:01:57.013553','2024-01-04 07:01:57.013553',NULL),(16,'IiDp1fPkIp7nh2VVnoNoWtR1c7JGXu',16,1,1,'2024-01-04 07:02:21.537774','2024-01-04 07:02:21.537774',NULL),(17,'gQC2AcS0boAIsV1N74OCJvlzP1Yx0I',17,1,1,'2024-01-04 07:04:20.547755','2024-01-04 07:04:20.547755',NULL),(18,'Hpga9W60Jj9jVkMQtHXbwYEuU3dCQR',18,1,1,'2024-01-04 07:05:08.699838','2024-01-04 07:05:08.699838',NULL),(19,'uFZEaiic1TgWn5y5fe4sGr2lzSFGJB',19,1,1,'2024-01-04 07:05:52.630836','2024-01-04 07:05:52.630836',NULL),(20,'jmHykER9V6gjZgdztbjcPcT9igbUoh',20,1,1,'2024-01-04 07:06:37.330326','2024-01-04 07:06:37.330326',NULL),(21,'2N78zUqJyWMD0LBwiPAJpry8YJOuLv',21,1,1,'2024-01-04 07:07:21.654097','2024-01-04 07:07:21.654097',NULL),(22,'gXX36TDPCbalSMfmRIPFDI7mZzFX8u',22,1,1,'2024-01-04 07:09:01.766203','2024-01-04 07:09:01.766203',NULL),(23,'KD8Q7xuS89bU2BoCqdfjTi5Mun2BMc',23,1,1,'2024-01-04 07:09:17.484983','2024-01-04 07:09:17.484983',NULL),(24,'KoLYKRw5Eb1q1HlivscaLHHbzGpJvm',24,1,1,'2024-01-04 07:10:07.071132','2024-01-04 07:10:07.071132',NULL),(25,'wtjOTlPDiCWURA7S0DL0Bvm7VSz57u',25,1,1,'2024-01-04 07:43:36.374701','2024-01-04 07:43:36.374701',NULL),(26,'geUzkmwmoDkWbXQgX7xNwveu925qIL',26,1,1,'2024-01-04 07:46:02.630306','2024-01-04 07:46:02.630306',NULL),(27,'mqMFv28AXzexQ23gAFyLYZBdKptCxb',27,1,35,'2024-01-04 08:04:35.841144','2024-01-04 08:04:35.841144',NULL),(28,'LgQfNHTwXOBRSngdwR3N1C5PhJZTI8',28,1,39,'2024-01-04 08:15:14.016402','2024-01-04 08:15:14.016402',NULL),(29,'N8XA8q1G914te1ZsKFtZyFEqtqYt9x',29,1,41,'2024-01-04 08:40:05.464527','2024-01-04 08:40:05.464527',NULL),(30,'fOs7F98jbliiltsTjaVSenA9gmyVSj',30,1,38,'2024-01-04 08:53:54.948185','2024-01-04 08:53:54.948185',NULL),(31,'akTGduQiwAEI6RhiMkIddWVJt5ZZc6',31,1,38,'2024-01-04 08:55:57.291262','2024-01-04 08:55:57.291262',NULL),(32,'Mzpyek0t2LAhGRTa266litw0Uxx2Ay',32,1,38,'2024-01-04 08:57:24.901455','2024-01-04 08:57:24.901455',NULL),(33,'eFYpuNUOCQ7vT4p8ux24CyqRoJYJs9',33,1,38,'2024-01-04 08:57:55.886345','2024-01-04 08:57:55.886345',NULL),(34,'uIZlk3OFrcXjHXLLgHOQLOriu8FtT5',34,1,1,'2024-01-04 09:17:49.281921','2024-01-04 09:17:49.281921',NULL),(35,'NoH0fm3s4eBlE6Er6kyrFrojOHBaxr',35,1,41,'2024-01-07 05:44:17.880215','2024-01-07 05:44:17.880215',NULL),(36,'dxxmjQ8LxFx2G2Yz9VGXgx5wvWZQP4',36,1,1,'2024-01-07 08:06:09.374831','2024-01-07 08:06:09.374831',NULL),(37,'2mcPSTmodkTnHgFpFCIABMqdad6dQp',37,1,1,'2024-01-12 03:35:17.306728','2024-01-12 03:35:17.306728',NULL),(38,'yubAmQxruBWKKsygbA5RXd9d9sxTRt',38,1,1,'2024-01-12 05:49:29.943783','2024-01-12 05:49:29.943783',NULL),(39,'pmSkYA8XCEoVCPL0mQfq0ZvNWfLvaN',39,1,1,'2024-01-12 05:58:46.211897','2024-01-12 05:58:46.211897',NULL),(40,'pn4txD0H3UH4GeXQ3qk6ewGA8OK9PQ',40,1,1,'2024-01-12 06:06:34.402573','2024-01-12 06:06:34.402573',NULL),(41,'Oa7O7o5uZycLbi7WQ4gIXufi9Tez8F',41,1,1,'2024-01-12 06:14:54.076081','2024-01-12 06:14:54.076081',NULL),(42,'6AdSwJJ920CaNuNIjUD8acnXUIoGyj',42,1,1,'2024-01-12 06:23:14.820788','2024-01-12 06:23:14.820788',NULL),(43,'Utkyr4u6gJRIAh1wdgF3xHcsmb2JO3',43,1,1,'2024-01-12 06:30:18.103131','2024-01-12 06:30:18.103131',NULL),(44,'QZg4JGfZjHXx2KCfuSIFcRPKfb8YRN',44,1,1,'2024-01-12 06:44:54.362334','2024-01-12 06:44:54.362334',NULL),(45,'S1HvDmvDmcI0nqf9VY2i97z7ToAuGr',45,1,1,'2024-01-12 07:33:15.928660','2024-01-12 07:33:15.928660',NULL),(46,'Z99017DXAHHzjUqjQfnSSGsZYC0pMn',46,1,1,'2024-01-12 07:37:57.696980','2024-01-12 07:37:57.696980',NULL),(47,'L9UbwRyI2xTgHLIkFkFbL5uyXavZCd',47,1,1,'2024-01-12 07:38:53.849752','2024-01-12 07:38:53.849752',NULL),(48,'Uu1OCYRXx9Qxr1RkwyZL4sRStQPjDS',48,1,1,'2024-01-12 07:42:41.448075','2024-01-12 07:42:41.448075',NULL),(49,'J3ueLKqIfL8L5bNzJaFlsrywednea7',49,1,1,'2024-01-12 07:48:00.713946','2024-01-12 07:48:00.713946',NULL),(50,'jNWbDU6AXHiVaIEXtdqXaqLTgDoopo',50,1,1,'2024-01-12 07:58:51.015096','2024-01-12 07:58:51.015096',NULL),(51,'1cZTI6zPUohwJMgxWxxkzgIrI3kF4k',51,1,1,'2024-01-12 08:03:42.597815','2024-01-12 08:03:42.597815',NULL),(52,'H6zByKdKI5P0obKUYoOy9EMumadoZy',52,1,1,'2024-01-12 08:12:02.877272','2024-01-12 08:12:02.877272',NULL),(53,'NErGMFbvZUhkMgtvsQ0fHBNe1J2XcG',53,1,1,'2024-01-12 08:13:20.854594','2024-01-12 08:13:20.854594',NULL),(54,'jdNwZi9dXMfrgKuUwo5ckFlLg0P5H6',54,1,1,'2024-01-12 08:45:39.985151','2024-01-12 08:45:39.985151',NULL),(55,'rqH9QJkt1LmAbWPe7OYWgS8InYnsBa',55,1,1,'2024-01-12 08:46:23.055280','2024-01-12 08:46:23.055280',NULL),(56,'CZLn4aZ2T8cLPDuyUsLIEa96yvUB3P',56,1,1,'2024-01-12 08:46:52.728437','2024-01-12 08:46:52.728437',NULL),(57,'l6r0qch4lReWJncJfhZT3SVvRtQYVD',57,1,1,'2024-01-12 08:47:57.864205','2024-01-12 08:47:57.864205',NULL),(58,'S3aJLM9hTcWwuk4CvXRLnIfA5nFACA',58,1,1,'2024-01-12 08:49:58.190508','2024-01-12 08:49:58.190508',NULL),(59,'ou7SMjKV9ObNcWJlYznjP6fpNpzUkj',59,1,1,'2024-01-12 08:56:42.093255','2024-01-12 08:56:42.093255',NULL),(60,'BFBjS4fqDpR63Hfy1tdq9qYmgwyKYh',60,1,1,'2024-01-12 08:59:04.640229','2024-01-12 08:59:04.640229',NULL),(61,'bhDSj7bZSY06x2V2G2HnDtzWI9qgNU',61,1,1,'2024-01-12 09:00:25.246721','2024-01-12 09:00:25.246721',NULL),(62,'h379jCfvfdPdhVg8uRqJUXTvKamleG',62,1,1,'2024-01-12 09:04:10.540914','2024-01-12 09:04:10.540914',NULL),(63,'B55TCSL2JjQtOp7OWBaIuZ5qAB7wyY',63,1,1,'2024-01-12 09:06:22.946728','2024-01-12 09:06:22.946728',NULL),(64,'6jZldHgtsUGaWdMTRIEYHzFrcAycVO',64,1,1,'2024-01-12 09:19:08.300594','2024-01-12 09:19:08.300594',NULL),(65,'CJV28raT0TMOry0ksTyNC4VXrCLPlW',65,1,1,'2024-01-12 09:19:59.721630','2024-01-12 09:19:59.721630',NULL),(66,'h0G9pHMs5ClDFmj7Uj00KM37ld8Ccy',66,1,1,'2024-01-12 09:33:15.337192','2024-01-12 09:33:15.337192',NULL),(67,'ToI6UGA4g0m1jijfRdwar8n0QAMxi3',67,1,1,'2024-01-12 09:38:10.555886','2024-01-12 09:38:10.555886',NULL),(68,'dGk2MzptODYJlEqtV3kpjSq9J8lm2Q',68,1,1,'2024-01-12 09:45:07.379758','2024-01-12 09:45:07.379758',NULL),(69,'ifL9mRA8KzIDBsn9jq7s9BtJKw7mLy',69,1,1,'2024-01-12 09:50:20.360954','2024-01-12 09:50:20.360954',NULL),(70,'A7qgAbYl5NmgONtBYHwE3P5biVVvjl',70,1,1,'2024-01-12 09:53:15.849550','2024-01-12 09:53:15.849550',NULL),(71,'NENxSx3nOwC3vNNhnWRANULS2ikIkM',71,1,1,'2024-01-12 09:53:57.746858','2024-01-12 09:53:57.746858',NULL),(72,'bR7MqNwG8vwG55eJWei9V7VSKp4ssj',72,1,1,'2024-01-14 05:46:45.693282','2024-01-14 05:46:45.693282',NULL),(73,'z01vX4HDeXokAZet2SY3o43LsfkwNj',73,1,1,'2024-01-14 07:19:49.181037','2024-01-14 07:19:49.181037',NULL),(74,'HkbLc0oXLeHIaU1DVNUdsE5xjV7y0W',74,1,35,'2024-01-14 07:20:02.761003','2024-01-14 07:20:02.761003',NULL);
+INSERT INTO `oauth2_provider_refreshtoken` VALUES (1,'79bXVFk5ucxM0mDi18FEQH751FkUbh',1,1,1,'2024-01-04 03:00:25.728814','2024-01-04 03:00:25.728814',NULL),(2,'CWO9Mvfaxo0cSgVeJd0IFStHb3kzr9',2,1,1,'2024-01-04 04:58:28.527678','2024-01-04 04:58:28.527678',NULL),(3,'NPHnE6F9Pi6kgpiXNjOo88Ov54ekIO',3,1,1,'2024-01-04 05:00:54.333621','2024-01-04 05:00:54.333621',NULL),(4,'W30rGLtl9r8L9FH3pcRJaLjLCyYYW7',4,1,1,'2024-01-04 05:15:25.707755','2024-01-04 05:15:25.707755',NULL),(5,'chIGaNuq9NimFFoVmirsnouqPNSf0S',5,1,1,'2024-01-04 05:38:15.543220','2024-01-04 05:38:15.543220',NULL),(6,'h6CrpvpkcY2SGZ5jdBJ0fYVfaIVDA6',6,1,1,'2024-01-04 06:33:45.775774','2024-01-04 06:33:45.775774',NULL),(7,'UJvXUJX6rMPAyjBRG8oIWJuvDWs7pz',7,1,1,'2024-01-04 06:42:59.757815','2024-01-04 06:42:59.757815',NULL),(8,'n0hrVfwcGg7RXd1ksRm751aKc7mxyY',8,1,1,'2024-01-04 06:43:24.508981','2024-01-04 06:43:24.508981',NULL),(9,'ZYBFPZ6Q9yLaoBjIyhSixiVizAxJj5',9,1,1,'2024-01-04 06:44:33.872057','2024-01-04 06:44:33.872057',NULL),(10,'YuZCwlhpMizmoSPZrDzvc0bRhPd8vn',10,1,1,'2024-01-04 06:45:34.377491','2024-01-04 06:45:34.377491',NULL),(11,'0x3LNYPLz7l9hewYlOCMHOvvC8jlH6',11,1,1,'2024-01-04 06:46:17.834318','2024-01-04 06:46:17.834318',NULL),(12,'lBvWG1XcBBYAZBbP3Kgzn14CL3DuBm',12,1,1,'2024-01-04 06:52:01.909880','2024-01-04 06:52:01.909880',NULL),(13,'YYo2vTVtfpV3ZhUMZdl3IJjkWbC8ay',13,1,1,'2024-01-04 06:52:29.485949','2024-01-04 06:52:29.485949',NULL),(14,'EGJao0YACty3BouGD7grMWW6UgCnp5',14,1,1,'2024-01-04 06:57:48.121657','2024-01-04 06:57:48.121657',NULL),(15,'VYzKrdiZzzpm8ErKB5NVlibHKjY23T',15,1,1,'2024-01-04 07:01:57.013553','2024-01-04 07:01:57.013553',NULL),(16,'IiDp1fPkIp7nh2VVnoNoWtR1c7JGXu',16,1,1,'2024-01-04 07:02:21.537774','2024-01-04 07:02:21.537774',NULL),(17,'gQC2AcS0boAIsV1N74OCJvlzP1Yx0I',17,1,1,'2024-01-04 07:04:20.547755','2024-01-04 07:04:20.547755',NULL),(18,'Hpga9W60Jj9jVkMQtHXbwYEuU3dCQR',18,1,1,'2024-01-04 07:05:08.699838','2024-01-04 07:05:08.699838',NULL),(19,'uFZEaiic1TgWn5y5fe4sGr2lzSFGJB',19,1,1,'2024-01-04 07:05:52.630836','2024-01-04 07:05:52.630836',NULL),(20,'jmHykER9V6gjZgdztbjcPcT9igbUoh',20,1,1,'2024-01-04 07:06:37.330326','2024-01-04 07:06:37.330326',NULL),(21,'2N78zUqJyWMD0LBwiPAJpry8YJOuLv',21,1,1,'2024-01-04 07:07:21.654097','2024-01-04 07:07:21.654097',NULL),(22,'gXX36TDPCbalSMfmRIPFDI7mZzFX8u',22,1,1,'2024-01-04 07:09:01.766203','2024-01-04 07:09:01.766203',NULL),(23,'KD8Q7xuS89bU2BoCqdfjTi5Mun2BMc',23,1,1,'2024-01-04 07:09:17.484983','2024-01-04 07:09:17.484983',NULL),(24,'KoLYKRw5Eb1q1HlivscaLHHbzGpJvm',24,1,1,'2024-01-04 07:10:07.071132','2024-01-04 07:10:07.071132',NULL),(25,'wtjOTlPDiCWURA7S0DL0Bvm7VSz57u',25,1,1,'2024-01-04 07:43:36.374701','2024-01-04 07:43:36.374701',NULL),(26,'geUzkmwmoDkWbXQgX7xNwveu925qIL',26,1,1,'2024-01-04 07:46:02.630306','2024-01-04 07:46:02.630306',NULL),(27,'mqMFv28AXzexQ23gAFyLYZBdKptCxb',27,1,35,'2024-01-04 08:04:35.841144','2024-01-04 08:04:35.841144',NULL),(28,'LgQfNHTwXOBRSngdwR3N1C5PhJZTI8',28,1,39,'2024-01-04 08:15:14.016402','2024-01-04 08:15:14.016402',NULL),(29,'N8XA8q1G914te1ZsKFtZyFEqtqYt9x',29,1,41,'2024-01-04 08:40:05.464527','2024-01-04 08:40:05.464527',NULL),(30,'fOs7F98jbliiltsTjaVSenA9gmyVSj',30,1,38,'2024-01-04 08:53:54.948185','2024-01-04 08:53:54.948185',NULL),(31,'akTGduQiwAEI6RhiMkIddWVJt5ZZc6',31,1,38,'2024-01-04 08:55:57.291262','2024-01-04 08:55:57.291262',NULL),(32,'Mzpyek0t2LAhGRTa266litw0Uxx2Ay',32,1,38,'2024-01-04 08:57:24.901455','2024-01-04 08:57:24.901455',NULL),(33,'eFYpuNUOCQ7vT4p8ux24CyqRoJYJs9',33,1,38,'2024-01-04 08:57:55.886345','2024-01-04 08:57:55.886345',NULL),(34,'uIZlk3OFrcXjHXLLgHOQLOriu8FtT5',34,1,1,'2024-01-04 09:17:49.281921','2024-01-04 09:17:49.281921',NULL),(35,'NoH0fm3s4eBlE6Er6kyrFrojOHBaxr',35,1,41,'2024-01-07 05:44:17.880215','2024-01-07 05:44:17.880215',NULL),(36,'dxxmjQ8LxFx2G2Yz9VGXgx5wvWZQP4',36,1,1,'2024-01-07 08:06:09.374831','2024-01-07 08:06:09.374831',NULL),(37,'2mcPSTmodkTnHgFpFCIABMqdad6dQp',37,1,1,'2024-01-12 03:35:17.306728','2024-01-12 03:35:17.306728',NULL),(38,'yubAmQxruBWKKsygbA5RXd9d9sxTRt',38,1,1,'2024-01-12 05:49:29.943783','2024-01-12 05:49:29.943783',NULL),(39,'pmSkYA8XCEoVCPL0mQfq0ZvNWfLvaN',39,1,1,'2024-01-12 05:58:46.211897','2024-01-12 05:58:46.211897',NULL),(40,'pn4txD0H3UH4GeXQ3qk6ewGA8OK9PQ',40,1,1,'2024-01-12 06:06:34.402573','2024-01-12 06:06:34.402573',NULL),(41,'Oa7O7o5uZycLbi7WQ4gIXufi9Tez8F',41,1,1,'2024-01-12 06:14:54.076081','2024-01-12 06:14:54.076081',NULL),(42,'6AdSwJJ920CaNuNIjUD8acnXUIoGyj',42,1,1,'2024-01-12 06:23:14.820788','2024-01-12 06:23:14.820788',NULL),(43,'Utkyr4u6gJRIAh1wdgF3xHcsmb2JO3',43,1,1,'2024-01-12 06:30:18.103131','2024-01-12 06:30:18.103131',NULL),(44,'QZg4JGfZjHXx2KCfuSIFcRPKfb8YRN',44,1,1,'2024-01-12 06:44:54.362334','2024-01-12 06:44:54.362334',NULL),(45,'S1HvDmvDmcI0nqf9VY2i97z7ToAuGr',45,1,1,'2024-01-12 07:33:15.928660','2024-01-12 07:33:15.928660',NULL),(46,'Z99017DXAHHzjUqjQfnSSGsZYC0pMn',46,1,1,'2024-01-12 07:37:57.696980','2024-01-12 07:37:57.696980',NULL),(47,'L9UbwRyI2xTgHLIkFkFbL5uyXavZCd',47,1,1,'2024-01-12 07:38:53.849752','2024-01-12 07:38:53.849752',NULL),(48,'Uu1OCYRXx9Qxr1RkwyZL4sRStQPjDS',48,1,1,'2024-01-12 07:42:41.448075','2024-01-12 07:42:41.448075',NULL),(49,'J3ueLKqIfL8L5bNzJaFlsrywednea7',49,1,1,'2024-01-12 07:48:00.713946','2024-01-12 07:48:00.713946',NULL),(50,'jNWbDU6AXHiVaIEXtdqXaqLTgDoopo',50,1,1,'2024-01-12 07:58:51.015096','2024-01-12 07:58:51.015096',NULL),(51,'1cZTI6zPUohwJMgxWxxkzgIrI3kF4k',51,1,1,'2024-01-12 08:03:42.597815','2024-01-12 08:03:42.597815',NULL),(52,'H6zByKdKI5P0obKUYoOy9EMumadoZy',52,1,1,'2024-01-12 08:12:02.877272','2024-01-12 08:12:02.877272',NULL),(53,'NErGMFbvZUhkMgtvsQ0fHBNe1J2XcG',53,1,1,'2024-01-12 08:13:20.854594','2024-01-12 08:13:20.854594',NULL),(54,'jdNwZi9dXMfrgKuUwo5ckFlLg0P5H6',54,1,1,'2024-01-12 08:45:39.985151','2024-01-12 08:45:39.985151',NULL),(55,'rqH9QJkt1LmAbWPe7OYWgS8InYnsBa',55,1,1,'2024-01-12 08:46:23.055280','2024-01-12 08:46:23.055280',NULL),(56,'CZLn4aZ2T8cLPDuyUsLIEa96yvUB3P',56,1,1,'2024-01-12 08:46:52.728437','2024-01-12 08:46:52.728437',NULL),(57,'l6r0qch4lReWJncJfhZT3SVvRtQYVD',57,1,1,'2024-01-12 08:47:57.864205','2024-01-12 08:47:57.864205',NULL),(58,'S3aJLM9hTcWwuk4CvXRLnIfA5nFACA',58,1,1,'2024-01-12 08:49:58.190508','2024-01-12 08:49:58.190508',NULL),(59,'ou7SMjKV9ObNcWJlYznjP6fpNpzUkj',59,1,1,'2024-01-12 08:56:42.093255','2024-01-12 08:56:42.093255',NULL),(60,'BFBjS4fqDpR63Hfy1tdq9qYmgwyKYh',60,1,1,'2024-01-12 08:59:04.640229','2024-01-12 08:59:04.640229',NULL),(61,'bhDSj7bZSY06x2V2G2HnDtzWI9qgNU',61,1,1,'2024-01-12 09:00:25.246721','2024-01-12 09:00:25.246721',NULL),(62,'h379jCfvfdPdhVg8uRqJUXTvKamleG',62,1,1,'2024-01-12 09:04:10.540914','2024-01-12 09:04:10.540914',NULL),(63,'B55TCSL2JjQtOp7OWBaIuZ5qAB7wyY',63,1,1,'2024-01-12 09:06:22.946728','2024-01-12 09:06:22.946728',NULL),(64,'6jZldHgtsUGaWdMTRIEYHzFrcAycVO',64,1,1,'2024-01-12 09:19:08.300594','2024-01-12 09:19:08.300594',NULL),(65,'CJV28raT0TMOry0ksTyNC4VXrCLPlW',65,1,1,'2024-01-12 09:19:59.721630','2024-01-12 09:19:59.721630',NULL),(66,'h0G9pHMs5ClDFmj7Uj00KM37ld8Ccy',66,1,1,'2024-01-12 09:33:15.337192','2024-01-12 09:33:15.337192',NULL),(67,'ToI6UGA4g0m1jijfRdwar8n0QAMxi3',67,1,1,'2024-01-12 09:38:10.555886','2024-01-12 09:38:10.555886',NULL),(68,'dGk2MzptODYJlEqtV3kpjSq9J8lm2Q',68,1,1,'2024-01-12 09:45:07.379758','2024-01-12 09:45:07.379758',NULL),(69,'ifL9mRA8KzIDBsn9jq7s9BtJKw7mLy',69,1,1,'2024-01-12 09:50:20.360954','2024-01-12 09:50:20.360954',NULL),(70,'A7qgAbYl5NmgONtBYHwE3P5biVVvjl',70,1,1,'2024-01-12 09:53:15.849550','2024-01-12 09:53:15.849550',NULL),(71,'NENxSx3nOwC3vNNhnWRANULS2ikIkM',71,1,1,'2024-01-12 09:53:57.746858','2024-01-12 09:53:57.746858',NULL),(72,'bR7MqNwG8vwG55eJWei9V7VSKp4ssj',72,1,1,'2024-01-14 05:46:45.693282','2024-01-14 05:46:45.693282',NULL),(73,'z01vX4HDeXokAZet2SY3o43LsfkwNj',73,1,1,'2024-01-14 07:19:49.181037','2024-01-14 07:19:49.181037',NULL),(74,'HkbLc0oXLeHIaU1DVNUdsE5xjV7y0W',74,1,35,'2024-01-14 07:20:02.761003','2024-01-14 07:20:02.761003',NULL),(75,'58YmpJLj7ilQKBS0jVBVbHbb61ZkFg',75,1,1,'2024-01-19 05:56:55.786356','2024-01-19 05:56:55.786356',NULL),(76,'uFmx7lXWPHKzy61eSee1AtqZd4JypI',76,1,1,'2024-01-19 06:09:05.199387','2024-01-19 06:09:05.199387',NULL),(77,'qF6IEgG4OsPMhfhoRnlEcomPf0j4Wj',77,1,2,'2024-01-19 07:40:29.240523','2024-01-19 07:40:29.240523',NULL);
 /*!40000 ALTER TABLE `oauth2_provider_refreshtoken` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -412,7 +412,7 @@ CREATE TABLE `thesismanagement_criteria` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `percent` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -440,7 +440,7 @@ CREATE TABLE `thesismanagement_majors` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -491,6 +491,66 @@ INSERT INTO `thesismanagement_memberofthesisdefensecommittee` VALUES (1,'2024-01
 UNLOCK TABLES;
 
 --
+-- Table structure for table `thesismanagement_message`
+--
+
+DROP TABLE IF EXISTS `thesismanagement_message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `thesismanagement_message` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `room_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ThesisManagement_mes_room_id_1221e6bb_fk_ThesisMan` (`room_id`),
+  KEY `ThesisManagement_mes_user_id_cc72db0b_fk_ThesisMan` (`user_id`),
+  CONSTRAINT `ThesisManagement_mes_room_id_1221e6bb_fk_ThesisMan` FOREIGN KEY (`room_id`) REFERENCES `thesismanagement_room` (`id`),
+  CONSTRAINT `ThesisManagement_mes_user_id_cc72db0b_fk_ThesisMan` FOREIGN KEY (`user_id`) REFERENCES `thesismanagement_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `thesismanagement_message`
+--
+
+LOCK TABLES `thesismanagement_message` WRITE;
+/*!40000 ALTER TABLE `thesismanagement_message` DISABLE KEYS */;
+/*!40000 ALTER TABLE `thesismanagement_message` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `thesismanagement_messagemodel`
+--
+
+DROP TABLE IF EXISTS `thesismanagement_messagemodel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `thesismanagement_messagemodel` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `timestamp` datetime(6) NOT NULL,
+  `content` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `recipient_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ThesisManagement_mes_recipient_id_23953882_fk_ThesisMan` (`recipient_id`),
+  KEY `ThesisManagement_mes_user_id_ed12ae83_fk_ThesisMan` (`user_id`),
+  CONSTRAINT `ThesisManagement_mes_recipient_id_23953882_fk_ThesisMan` FOREIGN KEY (`recipient_id`) REFERENCES `thesismanagement_user` (`id`),
+  CONSTRAINT `ThesisManagement_mes_user_id_ed12ae83_fk_ThesisMan` FOREIGN KEY (`user_id`) REFERENCES `thesismanagement_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `thesismanagement_messagemodel`
+--
+
+LOCK TABLES `thesismanagement_messagemodel` WRITE;
+/*!40000 ALTER TABLE `thesismanagement_messagemodel` DISABLE KEYS */;
+/*!40000 ALTER TABLE `thesismanagement_messagemodel` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `thesismanagement_position`
 --
 
@@ -502,7 +562,7 @@ CREATE TABLE `thesismanagement_position` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -529,7 +589,7 @@ CREATE TABLE `thesismanagement_role` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -542,6 +602,63 @@ LOCK TABLES `thesismanagement_role` WRITE;
 /*!40000 ALTER TABLE `thesismanagement_role` DISABLE KEYS */;
 INSERT INTO `thesismanagement_role` VALUES (1,'2024-01-04','2024-01-04',1,'admin'),(2,'2024-01-04','2024-01-04',1,'universityadministrator'),(3,'2024-01-04','2024-01-04',1,'lecturer'),(4,'2024-01-04','2024-01-04',1,'student');
 /*!40000 ALTER TABLE `thesismanagement_role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `thesismanagement_room`
+--
+
+DROP TABLE IF EXISTS `thesismanagement_room`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `thesismanagement_room` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `host_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `ThesisManagement_roo_host_id_0bc05bee_fk_ThesisMan` (`host_id`),
+  CONSTRAINT `ThesisManagement_roo_host_id_0bc05bee_fk_ThesisMan` FOREIGN KEY (`host_id`) REFERENCES `thesismanagement_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `thesismanagement_room`
+--
+
+LOCK TABLES `thesismanagement_room` WRITE;
+/*!40000 ALTER TABLE `thesismanagement_room` DISABLE KEYS */;
+INSERT INTO `thesismanagement_room` VALUES (1,'admin',1),(2,'hieu',2);
+/*!40000 ALTER TABLE `thesismanagement_room` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `thesismanagement_room_current_users`
+--
+
+DROP TABLE IF EXISTS `thesismanagement_room_current_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `thesismanagement_room_current_users` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `room_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ThesisManagement_room_cu_room_id_user_id_f034209a_uniq` (`room_id`,`user_id`),
+  KEY `ThesisManagement_roo_user_id_a9e7779f_fk_ThesisMan` (`user_id`),
+  CONSTRAINT `ThesisManagement_roo_room_id_db340bf3_fk_ThesisMan` FOREIGN KEY (`room_id`) REFERENCES `thesismanagement_room` (`id`),
+  CONSTRAINT `ThesisManagement_roo_user_id_a9e7779f_fk_ThesisMan` FOREIGN KEY (`user_id`) REFERENCES `thesismanagement_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `thesismanagement_room_current_users`
+--
+
+LOCK TABLES `thesismanagement_room_current_users` WRITE;
+/*!40000 ALTER TABLE `thesismanagement_room_current_users` DISABLE KEYS */;
+INSERT INTO `thesismanagement_room_current_users` VALUES (1,1,1),(2,1,2);
+/*!40000 ALTER TABLE `thesismanagement_room_current_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -595,7 +712,7 @@ CREATE TABLE `thesismanagement_statusthesis` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -622,7 +739,7 @@ CREATE TABLE `thesismanagement_thesis` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status_id` bigint NOT NULL,
   `committee_id` bigint DEFAULT NULL,
   `major_id` bigint DEFAULT NULL,
@@ -658,7 +775,7 @@ CREATE TABLE `thesismanagement_thesisdefensecommittee` (
   `create_date` date DEFAULT NULL,
   `update_date` date DEFAULT NULL,
   `active` tinyint(1) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -745,7 +862,7 @@ CREATE TABLE `thesismanagement_thesissupervisor` (
   `active` tinyint(1) NOT NULL,
   `thesis_id` bigint NOT NULL,
   `user_id` bigint NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ThesisManagement_the_thesis_id_458bebd6_fk_ThesisMan` (`thesis_id`),
   KEY `ThesisManagement_the_user_id_cd273cd9_fk_ThesisMan` (`user_id`),
@@ -773,24 +890,24 @@ DROP TABLE IF EXISTS `thesismanagement_user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `thesismanagement_user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `password` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `last_login` datetime(6) DEFAULT NULL,
   `is_superuser` tinyint(1) NOT NULL,
-  `username` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `first_name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `first_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_staff` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   `date_joined` datetime(6) NOT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `role` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `major_id` bigint DEFAULT NULL,
-  `temp_password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `date_of_birth` datetime(6) DEFAULT NULL,
-  `gender` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `temp_password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  `gender` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `ThesisManagement_use_major_id_d8a4c8cf_fk_ThesisMan` (`major_id`),
@@ -863,6 +980,33 @@ LOCK TABLES `thesismanagement_user_user_permissions` WRITE;
 /*!40000 ALTER TABLE `thesismanagement_user_user_permissions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `thesismanagement_user_user_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `thesismanagement_userprofile`
+--
+
+DROP TABLE IF EXISTS `thesismanagement_userprofile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `thesismanagement_userprofile` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `image` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `aboutyou` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `userprofile_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ThesisManagement_use_userprofile_id_c9ce8f19_fk_ThesisMan` (`userprofile_id`),
+  CONSTRAINT `ThesisManagement_use_userprofile_id_c9ce8f19_fk_ThesisMan` FOREIGN KEY (`userprofile_id`) REFERENCES `thesismanagement_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `thesismanagement_userprofile`
+--
+
+LOCK TABLES `thesismanagement_userprofile` WRITE;
+/*!40000 ALTER TABLE `thesismanagement_userprofile` DISABLE KEYS */;
+/*!40000 ALTER TABLE `thesismanagement_userprofile` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -873,4 +1017,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-14 14:26:49
+-- Dump completed on 2024-01-19 20:29:36
