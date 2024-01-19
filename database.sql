@@ -786,7 +786,7 @@ CREATE TABLE `thesismanagement_thesisdefensecommittee` (
 
 LOCK TABLES `thesismanagement_thesisdefensecommittee` WRITE;
 /*!40000 ALTER TABLE `thesismanagement_thesisdefensecommittee` DISABLE KEYS */;
-INSERT INTO `thesismanagement_thesisdefensecommittee` VALUES (1,'2024-01-04','2024-01-04',1,'Hội Đồng 1 Khóa 23-24',NULL),(2,'2024-01-04','2024-01-04',1,'Hội Đồng 2 Khóa 23-24',NULL),(3,'2024-01-04','2024-01-04',1,'Hội Đồng 3 Khóa 23-24',NULL),(4,'2024-01-04','2024-01-04',1,'Hội Đồng 3 Khóa 23-24',NULL);
+INSERT INTO `thesismanagement_thesisdefensecommittee` VALUES (1,'2024-01-04','2024-01-04',1,'Hội Đồng 1 Khóa 23-24',1),(2,'2024-01-04','2024-01-04',1,'Hội Đồng 2 Khóa 23-24',1),(3,'2024-01-04','2024-01-04',1,'Hội Đồng 3 Khóa 23-24',1),(4,'2024-01-04','2024-01-04',1,'Hội Đồng 3 Khóa 23-24',1);
 /*!40000 ALTER TABLE `thesismanagement_thesisdefensecommittee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1017,4 +1017,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-19 21:23:33
+-- Dump completed on 2024-01-19 21:26:14
