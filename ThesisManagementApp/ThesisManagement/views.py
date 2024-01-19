@@ -9,8 +9,11 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics, status
 from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from ThesisManagementApp import settings
 from django.shortcuts import get_object_or_404
 
@@ -22,6 +25,8 @@ from .permissions import IsLecturer, IsAdminOrUniversityAdministrator, IsAdmin, 
 import random
 import string
 import base64
+
+# from .task import send_email_async
 
 
 class BaseViewSet(viewsets.ModelViewSet):
@@ -159,6 +164,28 @@ class UpdateCriteriaViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView):
     permission_classes = [IsAdminOrUniversityAdministrator]
 
 
+def totalscore(thesis_id):
+    print(thesis_id)
+    students = ThesisStudent.objects.filter(thesis_id=thesis_id)  # danh sach sinh vien lam khoa luan thesis_id
+    print(students)
+    for s in students:
+        print(s.id)
+        scores_student = Score.objects.filter(thesis_id=thesis_id, student_id=s.id)  # danh sach diem cua sinh vien s
+        print(scores_student)
+        # cong thuc tinh diem : (diem * percent cua tieu chi do)/tong percent
+        tong_diem = 0
+        tong_tieu_chi = 0
+        for score in scores_student:
+            tong_diem += score.score * score.criteria.percent
+            tong_tieu_chi += score.criteria.percent
+            print('loai diem')
+            print(score.criteria.percent)
+            # criteria = Criteria.objects.get(score.criteria_id)
+        s.total = round(tong_diem / tong_tieu_chi, 1)
+        # print(s.total)
+        s.save()
+
+
 class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = ThesisDefenseCommittee.objects.all()
     serializer_class = serializers.ThesisDefenseCommitteeSerializers
@@ -178,6 +205,22 @@ class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.L
     def thesis(self, request, pk):
         list_thesis = Thesis.objects.filter(committee_id=pk)
         return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data, status=status.HTTP_200_OK)
+
+    @action(methods=['patch'], url_name='close', detail=True)
+    def close(self, request, pk):
+        list_thesis = Thesis.objects.filter(committee=pk)
+        status_close = StatusThesis.objects.get(pk=2)
+        committee = self.get_object()
+        committee.status = status_close
+        committee.save()
+        list_send_email = []
+        for thesis in list_thesis:
+            totalscore(thesis.id)
+            list_student = ThesisStudent.objects.filter(thesis=thesis)
+            for student in list_student:
+                list_send_email.append(student.email)
+        send_email(subject="Khóa luận của bản đã được tổng kết điểm", body="Khóa luận của bản đã được tổng kết điểm", listreceiver=list_send_email)
+        return Response('Thành công', status=status.HTTP_200_OK)
 
 
 class AddThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -707,6 +750,11 @@ class GetPositionViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Position.objects.all()
     serializer_class = serializers.PositionSerializers
 
+    def list(self, request, *args, **kwargs):
+        # send_email(listreceiver=['hieu24313@gmail.com'])
+        # send_email_async.delay(subject='1111', message='2222', recipient_list=['hieu24313@gmail.com'])
+        return super().list(request, *args, **kwargs)
+
 
 # viết lại các method từ đầu
 class GetMemberOfThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
@@ -778,18 +826,18 @@ class AddScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
             try:
                 thesis_user = Thesis.objects.get(pk=thesis)
                 print(thesis_user.committee_id)
-                print('11wd')
+                # print('11wd')
                 lecturer_user = MemberOfThesisDefenseCommittee.objects.get(user_id=lecturer,
                                                                            Committee_id=thesis_user.committee_id)  # id của gv trong bảng trung gian thesissupervisor
                 try:
-                    print('toi day')
+                    # print('toi day')
                     score = get_object_or_404(Score, lecturer_id=lecturer_user.id, student_id=student_user.id,
                                               criteria_id=criteria,
                                               thesis_id=thesis)
                     if score:
                         return Response({'error': 'Bạn đã chấm điểm cho tiêu chí này rồi!'},
                                         status=status.HTTP_400_BAD_REQUEST)
-                    print('toi day2')
+                    # print('toi day2')
                 except Http404:
                     criteria_user = Criteria.objects.get(pk=criteria)
                     # member
@@ -840,87 +888,65 @@ class UpdateScoreViewSet(viewsets.ViewSet, generics.UpdateAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class OpenThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
-    queryset = Thesis.objects.all()
-    serializer_class = serializers.ThesisSerializers
-
-    permission_classes = [IsAdminOrUniversityAdministrator]
-
-    def partial_update(self, request, *args, **kwargs):
-        status_thesis = StatusThesis.objects.get(pk=1)
-
-        thesis_id = kwargs.get('pk')
-        if thesis_id:
-            try:
-                thesis_id = int(thesis_id)
-                thesis = Thesis.objects.get(pk=thesis_id)
-                thesis.status = status_thesis
-                thesis.save()
-                return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
-            except ValueError:
-                return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def totalscore(thesis_id):
-    print(thesis_id)
-    students = ThesisStudent.objects.filter(thesis_id=thesis_id)  # danh sach sinh vien lam khoa luan thesis_id
-    print(students)
-    for s in students:
-        print(s.id)
-        scores_student = Score.objects.filter(thesis_id=thesis_id, student_id=s.id)  # danh sach diem cua sinh vien s
-        print(scores_student)
-        # cong thuc tinh diem : (diem * percent cua tieu chi do)/tong percent
-        tong_diem = 0
-        tong_tieu_chi = 0
-        for score in scores_student:
-            tong_diem += score.score * score.criteria.percent
-            tong_tieu_chi += score.criteria.percent
-            print('loai diem')
-            print(score.criteria.percent)
-            # criteria = Criteria.objects.get(score.criteria_id)
-        s.total = round(tong_diem / tong_tieu_chi, 1)
-        # print(s.total)
-        s.save()
+# class OpenThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+#     queryset = Thesis.objects.all()
+#     serializer_class = serializers.ThesisSerializers
+#
+#     permission_classes = [IsAdminOrUniversityAdministrator]
+#
+#     def partial_update(self, request, *args, **kwargs):
+#         status_thesis = StatusThesis.objects.get(pk=1)
+#
+#         thesis_id = kwargs.get('pk')
+#         if thesis_id:
+#             try:
+#                 thesis_id = int(thesis_id)
+#                 thesis = Thesis.objects.get(pk=thesis_id)
+#                 thesis.status = status_thesis
+#                 thesis.save()
+#                 return Response({'data': 'Thành Công!'}, status=status.HTTP_200_OK)
+#             except ValueError:
+#                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
-    queryset = Thesis.objects.all()
-    serializer_class = serializers.ThesisSerializers
-
-    permission_classes = [IsAdminOrUniversityAdministrator]
-
-    def partial_update(self, request, *args, **kwargs):
-        status_thesis = StatusThesis.objects.get(pk=2)
-        thesis_id = kwargs.get('pk')
-        if thesis_id:
-            try:
-                thesis_id = int(thesis_id)
-                thesis = Thesis.objects.get(pk=thesis_id)
-                thesis.status = status_thesis
-                thesis.save()
-                student = ThesisStudent.objects.filter(thesis=thesis_id)
-                listidsv = []
-                listemail = []
-                for s in student:
-                    listidsv.append(s.user_id)
-
-                try:
-                    totalscore(thesis_id)  # tinh diem ne
-                except ZeroDivisionError:
-                    return Response({'Có sinh viên chưa được chấm điểm'}, status=status.HTTP_400_BAD_REQUEST)
-                for i in listidsv:
-                    user = User.objects.get(pk=i)
-                    listemail.append(user.email)
-
-                send_email(subject='Khóa Luận Của Bạn Đã Được Chấm Điểm!', body='Khóa Luận Của Bạn Đã Được Chấm Điểm!',
-                           listreceiver=listemail)
-                return Response({'data': 'Thành Công! Khóa Luận này Đã Được Đóng Lại!'}, status=status.HTTP_200_OK)
-            except ValueError:
-                return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+# class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
+#     queryset = Thesis.objects.all()
+#     serializer_class = serializers.ThesisSerializers
+#
+#     permission_classes = [IsAdminOrUniversityAdministrator]
+#
+#     def partial_update(self, request, *args, **kwargs):
+#         status_thesis = StatusThesis.objects.get(pk=2)
+#         thesis_id = kwargs.get('pk')
+#         if thesis_id:
+#             try:
+#                 thesis_id = int(thesis_id)
+#                 thesis = Thesis.objects.get(pk=thesis_id)
+#                 thesis.status = status_thesis
+#                 thesis.save()
+#                 student = ThesisStudent.objects.filter(thesis=thesis_id)
+#                 listidsv = []
+#                 listemail = []
+#                 for s in student:
+#                     listidsv.append(s.user_id)
+#
+#                 try:
+#                     totalscore(thesis_id)  # tinh diem ne
+#                 except ZeroDivisionError:
+#                     return Response({'Có sinh viên chưa được chấm điểm'}, status=status.HTTP_400_BAD_REQUEST)
+#                 for i in listidsv:
+#                     user = User.objects.get(pk=i)
+#                     listemail.append(user.email)
+#
+#                 send_email(subject='Khóa Luận Của Bạn Đã Được Chấm Điểm!', body='Khóa Luận Của Bạn Đã Được Chấm Điểm!',
+#                            listreceiver=listemail)
+#                 return Response({'data': 'Thành Công! Khóa Luận này Đã Được Đóng Lại!'}, status=status.HTTP_200_OK)
+#             except ValueError:
+#                 return Response({'error': 'Sai Định Dạng Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response({'error': 'Thiếu Thông Tin Mã Khóa Luận!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class CloseThesisViewSet(viewsets.ViewSet, generics.UpdateAPIView):
@@ -1272,7 +1298,14 @@ class AddOrUpdateManyScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
             thesis_id = item['thesis']
             score = item['score']
             thesis = Thesis.objects.get(pk=thesis_id)
-            if thesis.status.name == 'Open':
+            check = False
+            if thesis:
+                committee = ThesisDefenseCommittee.objects.get(pk=thesis.committee)
+                if committee.status.name == 'Open':
+                    check = True
+                else:
+                    check = False
+            if check:
                 # truy vấn các objects ở đây
                 try:
                     student = ThesisStudent.objects.get(user_id=student_id, thesis_id=thesis_id)

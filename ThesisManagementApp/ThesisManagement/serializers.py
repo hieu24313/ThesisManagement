@@ -104,15 +104,15 @@ class ThesisStudentSerializers(serializers.ModelSerializer):
 
 
 class CommitteeSerializerOnlyName(serializers.ModelSerializer):
+    status = StatusThesisSerializers()
 
     class Meta:
         model = ThesisDefenseCommittee
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'status']
         
 
 class ThesisSerializers(serializers.ModelSerializer):
     # status = serializers.StringRelatedField(source='status.name')
-    status = StatusThesisSerializers()
     # student = ThesisStudentSerializers()
     # supervisor = ThesisSupervisorSerializers()
     committee = CommitteeSerializerOnlyName()
@@ -126,6 +126,8 @@ class ThesisSerializers(serializers.ModelSerializer):
 
 # Hội đồng
 class ThesisDefenseCommitteeSerializers(serializers.ModelSerializer):
+    status = StatusThesisSerializers()
+
     class Meta:
         model = ThesisDefenseCommittee
         fields = '__all__'
@@ -152,6 +154,8 @@ class MemberOfThesisDefenseCommitteeSerializers(serializers.ModelSerializer):
 
 
 class ThesisDefenseCommitteeSerializersGETMember(serializers.ModelSerializer):
+    status = StatusThesisSerializers()
+
     # thesis = ThesisSerializers()
     class Meta:
         model = ThesisDefenseCommittee
@@ -166,11 +170,11 @@ class PositionSerializerOnlyName(serializers.ModelSerializer):
 
 
 class ThesisSerializersForScore(serializers.ModelSerializer):
-    status = StatusThesisSerializers()
+    # status = StatusThesisSerializers()
 
     class Meta:
         model = Thesis
-        fields = ['id', 'name', 'status']
+        fields = ['id', 'name']
 
 
 class GetMemberOfThesisDefenseCommitteeSerializer(serializers.ModelSerializer):

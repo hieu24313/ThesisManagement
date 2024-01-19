@@ -36,10 +36,10 @@ router.register('add-score', views.AddScoreViewSet,
                 basename='add-score')
 router.register('update-score', views.UpdateScoreViewSet,
                 basename='update-score')
-router.register('open-thesis', views.OpenThesisViewSet,
-                basename='open-thesis')
-router.register('close-thesis', views.CloseThesisViewSet,
-                basename='close-thesis')
+# router.register('open-thesis', views.OpenThesisViewSet,
+#                 basename='open-thesis')
+# router.register('close-thesis', views.CloseThesisViewSet,
+#                 basename='close-thesis')
 router.register('add-all-member', views.AddThesisDefenseCommitteeAndMemberViewSet,
                 basename='add-all-member')
 router.register('check-old-password', views.CheckPassWordViewSet,
@@ -53,7 +53,7 @@ router.register('update-committee-and-member', views.UpdateThesisDefenseCommitte
 router.register('add-or-update-score', views.AddOrUpdateManyScoreViewSet,
                 basename='add-or-update-score')
 
-# router.register('a', views.TestSendArr)
+# router.register('a', views.SendEmailView)
 urlpatterns = [
     # path('swagger/', views.swagger_redirect, name='swagger'),
     path('', lambda _: redirect('/swagger/')),
