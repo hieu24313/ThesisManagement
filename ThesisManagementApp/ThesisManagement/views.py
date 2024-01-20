@@ -181,7 +181,10 @@ def totalscore(thesis_id):
             print('loai diem')
             print(score.criteria.percent)
             # criteria = Criteria.objects.get(score.criteria_id)
-        s.total = round(tong_diem / tong_tieu_chi, 1)
+        if tong_tieu_chi == 0:
+            s.total = 0
+        else:
+            s.total = round(tong_diem / tong_tieu_chi, 1)
         # print(s.total)
         s.save()
 
@@ -218,7 +221,8 @@ class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.L
             totalscore(thesis.id)
             list_student = ThesisStudent.objects.filter(thesis=thesis)
             for student in list_student:
-                list_send_email.append(student.email)
+                u = User.objects.get(pk=student.user_id)
+                list_send_email.append(u.email)
         send_email(subject="Khóa luận của bản đã được tổng kết điểm", body="Khóa luận của bản đã được tổng kết điểm", listreceiver=list_send_email)
         return Response('Thành công', status=status.HTTP_200_OK)
 
@@ -250,6 +254,15 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
 
     def filter_queryset(self, queryset):
         return dao.load_thesis(self.request.query_params)
+
+    @action(methods=['patch'], url_name='update-name', detail=True)
+    def update_name(self, request, pk):
+        thesis = self.get_object()
+        name = request.data.get('name')
+        thesis.name = name
+        thesis.save()
+        return Response(serializers.ThesisSerializers(thesis, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
 
     @action(methods=['get'], url_name='lecturer', detail=False)
     def lecturer(self, request, pk=None):

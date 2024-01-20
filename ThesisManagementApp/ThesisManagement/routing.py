@@ -20,6 +20,6 @@ from django.urls import re_path
 
 websocket_urlpatterns = [
     re_path(r'ws/chat/room/(?P<id_user>\w+)/$', consumers.ChatConsumer.as_asgi()),
-    re_path(r'ws/$', consumers.RoomConsumer.as_asgi()),
+    re_path(r'ws/(?P<id_user>\w+)/$', consumers.ChatConsumer.as_asgi()),
     re_path(r'test/(?P<id_user>\w+)/$', consumers.RoomConsumer.as_asgi()),
 ]
