@@ -31,13 +31,13 @@ SECRET_KEY = 'django-insecure-tv*_h-u1z@0cvnf)n1msoxr4hr(h(%g6+5c^a@zy%=v%7747cs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['*']
 
 # Application definition
 
 INSTALLED_APPS = [
     'daphne',
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,8 +52,9 @@ INSTALLED_APPS = [
     'cloudinary',
     'channels'
 ]
-ASGI_APPLICATION = 'ThesisManagementApp.asgi.application'
+# ASGI_APPLICATION = 'ThesisManagementApp.asgi.application'
 CKEDITOR_UPLOAD_PATH = "ckeditor/images/"
+ASGI_APPLICATION = "ThesisManagementApp.asgi.application"
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -192,13 +193,14 @@ cloudinary.config(
 # }
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
         },
     },
 }
+
 
 LOGGING = {
     'version': 1,
@@ -222,3 +224,5 @@ LOGGING = {
 # CELERY_BROKER_URL = 'redis://localhost:6379/0'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379

@@ -32,13 +32,13 @@ class CourseAppAdminSite(admin.AdminSite):
             count_thesis_current_year = dao.count_thesis_by_major_and_year()  # count khoa luan trong nam duoc chon
             list_thesis = dao.get_thesis_by_year()
             for t in list_thesis:
-                t.status = dao.get_status_by_id(t.status.id)
+                # t.status = dao.get_status_by_id(t.status.id)
                 t.student = dao.get_student_by_thesis_id(t)
                 t.supervisor = dao.get_lecturer_by_thesis_id(t)
         else:
             list_thesis = dao.get_thesis_by_year(year)
             for t in list_thesis:
-                t.status = dao.get_status_by_id(t.status.id)
+                # t.status = dao.get_status_by_id(t.status.id)
                 t.student = dao.get_student_by_thesis_id(t)
                 t.supervisor = dao.get_lecturer_by_thesis_id(t)
             count_thesis_current_year = dao.count_thesis_by_major_and_year(year)  # count khoa luan trong nam duoc chon

@@ -13,7 +13,6 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from ThesisManagementApp import settings
 from django.shortcuts import get_object_or_404
 
@@ -214,17 +213,20 @@ class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.L
         list_thesis = Thesis.objects.filter(committee=pk)
         status_close = StatusThesis.objects.get(pk=2)
         committee = self.get_object()
-        committee.status = status_close
-        committee.save()
-        list_send_email = []
-        for thesis in list_thesis:
-            totalscore(thesis.id)
-            list_student = ThesisStudent.objects.filter(thesis=thesis)
-            for student in list_student:
-                u = User.objects.get(pk=student.user_id)
-                list_send_email.append(u.email)
-        send_email(subject="Khóa luận của bản đã được tổng kết điểm", body="Khóa luận của bản đã được tổng kết điểm", listreceiver=list_send_email)
-        return Response('Thành công', status=status.HTTP_200_OK)
+        if committee.status != status_close:
+            committee.status = status_close
+            committee.save()
+            list_send_email = []
+            for thesis in list_thesis:
+                totalscore(thesis.id)
+                list_student = ThesisStudent.objects.filter(thesis=thesis)
+                for student in list_student:
+                    u = User.objects.get(pk=student.user_id)
+                    list_send_email.append(u.email)
+            send_email(subject="Khóa luận của bản đã được tổng kết điểm", body="Khóa luận của bản đã được tổng kết điểm", listreceiver=list_send_email)
+            return Response('Thành công', status=status.HTTP_200_OK)
+        else:
+            return Response('Hội đồng này đã khóa!', status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -247,7 +249,7 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_permissions(self):
-        if self.action == 'lecturer':
+        if self.action in ['lecturer', 'get_score_total_student', 'get_detail_score']:
             return [IsAuthenticated()]
         else:
             return [AllowAny()]
@@ -255,7 +257,26 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     def filter_queryset(self, queryset):
         return dao.load_thesis(self.request.query_params)
 
-    @action(methods=['patch'], url_name='update-name', detail=True)
+    @action(methods=['get'], url_path='score-total', url_name='score-total', detail=True)
+    def get_score_total_student(self, request, pk):
+        try:
+            total = ThesisStudent.objects.get(user=request.user, thesis=self.get_object())
+            return Response(serializers.ThesisStudentForScoreSerializers(total, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response('Bạn không làm kháo luận này!!!', status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['get'], url_path='detail-score', url_name='detail-score', detail=True)
+    def get_detail_score(self, request, pk):
+        try:
+            user_thesis_student = ThesisStudent.objects.get(user=request.user, thesis=self.get_object())
+            score = Score.objects.filter(student=user_thesis_student, thesis=self.get_object())
+            return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
+                            status=status.HTTP_200_OK)
+        except ValueError:
+            return Response('Có lỗi xảy ra!', status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['patch'], url_name='update-name', url_path='update-name', detail=True)
     def update_name(self, request, pk):
         thesis = self.get_object()
         name = request.data.get('name')
@@ -328,7 +349,7 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
         return Response(serializers.ThesisStudentSerializers(student, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
 
-    @action(methods='post', url_name='add-thesis', detail=False)
+    @action(methods='post', url_name='add-thesis', url_path='add-thesis', detail=False)
     def add_thesis(self, request):
         data = request.data
         # thesis = self.instance
@@ -401,7 +422,7 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
             return Response({'error': f'Lỗi : {str(e)}'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods='PATCH', url_name='update-thesis', detail=True)
+    @action(methods='PATCH', url_name='update-thesis', url_path='update-thesis', detail=True)
     def update_thesis(self, request, pk):
 
         thesis = self.get_object()  # khóa luận

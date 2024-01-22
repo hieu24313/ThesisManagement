@@ -103,6 +103,23 @@ class ThesisStudentSerializers(serializers.ModelSerializer):
         fields = ['user']
 
 
+class ThesisSerializersForScore(serializers.ModelSerializer):
+    # status = StatusThesisSerializers()
+
+    class Meta:
+        model = Thesis
+        fields = ['id', 'name']
+
+
+class ThesisStudentForScoreSerializers(serializers.ModelSerializer):
+    user = UserSerializersOnlyName()
+    thesis = ThesisSerializersForScore()
+
+    class Meta:
+        model = ThesisStudent
+        fields = '__all__'
+
+
 class CommitteeSerializerOnlyName(serializers.ModelSerializer):
     status = StatusThesisSerializers()
 
@@ -166,14 +183,6 @@ class PositionSerializerOnlyName(serializers.ModelSerializer):
 
     class Meta:
         model = Position
-        fields = ['id', 'name']
-
-
-class ThesisSerializersForScore(serializers.ModelSerializer):
-    # status = StatusThesisSerializers()
-
-    class Meta:
-        model = Thesis
         fields = ['id', 'name']
 
 

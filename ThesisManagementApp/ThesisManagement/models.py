@@ -16,6 +16,7 @@ class BaseModel(models.Model):
         abstract = True
 
 
+
 class Role(BaseModel):
     name = models.CharField(max_length=255)  # admin, universityadministrator, lecturer, student
 
