@@ -338,7 +338,7 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
                 score = Score.objects.filter(thesis_id=pk, lecturer_id=user_committee.id)
                 print(score)
             except ObjectDoesNotExist:
-                return Response('Sai thông tin khóa chính!')
+                return Response('Có dữ liệu chưa đầy đủ!!!', status=status.HTTP_400_BAD_REQUEST)
 
             return Response(serializers.GetScoreSerializer(score, many=True, context={'request': request}).data,
                             status=status.HTTP_200_OK)

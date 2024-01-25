@@ -18,18 +18,18 @@
 <div class="main">
     <div class="main1">
         <div class="thesis">
-            <form method="get">
+            <form method="get" class="form">
             <!--    <label for="param">Parameter:</label>-->
             <!--    <input type="text" id="param" name="param" value="{{ year }}">-->
-            <label for="select_option">Chọn năm:</label>
-            <select id="select_option" name="select_option">
-                <option value="all">Tất Cả</option>
-                {% for i in year %}
-                <option value="{{ i }}">{{ i }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Lọc</button>
-        </form>
+                <label for="select_option">Chọn năm:</label>
+                <select id="select_option" name="select_option">
+                    <option value="all">Tất Cả</option>
+                    {% for i in year %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Lọc</button>
+            </form>
         <h2>Nghành và số lượng tham gia {{ current_year }}</h2>
         <table class="table">
             <thead>
