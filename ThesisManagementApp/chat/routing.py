@@ -7,5 +7,6 @@ router = routers.DefaultRouter()
 router.register('chat/room', consumers.ChatConsumer, basename='chat-room')
 
 websocket_urlpatterns = [
-    re_path(r"ws/chat/(?P<room_name>\w+)/$", consumers.ChatConsumer.as_asgi()),
+    # re_path(r"ws/chat/(?P<room_name>\w+)/$", consumers.ChatConsumer.as_asgi()),
+    re_path(r"chat/(?P<userid>\w+)/$", consumers.Chat2Consumer.as_asgi()),
 ]
