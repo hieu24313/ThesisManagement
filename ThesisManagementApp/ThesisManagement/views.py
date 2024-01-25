@@ -294,8 +294,10 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
             list_committee_user = list(MemberOfThesisDefenseCommittee.objects.filter(user=user))
             list_thesis = []
             for c in list_committee_user:
+                print(c.Committee.status.name)
                 # list_thesis.append(Thesis.objects.filter(status__name='Open', committee=c.Committee))
-                list_thesis += Thesis.objects.filter(status__name='Open', committee=c.Committee)
+                if c.Committee.status.name == 'Open':
+                    list_thesis += Thesis.objects.filter(committee=c.Committee)
 
             return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data,
                             status=status.HTTP_200_OK)

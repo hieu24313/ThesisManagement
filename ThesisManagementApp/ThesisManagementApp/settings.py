@@ -226,3 +226,10 @@ LOGGING = {
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#         'LOCATION': 'unique-snowflake',
+#     }
+# }
