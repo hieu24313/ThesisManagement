@@ -1043,7 +1043,7 @@ def AddAllMember(committee, user_id, position_id):
 
 class AddThesisDefenseCommitteeAndMemberViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = ThesisDefenseCommittee.objects.all()
-    serializer_class = serializers.ThesisDefenseCommitteeSerializers
+    serializer_class = serializers.AddThesisDefenseCommitteeSerializers
 
     permission_classes = [IsAdminOrUniversityAdministrator]
 

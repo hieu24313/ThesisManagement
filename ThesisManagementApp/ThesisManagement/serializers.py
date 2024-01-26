@@ -143,7 +143,15 @@ class ThesisSerializers(serializers.ModelSerializer):
 
 # Hội đồng
 class ThesisDefenseCommitteeSerializers(serializers.ModelSerializer):
-    status = StatusThesisSerializers()
+    status = StatusThesisSerializers(allow_null=True)
+
+    class Meta:
+        model = ThesisDefenseCommittee
+        fields = '__all__'
+
+
+class AddThesisDefenseCommitteeSerializers(serializers.ModelSerializer):
+    # status = StatusThesisSerializers(allow_null=True)
 
     class Meta:
         model = ThesisDefenseCommittee
