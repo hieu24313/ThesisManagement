@@ -828,6 +828,14 @@ class DeleteMemberOfThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.Des
 
     permission_classes = [IsAdminOrUniversityAdministrator]
 
+    def destroy(self, request, *args, **kwargs):
+        member = self.get_object()
+        committee = ThesisDefenseCommittee.objects.get(pk=member.Committee_id)
+        if committee.status.name == 'Open':
+            return super().destroy(request, *args, **kwargs)
+        else:
+            return Response('Hội động này đã được khóa! ')
+
 
 class GetScoreViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Score.objects.all()
@@ -1336,7 +1344,7 @@ class AddOrUpdateManyScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
             thesis = Thesis.objects.get(pk=thesis_id)
             check = False
             if thesis:
-                committee = ThesisDefenseCommittee.objects.get(pk=thesis.committee)
+                committee = ThesisDefenseCommittee.objects.get(pk=thesis.committee_id)
                 if committee.status.name == 'Open':
                     check = True
                 else:
