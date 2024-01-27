@@ -228,6 +228,105 @@ class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.L
         else:
             return Response('Hội đồng này đã khóa!', status=status.HTTP_400_BAD_REQUEST)
 
+    @action(methods='patch', detail=True, url_path='update-member', url_name='update-member')
+    def update_member(self, request, pk):
+        data = request.data
+        # committee_id = data.get('committee')
+        # if not committee_id:
+        #     return Response({'error': 'Thiếu ID hội đồng!!!'}, status=status.HTTP_400_BAD_REQUEST)
+        committee = self.get_object()
+        # memberofcommittee = MemberOfThesisDefenseCommittee.objects.filter(Committee_id=committee_id)
+        # memberofcommittee.delete()
+        try:
+            # member1
+            member1_id = data.get('member1')
+            position1_id = data.get('position1')
+
+            if member1_id and position1_id:
+                position1 = Position.objects.get(pk=position1_id)
+                user = User.objects.get(pk=member1_id)
+                try:
+                    mem1 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position1)
+                    mem1.user = user
+                    mem1.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member1_id, position1_id)
+
+            # member2
+            member2_id = data.get('member2')
+            position2_id = data.get('position2')
+
+            if member2_id and position2_id:
+                position2 = Position.objects.get(pk=position2_id)
+                user = User.objects.get(pk=member2_id)
+                try:
+                    mem2 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position2)
+                    mem2.user = user
+                    mem2.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member2_id, position2_id)
+
+            # member3
+            member3_id = data.get('member3')
+            position3_id = data.get('position3')
+
+            if member3_id and position1_id:
+                position3 = Position.objects.get(pk=position3_id)
+                user = User.objects.get(pk=member3_id)
+                try:
+                    mem3 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position3)
+                    mem3.user = user
+                    mem3.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member3_id, position3_id)
+
+            # member4
+            member4_id = data.get('member4')
+            position4_id = data.get('position4')
+
+            if member4_id and position4_id:
+                position4 = Position.objects.get(pk=position4_id)
+                user = User.objects.get(pk=member4_id)
+                try:
+                    mem4 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position4)
+                    mem4.user = user
+                    mem4.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member4_id, position4_id)
+
+            # member5
+            member5_id = data.get('member5')
+            position5_id = data.get('position5')
+            if member5_id and position5_id:
+                position5 = Position.objects.get(pk=position5_id)
+                user = User.objects.get(pk=member5_id)
+                try:
+                    mem5 = MemberOfThesisDefenseCommittee.objects.get(Committee=committee, position=position5)
+                    mem5.user = user
+                    mem5.save()
+                except MemberOfThesisDefenseCommittee.DoesNotExist:
+                    AddAllMember(committee, member5_id, position5_id)
+            # if member1_id and position1_id:
+            #     AddAllMember(committee, member1_id, position1_id)
+            #
+            # if member2_id and position2_id:
+            #     AddAllMember(committee, member2_id, position2_id)
+            #
+            # if member3_id and position3_id:
+            #     AddAllMember(committee, member3_id, position3_id)
+            #
+            # if member4_id and position4_id:
+            #     AddAllMember(committee, member4_id, position4_id)
+            #
+            # if member5_id and position5_id:
+            #     AddAllMember(committee, member5_id, position5_id)
+            # super().create(request, *args, **kwargs)
+
+            return Response({'data': serializers.ThesisDefenseCommitteeSerializers(committee).data},
+                            status=status.HTTP_200_OK)
+        except MemberOfThesisDefenseCommittee.DoesNotExist:
+            return Response({'error': 'Check Lại ID Position và ID USER!'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AddThesisDefenseCommitteeViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = ThesisDefenseCommittee.objects.all()
