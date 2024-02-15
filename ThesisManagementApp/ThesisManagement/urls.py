@@ -52,6 +52,7 @@ router.register('update-committee-and-member', views.UpdateThesisDefenseCommitte
                 basename='update-committee-and-member')
 router.register('add-or-update-score', views.AddOrUpdateManyScoreViewSet,
                 basename='add-or-update-score')
+router.register('create-pdf', views.GetPDF)
 # router.register('chat/')
 # router.register('a', views.SendEmailView)
 urlpatterns = [

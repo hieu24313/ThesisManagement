@@ -8,13 +8,20 @@ from django.shortcuts import render, redirect
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from ThesisManagementApp import settings
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from django.core.files.storage import default_storage
+from django.conf import settings
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from . import dao
 from . import serializers
@@ -24,6 +31,7 @@ from .permissions import IsLecturer, IsAdminOrUniversityAdministrator, IsAdmin, 
 import random
 import string
 import base64
+import os
 
 # from .task import send_email_async
 
@@ -1491,3 +1499,94 @@ class AddOrUpdateManyScoreViewSet(viewsets.ViewSet, generics.CreateAPIView):
 #             print(item["b"])
 #
 #         return Response('Ok', status=status.HTTP_200_OK)
+
+
+# @api_view(['GET'])
+class GetPDF(viewsets.ReadOnlyModelViewSet):
+    queryset = Thesis.objects.all()
+    serializer_class = serializers.ThesisSerializers
+
+    @action(methods=['get'], detail=True, url_name='pdf', url_path='pdf')
+    def pdf(self, request, pk):
+        thesis_id = pk
+        thesis = Thesis.objects.get(pk=thesis_id)
+        response = HttpResponse(content_type='application/pdf')
+        name_file = f'thesis{thesis.id}.pdf'
+
+        response['Content-Disposition'] = f'attachment; filename="{name_file}"'
+        # Tạo canvas để vẽ nội dung PDF
+        # p = canvas.Canvas(response)
+        file_path = default_storage.path(f'media/{name_file}')
+
+        # Tạo canvas để vẽ nội dung PDF
+        p = canvas.Canvas(file_path)
+
+        # Thiết lập font và kích thước
+        p.setFont("Helvetica-Bold", 12)
+        # Tiêu đề
+        p.setTitle(f'{thesis.name}')
+        start_y_position = 800
+        content_header_y_position = start_y_position - 20
+        p.drawString(50, start_y_position, f'{thesis.name}')
+        # p.drawString(50, content_header_y_position, "----")
+
+        criteria = Criteria.objects.all()
+        # print(len(criteria))
+        # print(criteria)
+        x_base = 500/(len(criteria) + 2)
+        count = 3
+        # print(x_base)
+        p.drawString(x_base, 700, "ID")
+        p.drawString(2 * x_base, 700, "Ho và Ten")
+        for c in criteria:
+            p.drawString(count * x_base, 700, f'{c.name}')
+            count += 1
+        data = []
+        # Dữ liệu mẫu (đây có thể là dữ liệu từ cơ sở dữ liệu)
+        thesis_student = ThesisStudent.objects.filter(thesis_id=thesis_id)
+        for ts in thesis_student:
+            obj = {}
+            student = User.objects.get(pk=ts.user_id)
+            student_ = ThesisStudent.objects.get(user=student, thesis=thesis)
+            obj.update({"ID": ts.user_id, "Ho và Ten": f"{student.last_name} {student.first_name}"})
+            for c in criteria:
+                try:
+                    score = Score.objects.filter(criteria=c, thesis_id=thesis_id, student=student_)
+                    # print(score[0])
+                    tong = 0
+                    count1 = 0
+                    for sc in score:
+                        tong += sc.score
+                        print(sc.score)
+                        count1 += 1
+                    if count1 == 0:
+                        count1 = 1
+                    obj.update({f"{c.name}": tong/count1})
+                except ObjectDoesNotExist:
+                    obj.update({f"{c.name}": "#"})
+            data.append(obj)
+            # print(student)
+        # Vẽ dữ liệu từ mẫu vào PDF
+        row_height = 20
+        y_position = 680  # Điểm bắt đầu vẽ dữ liệu
+        print(data)
+        for item in data:
+            count2 = 3
+            p.drawString(x_base, y_position, str(item["ID"]))
+            p.drawString(200, y_position, item["Ho và Ten"])
+            for c in criteria:
+                # p.drawString(x_base * count2, y_position, item[f"{c.name}"])
+                p.drawString(x_base * count2, y_position, str(item[c.name]))
+                count2 += 1
+
+            y_position -= row_height
+
+        # Kết thúc và trả về response
+        p.showPage()
+        p.save()
+        file_url = default_storage.url(f'media/{name_file}')
+        server_domain = request.META['HTTP_HOST']
+        full_url = request.build_absolute_uri()
+        # return JsonResponse({'pdf_url': f'{server_domain}/static{file_url}'})
+        print(server_domain)
+        return Response(f'http://{server_domain}/static{file_url}', status=status.HTTP_200_OK)
