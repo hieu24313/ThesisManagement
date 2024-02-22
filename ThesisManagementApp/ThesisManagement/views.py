@@ -23,7 +23,7 @@ from django.conf import settings
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from . import dao
+from . import dao, paginators
 from . import serializers
 from .mail import send_email
 from .models import *
@@ -199,6 +199,7 @@ def totalscore(thesis_id):
 class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = ThesisDefenseCommittee.objects.all()
     serializer_class = serializers.ThesisDefenseCommitteeSerializers
+    pagination_class = paginators.ThesisDefenseCommitteePagination
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('name', openapi.IN_QUERY, description="Lọc theo tên",
