@@ -46,6 +46,7 @@ class BaseViewSet(viewsets.ModelViewSet):
 class GetUserViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializers
+    pagination_class = paginators.UserPagination
 
     # permission_classes = [IsAuthenticated]
 
@@ -355,6 +356,7 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
     queryset = Thesis.objects.all()
     serializer_class = serializers.ThesisSerializers
     permission_classes = [AllowAny]
+    pagination_class = paginators.ThesisPagination
 
     def get_permissions(self):
         if self.action in ['lecturer', 'get_score_total_student', 'get_detail_score']:
