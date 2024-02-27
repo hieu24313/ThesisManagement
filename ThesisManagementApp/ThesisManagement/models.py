@@ -276,18 +276,18 @@ def create_superuser(sender, **kwargs):
                 User.objects.get_or_create(username=username, password=password, role='lecturer'
                                            , email='hieu24313@gmail.com')
 
-        first_names = ["Hồng", "Trung", "Linh", "Quang", "Thiên", "Phương", "Minh", "Anh", "Dương", "Tâm", "Thu",
-                       "Tùng", "Hải", "Ngọc", "Hà", "Tú", "Kiều", "Đức", "Thúy", "Vân"]
-        last_names = ["Nguyễn", "Trần", "Lê", "Phạm", "Võ", "Hoàng", "Đặng", "Bùi", "Đỗ", "Lý", "Ngô", "Đinh", "Hồ",
-                      "Vũ", "Đào", "Mai", "Quách", "Trịnh", "Đoàn", "Phan"]
-        # import random
-        # for i in range(47, 48):
-        #
-        #
-        #     # Chọn một tên và họ ngẫu nhiên
-        #     random_first_name = random.choice(first_names)
-        #     random_last_name = random.choice(last_names)
-        #     u = User.objects.get(pk=i)
-        #     u.first_name = random.choice(first_names)
-        #     u.last_name = random.choice(last_names)
-        #     u.save()
+        first_names = ["Huy", "Trung", "Linh", "Quang", "Thi", "Phong", "Minh", "Anh", "Thu", "Tâm",
+                       "Tùng", "Hải", "Ngọc", "Hà", "Tú", "Hanh", "An", "Thúy", "Vân"]
+        last_names = ["Trần", "Lê", "Phạm", "Võ", "Bùi", "Nguyên", "Lý", "Ngô", "Vũ", "Duy", "Mai", "Quách", "Phan"]
+        import random
+        for i in range(1, 46):
+
+
+            # Chọn một tên và họ ngẫu nhiên
+            random_first_name = random.choice(first_names)
+            random_last_name = random.choice(last_names)
+            u = User.objects.get(pk=i)
+            print(i)
+            u.first_name = random.choice(first_names)
+            u.last_name = random.choice(last_names)
+            u.save()
