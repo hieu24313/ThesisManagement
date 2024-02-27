@@ -44,3 +44,7 @@ select#select_option{
 button{
     width:20%
 }
+.url{
+    text-align: center;
+    text-decoration: none;
+}

@@ -23,3 +23,7 @@ select{
 button{
     width:10%
 }
+div.url{
+    text-align: center;
+    text-decoration: none;
+}

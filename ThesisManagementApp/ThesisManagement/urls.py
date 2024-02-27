@@ -59,5 +59,6 @@ urlpatterns = [
     # path('swagger/', views.swagger_redirect, name='swagger'),
     path('', lambda _: redirect('/swagger/')),
     path('', include(router.urls)),
+    # path('admin1/', views.custom_admin_view)
     # path('', include(websocket_urlpatterns))
 ]

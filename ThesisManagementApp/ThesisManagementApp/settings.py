@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',  # OAuth2 middleware
+    'ThesisManagement.middlewares.AdminJSMiddleware',
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 

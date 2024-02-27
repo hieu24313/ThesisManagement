@@ -33,6 +33,7 @@ import string
 import base64
 import os
 
+
 # from .task import send_email_async
 
 
@@ -75,14 +76,14 @@ class GetUserViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
         return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
 
-    @action(methods=['get'], url_name='committee', detail=True) #hội đồng user tham gia
+    @action(methods=['get'], url_name='committee', detail=True)  # hội đồng user tham gia
     def committee(self, request, pk):
         committee = ThesisDefenseCommittee.objects.filter(memberofthesisdefensecommittee__user_id=pk)
         return Response(
             serializers.ThesisDefenseCommitteeSerializers(committee, many=True, context={'request': request}).data,
             status=status.HTTP_200_OK)
 
-    @action(methods=['get'], url_name='score', detail=True) # lấy điểm của user
+    @action(methods=['get'], url_name='score', detail=True)  # lấy điểm của user
     def score(self, request, pk):
         params = request.query_params
         thesis = params.get('thesis')
@@ -216,7 +217,8 @@ class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.L
     @action(methods=['get'], url_name='thesis', detail=True)
     def thesis(self, request, pk):
         list_thesis = Thesis.objects.filter(committee_id=pk)
-        return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data, status=status.HTTP_200_OK)
+        return Response(serializers.ThesisSerializers(list_thesis, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
 
     @action(methods=['patch'], url_name='close', detail=True)
     def close(self, request, pk):
@@ -233,7 +235,8 @@ class GetThesisDefenseCommitteeViewSet(viewsets.ReadOnlyModelViewSet, generics.L
                 for student in list_student:
                     u = User.objects.get(pk=student.user_id)
                     list_send_email.append(u.email)
-            send_email(subject="Khóa luận của bản đã được tổng kết điểm", body="Khóa luận của bản đã được tổng kết điểm", listreceiver=list_send_email)
+            send_email(subject="Khóa luận của bản đã được tổng kết điểm",
+                       body="Khóa luận của bản đã được tổng kết điểm", listreceiver=list_send_email)
             return Response('Thành công', status=status.HTTP_200_OK)
         else:
             return Response('Hội đồng này đã khóa!', status=status.HTTP_400_BAD_REQUEST)
@@ -372,7 +375,7 @@ class GetThesisViewSet(viewsets.ReadOnlyModelViewSet, generics.ListAPIView):
         try:
             total = ThesisStudent.objects.get(user=request.user, thesis=self.get_object())
             return Response(serializers.ThesisStudentForScoreSerializers(total, context={'request': request}).data,
-                        status=status.HTTP_200_OK)
+                            status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response('Bạn không làm kháo luận này!!!', status=status.HTTP_400_BAD_REQUEST)
 
@@ -1536,7 +1539,7 @@ class GetPDF(viewsets.ReadOnlyModelViewSet):
         criteria = Criteria.objects.all()
         # print(len(criteria))
         # print(criteria)
-        x_base = 500/(len(criteria) + 2)
+        x_base = 500 / (len(criteria) + 2)
         count = 3
         # print(x_base)
         p.drawString(x_base, 700, "ID")
@@ -1564,7 +1567,7 @@ class GetPDF(viewsets.ReadOnlyModelViewSet):
                         count1 += 1
                     if count1 == 0:
                         count1 = 1
-                    obj.update({f"{c.name}": tong/count1})
+                    obj.update({f"{c.name}": tong / count1})
                 except ObjectDoesNotExist:
                     obj.update({f"{c.name}": "#"})
             data.append(obj)
@@ -1593,3 +1596,9 @@ class GetPDF(viewsets.ReadOnlyModelViewSet):
         # return JsonResponse({'pdf_url': f'{server_domain}/static{file_url}'})
         print(server_domain)
         return Response(f'http://{server_domain}/static{file_url}', status=status.HTTP_200_OK)
+
+
+# def custom_admin_view(request):
+#     # Thực hiện logic xử lý của bạn ở đây
+#     # Ví dụ: Trả về một trang HTML đơn giản
+#     return render(request, 'admin/index.html')

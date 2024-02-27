@@ -8,7 +8,15 @@
 <link rel="stylesheet" href="{% static 'css/stats_score.css' %}">
 {% endblock %}
 {% block content %}
-
+<script>
+        function changeColor(isHovering) {
+            var element = document.getElementById('hoverElement');
+                element.style.textDecoration = 'None';
+        }
+    </script>
+<div class="url" style="text-align: center; text-decoration: none;">
+    <a id="hoverElement"  href="../stats-major/">Xem thống tần xuất tham gia</a>
+</div>
 <h1 class="title">
     THỐNG KÊ ĐIỂM
     {% if current_year == 'all' %}
@@ -16,6 +24,13 @@
     {% else %}
     NĂM {{ current_year }}
     {% endif %}
+
+    {% if current_major == 'all' %}
+    CỦA TOÀN NGHÀNH
+    {% else %}
+    NGHÀNH {{ current_major }}
+    {% endif %}
+
 </h1>
 <div class="container">
     <div>

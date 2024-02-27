@@ -9,14 +9,24 @@ import datetime
 # Register your models here.
 
 
-class CourseAppAdminSite(admin.AdminSite):
+class ThesisAppAdminSite(admin.AdminSite):
     site_header = 'Thesis Management'
+
+    def each_context(self, request):
+        context = super().each_context(request)
+        context['custom_js'] = 'admin/js/admin_custom.js'  # Đường dẫn tới tệp JavaScript của bạn
+        return context
 
     def get_urls(self): # chưa phân quyền nhé........
         return [
                    path('stats-major/', self.stats_view_major),
                    path('stats-score/', self.stats_view_score)
                ] + super().get_urls()
+    # def get_media(self):
+    #     # Ghi đè phương thức này để thêm các tập tin media
+    #     media = super().get_media()
+    #     media.add_js(['admin/js/admin_custom.js'])
+    #     return media
 
     def stats_view_major(self, request):
 
@@ -68,34 +78,42 @@ class CourseAppAdminSite(admin.AdminSite):
         if year != 'all' and major == 'all':
             score = dao.get_score(year=year)
         if year == 'all' and major != 'all':
-            score = dao.get_score(year=year)
+            score = dao.get_score(major=major)
         if year != 'all' and major != 'all':
             score = dao.get_score(year=year, major=major)
 
         get_year_has_thesis = dao.get_year_do_thesis()
         # print(score)
-
+        if major != 'all':
+            major = Majors.objects.get(pk=major)
         return TemplateResponse(request, 'admin/stats_score.html', {
             'year_has_thesis': get_year_has_thesis,
             'current_year': year,
             'major': dao.get_all_major(),
+            'current_major': major,
             'score': score
         })
 
 
-admin_site = CourseAppAdminSite(name='Thesis Management')
+admin_site = ThesisAppAdminSite(name='Thesis Management')
 
 
-class UserAdmin(admin.ModelAdmin):
+class CustomModelAdmin(admin.ModelAdmin):
+
+    class Media:
+        js = ('admin/js/admin_custom.js',)
+
+
+class UserAdmin(CustomModelAdmin):
     list_display = ['username', 'first_name', 'last_name', 'email', 'date_joined', 'is_staff']
 
 
-class CriteriaAdmin(admin.ModelAdmin):
+class CriteriaAdmin(CustomModelAdmin):
     list_display = ['id', 'name', 'active']
 
 
 admin_site.register(User, UserAdmin)
 admin_site.register(Criteria, CriteriaAdmin)
-admin_site.register(Position)
-admin_site.register(Majors)
+admin_site.register(Position, CustomModelAdmin)
+admin_site.register(Majors, CustomModelAdmin)
 
