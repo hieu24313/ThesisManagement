@@ -1,0 +1,19 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<link rel="stylesheet" href="{% static 'css/stats_score.css' %}">
+{% endblock %}
+{% block content %}
+<div>
+Vui Lòng Tải Biểu Mẫu File <a href="{{link}}">Tại Đây</a>
+<form method="post" enctype="multipart/form-data" style="margin-top: 10px">
+        {% csrf_token %}
+        <input type="file" name="excel_file">
+        <button type="submit">Upload</button>
+</form>
+</div>
+{% endblock %}

@@ -25,7 +25,7 @@
     NĂM {{ current_year }}
     {% endif %}
 
-    {% if current_major == 'all' %}
+    {% if current_major == 'all' or current_major == None %}
     CỦA TOÀN NGHÀNH
     {% else %}
     NGHÀNH {{ current_major }}
